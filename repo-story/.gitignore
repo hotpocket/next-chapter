@@ -1,0 +1,9 @@
+output/
+__pycache__/
+*.pyc
+*.wav
+*.mp3
+*.m4b
+*.m4a
+voices/*.wav
+!voices/.gitkeep
