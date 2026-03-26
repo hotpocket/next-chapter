@@ -35,18 +35,11 @@ When all explorations complete, proceed to Phase 3.
 
 ## Phase 3: Thematic Synthesis
 
-**This phase requires user input. Do not proceed past it without the user's direction.**
-
 Read all dossiers. Do connection-finding first: notice resonances, contradictions, and surprises across projects without organizing them yet.
 
-Then propose themes. Present them to the user directly in the conversation:
+Then organize into themes. Present them to the user directly in the conversation — theme name, general principle, which repos embody it, rough origin — so the user can see what you found. Then write themes to `output/themes.md` and proceed to Phase 4 immediately.
 
-- Theme name
-- The general principle
-- Which repos embody it and how
-- Rough sense of origin
-
-Ask the user: "These are the themes I found. What would you change — merge, split, drop, add?" Wait for their response. Revise as directed. When the user is satisfied, write the final themes to `output/themes.md` and proceed.
+Do not ask for permission to continue. The user does not have deep knowledge of the repos — that is why they are running this skill. Present your findings and move forward. If the user wants to redirect, they will say so.
 
 ## Phase 4: Research
 
@@ -74,11 +67,23 @@ Key principles:
 
 Write sections to `output/sections/` — one text file per theme, named by content (e.g., `section-fail-fast.txt`).
 
+## Chapter Ordering
+
+After all sections are written, determine the chapter order. The sections should flow as a narrative arc — not alphabetically, not by repo, but by the logic of how the ideas build on each other. Consider: opening with the broadest philosophical frame, moving through process and methodology, deepening into technical substance, and closing with a unifying principle.
+
+Write the ordered chapter list to `output/chapters.txt` — one filename per line, in the order they should appear in the audiobook. Example:
+
+```
+section-boil-the-lake.txt
+section-three-layer-knowledge-search.txt
+section-fail-fast.txt
+```
+
 ## Completion
 
-When all sections are written, tell the user:
+When all sections and `chapters.txt` are written, tell the user:
 
-1. List the sections produced and their approximate word counts
+1. List the chapters in order with their approximate word counts
 2. Tell them to run `build_audio.py` to generate the chaptered audiobook:
    ```
    python build_audio.py --voice voices/my_voice.wav --output output/book.m4b

@@ -26,7 +26,19 @@ from pathlib import Path
 
 
 def find_sections(sections_dir: Path) -> list[Path]:
-    """Find all section text files, sorted by name."""
+    """Find section files in chapter order from chapters.txt, or alphabetically as fallback."""
+    chapters_file = sections_dir.parent / "chapters.txt"
+    if chapters_file.exists():
+        lines = [l.strip() for l in chapters_file.read_text().splitlines() if l.strip()]
+        sections = []
+        for filename in lines:
+            path = sections_dir / filename
+            if not path.exists():
+                print(f"Chapter file not found: {path}")
+                sys.exit(1)
+            sections.append(path)
+        if sections:
+            return sections
     sections = sorted(sections_dir.glob("section-*.txt"))
     if not sections:
         print(f"No section-*.txt files found in {sections_dir}")
@@ -66,12 +78,15 @@ def generate_chapter_audio(
     total_chapters: int,
 ) -> Path:
     """Generate audio for one chapter, chunk by chunk. Returns path to chapter WAV."""
-    import torch
     import torchaudio
 
     chunks = split_into_chunks(text)
     total_chunks = len(chunks)
     chapter_wav_path = chunks_dir.parent / f"chapter-{chapter_idx:02d}-{chapter_title.lower().replace(' ', '-')}.wav"
+
+    # Clean up any temp files from a previously killed run
+    for stale in chunks_dir.glob(f"ch{chapter_idx:02d}_chunk_*.tmp.wav"):
+        stale.unlink()
 
     print(f"\n[Chapter {chapter_idx}/{total_chapters}] {chapter_title} — {total_chunks} chunks")
 
@@ -88,24 +103,33 @@ def generate_chapter_audio(
         wav = model.generate(chunk_text, audio_prompt_path=None)
         dt = time.time() - t0
 
-        torchaudio.save(str(chunk_path), wav, model.sr)
+        # Atomic write: temp file + rename so a kill mid-write can't leave a corrupt chunk
+        tmp_path = chunk_path.with_name(chunk_path.stem + ".tmp.wav")
+        torchaudio.save(str(tmp_path), wav, model.sr)
+        tmp_path.rename(chunk_path)
 
         duration = wav.shape[-1] / model.sr
         rtf = dt / duration if duration > 0 else 0
         pct = (i + 1) / total_chunks * 100
         print(f"  Chunk {i+1}/{total_chunks} — {pct:.0f}% — {duration:.1f}s audio in {dt:.1f}s — RTF {rtf:.2f}x")
+        del wav  # Free GPU memory immediately
 
-    # Concatenate chunks into chapter WAV
+    # Concatenate chunks into chapter WAV via ffmpeg (no memory accumulation)
     print(f"  Concatenating {total_chunks} chunks into chapter audio...")
-    all_audio = []
-    for chunk_path in chunk_wavs:
-        waveform, sr = torchaudio.load(str(chunk_path))
-        all_audio.append(waveform)
+    filelist = chunks_dir / f"ch{chapter_idx:02d}_filelist.txt"
+    with open(filelist, "w") as f:
+        for chunk_path in chunk_wavs:
+            f.write(f"file '{chunk_path.resolve()}'\n")
 
-    combined = torch.cat(all_audio, dim=-1)
-    torchaudio.save(str(chapter_wav_path), combined, model.sr)
+    tmp_chapter = chapter_wav_path.with_name(chapter_wav_path.stem + ".tmp.wav")
+    subprocess.run([
+        "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+        "-i", str(filelist), "-c", "copy", str(tmp_chapter),
+    ], capture_output=True, check=True)
+    tmp_chapter.rename(chapter_wav_path)
+    filelist.unlink()
 
-    chapter_duration = combined.shape[-1] / model.sr
+    chapter_duration = get_wav_duration(chapter_wav_path)
     print(f"  Chapter {chapter_idx} complete: {chapter_duration:.1f}s ({chapter_duration/60:.1f}m)")
 
     return chapter_wav_path
@@ -182,7 +206,7 @@ def assemble_m4b(chapter_paths: list[Path], chapter_titles: list[str], output_pa
 
 def main():
     parser = argparse.ArgumentParser(description="Build chaptered audiobook from repo-story sections")
-    parser.add_argument("--voice", required=True, help="Path to voice reference WAV file")
+    parser.add_argument("--voice", default=None, help="Path to voice reference WAV file (default: auto-detect from voices/)")
     parser.add_argument("--sections-dir", default="output/sections", help="Directory containing section-*.txt files")
     parser.add_argument("--output", default="output/book.m4b", help="Output M4B file path")
     parser.add_argument("--chunks-dir", default="output/audio/chunks", help="Directory for intermediate chunk WAVs")
@@ -191,11 +215,38 @@ def main():
     sections_dir = Path(args.sections_dir)
     output_path = Path(args.output)
     chunks_dir = Path(args.chunks_dir)
-    voice_path = args.voice
+
+    # Auto-detect voice file if not specified
+    if args.voice:
+        voice_path = args.voice
+    else:
+        voices_dir = Path("voices")
+        wavs = list(voices_dir.glob("*.wav")) if voices_dir.exists() else []
+        if len(wavs) == 1:
+            voice_path = str(wavs[0])
+        elif len(wavs) > 1:
+            print(f"Multiple voice files in voices/: {[w.name for w in wavs]}")
+            print("Specify one with --voice")
+            sys.exit(1)
+        else:
+            print("No voice file found. Place a .wav in voices/ or use --voice")
+            sys.exit(1)
 
     if not Path(voice_path).exists():
         print(f"Voice file not found: {voice_path}")
         sys.exit(1)
+
+    if output_path.exists():
+        print(f"\n{output_path} already exists.")
+        response = input("Overwrite? [y/N] or enter a new filename: ").strip()
+        if response.lower() == 'y':
+            pass
+        elif response.lower() in ('', 'n'):
+            print("Aborted.")
+            sys.exit(0)
+        else:
+            output_path = Path(response) if response.endswith('.m4b') else Path(response + '.m4b')
+            print(f"Output: {output_path}")
 
     sections = find_sections(sections_dir)
     print(f"Found {len(sections)} sections:")
@@ -204,7 +255,7 @@ def main():
 
     # Load Chatterbox TTS
     print("\nLoading Chatterbox TTS model...")
-    from chatterbox.tts import ChatterboxTurboTTS
+    from chatterbox.tts_turbo import ChatterboxTurboTTS
     model = ChatterboxTurboTTS.from_pretrained(device="cuda")
     model.prepare_conditionals(voice_path)
     print("Model loaded.")
