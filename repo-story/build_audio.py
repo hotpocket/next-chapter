@@ -195,6 +195,7 @@ def assemble_m4b(chapter_paths: list[Path], chapter_titles: list[str], output_pa
             "-i", str(metadata),
             "-map", "0:a", "-map_metadata", "1",
             "-c:a", "aac", "-b:a", "128k",
+            "-movflags", "+faststart",
             str(output_path),
         ], capture_output=True, check=True)
 
