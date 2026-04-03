@@ -60,6 +60,7 @@ def generate_html(books: list[dict], feedback_url: str = "") -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Repo Story</title>
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="player.css">
 </head>
 <body>
@@ -116,7 +117,7 @@ def main():
 
     # Copy player component files
     player_dir = Path(__file__).parent / "player"
-    for player_file in ["player.css", "player.js", "feedback.js"]:
+    for player_file in ["player.css", "player.js", "feedback.js", "sw.js", "manifest.webmanifest"]:
         src = player_dir / player_file
         dest = output_dir / player_file
         if src.exists():
