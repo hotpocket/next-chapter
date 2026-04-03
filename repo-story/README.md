@@ -32,17 +32,36 @@ Claude will:
 
 Text sections are written to `output/sections/`.
 
-### 3. Generate audio
+### 3. Build the audiobook
 
-After the sections are written, run the audio script:
+After the sections are written:
 
 ```bash
+# Generate audio (requires CUDA GPU — takes hours, supports resume)
 python build_audio.py --voice voices/my_voice.wav
+
+# Generate time-aligned transcripts from chunk WAVs
+python build_transcripts.py
+
+# Fetch the player component
+./luinst audiobook/vanilla player/
+
+# Build the static site
+python build_site.py
+
+# Serve locally (supports Range requests for seeking in large M4B files)
+python serve.py
 ```
 
-This generates audio via Chatterbox TTS and assembles a chaptered M4B audiobook at `output/book.m4b`.
+The audio script prints progress continuously and supports resume — if interrupted, re-run and it skips already-generated chunks.
 
-The script prints progress continuously and supports resume — if interrupted, re-run and it skips already-generated chunks.
+### 4. Deploy
+
+```bash
+./deploy.sh
+```
+
+Syncs HTML, player files, transcripts, and audio to S3 + CloudFront.
 
 ## Requirements
 
@@ -53,17 +72,6 @@ The script prints progress continuously and supports resume — if interrupted, 
 ## Voice reference
 
 Place a voice reference WAV file in `voices/`. Requirements: mono, 24kHz sample rate, 5-15 seconds of clear speech. See the Chatterbox docs for details on voice cloning.
-
-## UI component
-
-The static site player is pulled from [landry-ui](https://github.com/hotpocket/landry-ui):
-
-```bash
-# Fetch/update the player component
-./luinst audiobook/vanilla player/
-```
-
-`player/` is gitignored — it's a fetched dependency. Re-run to update.
 
 ## Project structure
 
