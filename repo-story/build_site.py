@@ -126,6 +126,15 @@ def main():
         else:
             print(f"  Warning: {src} not found")
 
+    # Copy icons
+    icons_src = player_dir / "icons"
+    if icons_src.exists():
+        icons_dest = output_dir / "icons"
+        if icons_dest.exists():
+            shutil.rmtree(icons_dest)
+        shutil.copytree(icons_src, icons_dest)
+        print(f"  Copied icons/")
+
     # Write HTML
     html = generate_html(books, feedback_url=args.feedback_url)
     index = output_dir / "index.html"
