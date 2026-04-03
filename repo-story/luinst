@@ -1,0 +1,14 @@
+#!/bin/bash
+# Fetch landry-ui audiobook player (vanilla) into this project.
+set -euo pipefail
+
+REPO="${LANDRY_UI_REPO:-git@github.com:hotpocket/landry-ui.git}"
+BRANCH="${LANDRY_UI_BRANCH:-main}"
+
+echo "Fetching audiobook/vanilla from ${REPO} (${BRANCH}) → player/"
+rm -rf player
+mkdir -p player
+git archive --remote="$REPO" "$BRANCH" audiobook/vanilla/ | tar -x --strip-components=2 -C player
+
+echo "Updated player/:"
+ls -1 player
