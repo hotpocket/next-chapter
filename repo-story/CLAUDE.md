@@ -21,6 +21,16 @@ The player is fetched from [landry-ui](https://github.com/hotpocket/landry-ui) v
 ## Feedback API
 
 
+## Obsidian Knowledge Vault
+
+Persistent knowledge vault at `./vault`. Symlinked into `~/Documents/AgentMemory/repo-story` for cross-project discoverability.
+
+**At session start**, orient from the vault: read `vault/sessions/Session Log.md`, then the latest recap it points to, then `vault/todos/repo-story.md`. This is cross-session memory — the recap from the prior session usually has the context you need to pick up where things left off.
+
+**At session end** or on "wrapping up" signals, offer to run `/vault recap`. Don't auto-run; ask first.
+
+Use `/vault` commands (or natural-language vault requests like "show me the todos" / "save this as an ADR") for all vault operations — see the vault skill at `~/.claude/skills/vault/SKILL.md` for the full conventions (note formats, frontmatter rules, audience filtering, multi-resolution graph navigation).
+
 ## See also
 
 - [TODOS.md](TODOS.md) — project TODO list
