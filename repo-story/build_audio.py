@@ -65,7 +65,12 @@ def split_into_chunks(text: str, max_chars: int = 300) -> list[str]:
             current = f"{current} {sentence}" if current else sentence
     if current.strip():
         chunks.append(current.strip())
-    return chunks
+    # Drop degenerate chunks (no word characters, e.g. '"..."'): Chatterbox
+    # given near-zero phonetic content can hallucinate the conditioning
+    # sample's transcript instead (voice-sample leak, wbt ch 1073).
+    # NOTE: this shifts chunk indices for any section containing a dropped
+    # chunk — delete that section's cached chunk WAVs before regenerating.
+    return [c for c in chunks if re.search(r"\w", c)]
 
 
 def generate_chapter_audio(
