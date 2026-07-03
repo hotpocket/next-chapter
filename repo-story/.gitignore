@@ -8,3 +8,19 @@ __pycache__/
 voices/*.wav
 !voices/.gitkeep
 player/
+
+# Per-repo AUTORUN folders (each is <repo-name>/ with repo/ + output/)
+mattpocock-skills/
+.gstack/
+
+# Obsidian vault — track shared config + notes, ignore personal/local state
+vault/.obsidian/workspace.json
+vault/.obsidian/workspace-mobile.json
+vault/.obsidian/plugins/
+vault/.obsidian/themes/
+vault/.obsidian/hotkeys.json
+vault/.obsidian/appearance.json
+vault/.obsidian/graph.json
+
+# Local pyenv virtualenv pin
+.python-version
