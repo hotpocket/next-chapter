@@ -145,7 +145,8 @@ def get_wav_duration(path: Path) -> float:
     return float(result.stdout.strip())
 
 
-def assemble_m4b(chapter_paths: list[Path], chapter_titles: list[str], output_path: Path):
+def assemble_m4b(chapter_paths: list[Path], chapter_titles: list[str], output_path: Path,
+                 title: str = "Repo Story", artist: str = "", date: str = ""):
     """Assemble chapter WAVs into a single M4B with chapter metadata."""
     print(f"\nAssembling {len(chapter_paths)} chapters into M4B...")
 
@@ -162,7 +163,12 @@ def assemble_m4b(chapter_paths: list[Path], chapter_titles: list[str], output_pa
         metadata = tmpdir / "metadata.txt"
         with open(metadata, "w") as f:
             f.write(";FFMETADATA1\n")
-            f.write("title=Repo Story\n")
+            f.write(f"title={title}\n")
+            f.write("album=Repo Story\n")
+            if artist:
+                f.write(f"artist={artist}\n")
+            if date:
+                f.write(f"date={date}\n")
             f.write("\n")
 
             offset_ms = 0
@@ -211,6 +217,9 @@ def main():
     parser.add_argument("--sections-dir", default="output/sections", help="Directory containing section-*.txt files")
     parser.add_argument("--output", default="output/book.m4b", help="Output M4B file path")
     parser.add_argument("--chunks-dir", default="output/audio/chunks", help="Directory for intermediate chunk WAVs")
+    parser.add_argument("--title", default="Repo Story", help="Episode title (M4B title tag; album is always 'Repo Story')")
+    parser.add_argument("--artist", default="", help="Artist tag for the M4B")
+    parser.add_argument("--date", default="", help="Date tag for the M4B (YYYY-MM-DD)")
     args = parser.parse_args()
 
     sections_dir = Path(args.sections_dir)
@@ -287,7 +296,8 @@ def main():
     print(f"\nAll audio generated in {t_generation:.0f}s ({t_generation/60:.1f}m)")
 
     # Assemble into M4B
-    assemble_m4b(chapter_paths, chapter_titles, output_path)
+    assemble_m4b(chapter_paths, chapter_titles, output_path,
+                 title=args.title, artist=args.artist, date=args.date)
 
 
 if __name__ == "__main__":

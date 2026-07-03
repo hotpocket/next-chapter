@@ -5,10 +5,14 @@ Claude Code skill that analyzes repositories and produces documentary audio narr
 ## Build pipeline
 
 1. Skill phases (in Claude Code): Survey → Explore → Synthesize → Research → Narrate → `output/sections/`
-2. `build_audio.py` — sections → chunk WAVs → chapter WAVs → chaptered M4B
-3. `build_transcripts.py` — chunk WAVs + section text → `transcripts.json`
-4. `build_site.py` — M4B + player component → static site in `output/site/`
-5. `deploy.sh` — sync to S3 + CloudFront
+2. `build_audio.py` — sections → chunk WAVs → chapter WAVs → chaptered M4B (pass `--title`/`--artist`; album is always `Repo Story`)
+3. `build_m4a.py` — chapter WAVs → per-chapter M4As + `chapters_manifest.json` (**production format** for the landry-ui player)
+4. `build_transcripts.py` — chunk WAVs + section text → `transcripts.json` (per-chapter timestamps)
+5. Publish, two targets:
+   - **[family-site]/books (primary)** — register the book in `~/git/[family-repo]/[family-site-deploy]/books.json` (manifest + transcripts_path + audio_prefix), then user runs `[family-site-deploy]/deploy.sh`. That script fetches the player, builds the multi-book site via `landry-ui-playground/audiobook/build_*.py --config`, and syncs S3/CloudFront.
+   - **brandonlandry.com (single M4B)** — `build_site.py` → static site in `output/site/`, `scripts/generate-manifest.sh` (reads M4B tags), `deploy.sh`.
+
+`AUTORUN.md` is the end-to-end execution contract for unattended runs.
 
 ## UI component
 

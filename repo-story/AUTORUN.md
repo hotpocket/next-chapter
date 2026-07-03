@@ -30,7 +30,8 @@ Everything for a single run lives under one top-level folder at the repo-story r
     ├── audio/
     │   ├── chunks/                intermediate chunk WAVs (resume cache)
     │   └── chapter-NN-*.wav       per-chapter concat WAVs
-    ├── book.m4b                   final chaptered audiobook
+    ├── m4a/                       per-chapter M4As + chapters_manifest.json (production format)
+    ├── book.m4b                   single-file audiobook (brandonlandry.com path)
     ├── transcripts.json           time-aligned transcript
     └── site/                      deploy-ready static site
 ```
@@ -118,50 +119,60 @@ Themes that are independent can be written in parallel via narration subagents; 
 
 ```bash
 cd <repo-folder>
-python ../build_audio.py --voice ../voices/<your-voice>.wav
+python ../build_audio.py --voice ../voices/<your-voice>.wav --title "<Episode Title>" --artist "<Author>"
 ```
 
-Defaults are correct (sections-dir `output/sections`, chunks-dir `output/audio/chunks`, output `output/book.m4b`).
+Defaults are correct (sections-dir `output/sections`, chunks-dir `output/audio/chunks`, output `output/book.m4b`). `--title` is the episode title (what brandonlandry.com displays via manifest.json); album is always `Repo Story`.
 
 This step requires CUDA. RTX 2080 Ti runs roughly 0.5–1.5× real-time for Chatterbox TurboTTS, so a 60-minute book ≈ 30–90 minutes wall-clock. **Run in background** (`run_in_background: true`) and continue with phases 7–8 only after completion notification.
 
 Resume is automatic — re-running skips chunks whose WAV files exist. If a chunk seems wrong, delete its file and re-run.
 
-### Phase 7 — Transcripts
+### Phase 7 — Per-chapter M4As + transcripts (production format)
+
+The landry-ui player consumes **per-chapter M4As**, not the M4B. This is the format deployed at [family-site]/books via [family-site-deploy].
 
 ```bash
 cd <repo-folder>
+python ../build_m4a.py --title "<Book Title>" --artist "<Author>"
 python ../build_transcripts.py --slug <repo-folder>
 ```
 
-Reads chunk WAVs and section text, writes `output/site/transcripts.json`. Seconds, no GPU.
+`build_m4a.py` encodes `output/audio/chapter-*.wav` → `output/m4a/chapter_NNNN.m4a` + `chapters_manifest.json` (resume-safe). `build_transcripts.py` writes `output/site/transcripts.json` from chunk WAVs — per-chapter-relative timestamps, already the shape [family-site-deploy] expects. Both run in seconds-to-minutes, no GPU.
 
-### Phase 8 — Site
+### Phase 8 — Publish
 
-Refresh the shared player component (lives at repo-story root, used by every site):
+**Primary path — [family-site]/books ([family-site-deploy]):** add an entry to `~/git/[family-repo]/[family-site-deploy]/books.json`:
 
-```bash
-LANDRY_UI_REPO=https://github.com/hotpocket/landry-ui.git ./luinst audiobook/vanilla player/
+```json
+{
+  "slug": "<repo-folder>",
+  "title": "<Book Title>",
+  "artist": "<Author>",
+  "manifest": "~/git/repo-story/<repo-folder>/output/m4a/chapters_manifest.json",
+  "transcripts_path": "~/git/repo-story/<repo-folder>/output/site/transcripts.json",
+  "audio_prefix": "<repo-folder>/"
+}
 ```
 
-If that fails (private repo over HTTPS, network), skip — the existing `player/` is reused. The site will lose PWA offline assets (`sw.js`, `manifest.webmanifest`, `icons/`) but stays functional. Report the degradation in chat.
+Then the user runs `[family-site-deploy]/deploy.sh` (SSH fetch + AWS — **do not run it yourself**; it handles player fetch, multi-book site build, S3, CloudFront).
 
-Then build the site:
+**Secondary path — brandonlandry.com (single M4B, optional):** build the standalone site only if asked:
 
 ```bash
-cd <repo-folder>
-python ../build_site.py
+LANDRY_UI_REPO=https://github.com/hotpocket/landry-ui.git ./luinst audiobook/vanilla player/   # from repo-story root; on failure reuse existing player/ (loses PWA assets — report it)
+cd <repo-folder> && python ../build_site.py
+../scripts/generate-manifest.sh   # manifest.json for brandonlandry.com, reads M4B tags
 ```
 
-Output: `<repo-folder>/output/site/` — `index.html`, copied M4B under `audio/`, transcripts, player files. Open `index.html` over HTTP (file:// won't support Range requests) — use `python ../serve.py` from the repo folder.
+Preview `output/site/` over HTTP (file:// won't support Range requests) — `python ../serve.py` from the repo folder.
 
 ### Phase 9 — Done
 
 Report to the user:
-- Path to the M4B
-- Total duration and chapter count
-- Path to the site folder
-- Whether deploy was skipped (default: yes; the user must explicitly request `./deploy.sh`)
+- Path to the M4B and `output/m4a/` (chapter count, total duration)
+- The books.json entry added (or proposed)
+- Reminder that deploy is theirs to run: `[family-site-deploy]/deploy.sh` ([family-site]) or `./deploy.sh` (brandonlandry.com)
 
 ---
 

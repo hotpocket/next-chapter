@@ -8,14 +8,14 @@ created: 2026-05-22
 
 ## Open
 
-- [ ] Repo-story's `build_audio.py`/`build_site.py`/`build_transcripts.py` are stale (single-M4B). Either retire them in favor of `landry-ui-playground/audiobook/build_*.py` (and update [[AUTORUN]] to point there), or rewrite to produce per-chapter M4As natively. — *from [[2026-05-22 - audiobook pipeline + multi-book deploy]]*
 - [ ] Offline-download stuck on "Preparing…" over plain-HTTP LAN. Pick: HTTPS-with-self-signed-cert serve.py, OR patch player to detect `!isSecureContext` and hide/disable the download button. — *from [[2026-05-22 - audiobook pipeline + multi-book deploy]]*
 - [ ] If the library grows past 2 books on [family-site], consider lazy-loading transcripts per book (current merged transcripts.json is 15 MB).
 - [ ] Move the per-repo-vault + symlink convention into the canonical skill's bundled template (so future `/vault init` runs get it for free).
-- [ ] `landry-ui` repo requires SSH access for `luinst` — HTTPS clone fails (private). Document or make luinst HTTPS-aware so it degrades gracefully.
 
 ## Completed
 
+- [x] Retire single-M4B staleness: added `build_m4a.py` (per-chapter M4As + chapters_manifest.json, verified byte-identical structure vs deployed mattpocock manifest); `build_transcripts.py` was already per-chapter-compatible; [[AUTORUN]] Phase 7/8 now route through [family-site-deploy]/books.json as the primary publish path. `build_site.py`+M4B kept as the brandonlandry.com path. (2026-07-02)
+- [x] luinst SSH/HTTPS degradation — documented in AUTORUN.md constraints (HTTPS env override, fall back to cached `player/`); [family-site-deploy]/deploy.sh handles it with `--skip-lui-deps` + ls-remote SHA cache. (2026-07-02)
 - [x] Commit pending changes in repo-story: AUTORUN.md, .gitignore additions, CLAUDE.md vault pointer, vault/ (committed; `.python-version` gitignored as local pyenv state). (2026-07-02)
 
 - [x] Take a GitHub URL and produce an audiobook end-to-end via the repo-story pipeline (validated on mattpocock/skills, 2026-05-22).

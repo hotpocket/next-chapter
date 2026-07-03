@@ -1,4 +1,7 @@
 # TODO
 
-- [ ] Set proper m4b metadata (title, album, artist, date) during audiobook generation. Currently only sets `title: Repo Story` which is the series name, not the episode title. The title should describe the specific repo/topic being narrated. brandonlandry.com reads this metadata via manifest.json — whatever repo-story sets is what the site displays.
-- [ ] Extract player/ into its own repo for cross-project reuse
+
+## Done
+
+- [x] Set proper m4b metadata (title, album, artist, date) — `build_audio.py --title/--artist/--date`; album fixed to `Repo Story`, title is the episode. (2026-07-02)
+- [x] Extract player/ into its own repo for cross-project reuse — lives in [landry-ui](https://github.com/hotpocket/landry-ui), fetched via `luinst`.
