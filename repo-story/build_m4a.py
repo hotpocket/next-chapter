@@ -26,21 +26,13 @@ Then register in [family-site-deploy]/books.json:
 """
 
 import argparse
-import json
 import subprocess
 import sys
 from pathlib import Path
 
+from chatterbook.manifest import write_chapters_manifest
+
 from build_audio import find_sections, section_title
-
-
-def ffprobe_duration(path: Path) -> float:
-    out = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-        capture_output=True, text=True, check=True,
-    ).stdout.strip()
-    return float(out)
 
 
 def encode_m4a(wav: Path, m4a: Path, chapter_title: str, book_title: str,
@@ -77,11 +69,11 @@ def main():
         sys.exit(1)
 
     m4a_dir.mkdir(parents=True, exist_ok=True)
-    chapters = []
-    total_duration = 0.0
+    titles_map = {}
 
     for i, (wav, section) in enumerate(zip(wavs, sections), 1):
         chapter_title = f"Chapter {i}: {section_title(section)}"
+        titles_map[str(i)] = section_title(section)
         m4a = m4a_dir / f"chapter_{i:04d}.m4a"
 
         if m4a.exists() and m4a.stat().st_mtime > wav.stat().st_mtime:
@@ -90,31 +82,17 @@ def main():
             print(f"  Ch{i}: {chapter_title} — encoding...")
             encode_m4a(wav, m4a, chapter_title, args.title, args.artist, i, len(wavs))
 
-        dur = ffprobe_duration(m4a)
-        chapters.append({
-            "n": i,
-            "title": chapter_title,
-            "filename": m4a.name,
-            "duration_s": round(dur, 3),
-            "size_bytes": m4a.stat().st_size,
-        })
-        total_duration += dur
-
-    manifest = {
-        "version": "v1",
-        "book": {
-            "title": args.title,
-            "artist": args.artist,
-            "total_duration_s": round(total_duration, 3),
-            "chapter_count": len(chapters),
-        },
-        "chapters": chapters,
-    }
+    # Shared writer: sha8 content-hash version (replaces the old fixed "v1"),
+    # duration cache keyed by (filename, size), atomic write.
     manifest_path = m4a_dir / "chapters_manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2))
+    manifest = write_chapters_manifest(
+        range(1, len(wavs) + 1), titles_map, m4a_dir, manifest_path,
+        args.title, args.artist,
+    )
 
     print(f"\nWrote {manifest_path}")
-    print(f"  {len(chapters)} chapters, {total_duration/60:.1f} minutes")
+    print(f"  {len(manifest['chapters'])} chapters, "
+          f"{manifest['book']['total_duration_s']/60:.1f} minutes")
     print("\nNext: build_transcripts.py, then register this book in [family-site-deploy]/books.json")
 
 

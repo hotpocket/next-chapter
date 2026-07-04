@@ -24,6 +24,12 @@ import tempfile
 import time
 from pathlib import Path
 
+# Shared audiobook engine (~/git/chatterbook, on sys.path via .pth).
+# is_speakable is the ch-1073 voice-sample-leak guard — imported, not
+# mirrored, so wbt and repo-story can no longer drift.
+from chatterbook.audio import get_wav_duration  # noqa: F401  (re-exported to build_transcripts.py)
+from chatterbook.text import is_speakable
+
 
 def find_sections(sections_dir: Path) -> list[Path]:
     """Find section files in chapter order from chapters.txt, or alphabetically as fallback."""
@@ -70,7 +76,7 @@ def split_into_chunks(text: str, max_chars: int = 300) -> list[str]:
     # sample's transcript instead (voice-sample leak, wbt ch 1073).
     # NOTE: this shifts chunk indices for any section containing a dropped
     # chunk — delete that section's cached chunk WAVs before regenerating.
-    return [c for c in chunks if re.search(r"\w", c)]
+    return [c for c in chunks if is_speakable(c)]
 
 
 def generate_chapter_audio(
@@ -138,16 +144,6 @@ def generate_chapter_audio(
     print(f"  Chapter {chapter_idx} complete: {chapter_duration:.1f}s ({chapter_duration/60:.1f}m)")
 
     return chapter_wav_path
-
-
-def get_wav_duration(path: Path) -> float:
-    """Get duration of a WAV file in seconds via ffprobe."""
-    result = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-        capture_output=True, text=True,
-    )
-    return float(result.stdout.strip())
 
 
 def assemble_m4b(chapter_paths: list[Path], chapter_titles: list[str], output_path: Path,
