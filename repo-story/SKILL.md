@@ -9,6 +9,8 @@ You are executing the repo-story process. This skill surveys code repositories, 
 
 Read `PLAN.md` in this skill's directory for the full process definition. The phases below are your execution guide.
 
+**Model split — Fable plans, Opus executes.** The main session is pinned to Fable via `.claude/settings.json` (loud failure if unavailable) and does the planning: Phase 1 survey, Phase 3 synthesis, Phase 5a beats, chapter ordering. Phases 2, 4, and 5b run only via the named agent types in `.claude/agents/` (`explorer`, `code-researcher`, `history-researcher`, `narrator`), each pinned to Opus. Never spawn generic subagents for those phases and never write sections inline. See `docs/adr/0001-fable-plans-opus-executes.md`.
+
 ## Invocation
 
 The user will provide one or more repository paths. They may also provide an attribution level (full, light, minimal — default to light if not specified). The lens emerges from the material — do not ask for one up front.
@@ -25,7 +27,7 @@ Present the user with a brief catalog: project name, author, purpose, tech stack
 
 Read the detailed guidance in `prompts/explore.md`.
 
-Launch parallel exploration agents — one per repo. Each agent should read as many files as needed to understand the project deeply. Record exact quotes, exact numbers, exact variable names.
+Launch one `explorer` agent per repo, in parallel. Each agent reads as many files as needed to understand the project deeply, recording exact quotes, exact numbers, exact variable names.
 
 **Watch for surprises above all else.** When something genuinely unexpected appears — something the README did not predict — go deeper immediately while context is held.
 
@@ -46,8 +48,8 @@ Do not ask for permission to continue. The user does not have deep knowledge of 
 Read the detailed guidance in `prompts/research_code.md` and `prompts/research_history.md`.
 
 For each theme, launch parallel research:
-- **Implementation verification agent**: Re-reads source files, extracts exact details, corrects Phase 2 errors
-- **History and landscape agent**: Traces origins (who, when, what paper, what problem), maps current landscape (what alternatives exist, how this compares, where it sits in the field)
+- **`code-researcher` agent**: Re-reads source files, extracts exact details, corrects Phase 2 errors
+- **`history-researcher` agent**: Traces origins (who, when, what paper, what problem), maps current landscape (what alternatives exist, how this compares, where it sits in the field)
 
 Write research packets to `output/research/` — one markdown file per theme.
 
@@ -57,7 +59,9 @@ If research contradicts the Phase 3 themes, revise the themes and inform the use
 
 Read the detailed guidance in `prompts/narrate.md`.
 
-For each theme, write a documentary audio narrative. Full detail. Real people, real history, real technical substance. The material determines the structure — do not force every theme into the same template.
+**5a — Beats (main session).** For each theme, write `output/beats/<theme>.md`: the narrative arc, the must-hit facts (pointing at the research packets), and the transitions into and out of neighboring themes.
+
+**5b — Sections (`narrator` agents).** One `narrator` agent per theme — parallel when independent, sequential when they build on each other. Never write sections inline. Each expands its beats + research into a documentary audio narrative. Full detail. Real people, real history, real technical substance. The material determines the structure — do not force every theme into the same template.
 
 Key principles:
 - This is documentary work — factual, grounded, committed to reality

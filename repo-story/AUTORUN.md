@@ -25,7 +25,8 @@ Everything for a single run lives under one top-level folder at the repo-story r
     ├── dossiers/                  Phase 2 — one .md per repo/subproject
     ├── themes.md                  Phase 3
     ├── research/                  Phase 4 — one .md per theme
-    ├── sections/                  Phase 5 — section-*.txt per theme
+    ├── beats/                     Phase 5a — per-theme arc notes (main session)
+    ├── sections/                  Phase 5b — section-*.txt per theme
     ├── chapters.txt               narrative-arc order of sections
     ├── audio/
     │   ├── chunks/                intermediate chunk WAVs (resume cache)
@@ -43,6 +44,7 @@ Why this layout: the build scripts (`build_audio.py`, `build_transcripts.py`, `b
 - **No SSH commands.** The user manages ssh-agent manually. `luinst` defaults to `git@github.com:`; override with `LANDRY_UI_REPO=https://github.com/hotpocket/landry-ui.git`. If HTTPS fails because the repo is private, fall back to whatever is already in `player/` and skip PWA assets — the site will still work, just without offline support. See `memory/feedback_no_ssh.md`.
 - **Don't deploy without explicit ask.** `deploy.sh` syncs to S3 + CloudFront. Stop after `build_site.py`.
 - **Don't clobber prior runs.** Each repo gets its own folder. Never write into the repo-story root `output/`.
+- **Model split — Fable plans, Opus executes.** The main session is pinned to Fable via `.claude/settings.json` (loud failure if unavailable — do not fall back silently) and does the planning phases: 1 survey, 3 themes, 5a beats, chapter ordering. Phases 2, 4, and 5b run only via the named agent types in `.claude/agents/` (`explorer`, `code-researcher`, `history-researcher`, `narrator`), each pinned to Opus. Never spawn generic subagents for those phases and never write sections inline. See [docs/adr/0001](docs/adr/0001-fable-plans-opus-executes.md).
 - **Don't pause for approval mid-pipeline.** PLAN.md says Phase 3 "presented to the user for review" — AUTORUN mode overrides that to present-and-continue. The user invoked AUTORUN precisely so they could walk away. If a real problem arises (auth prompt, GPU OOM, missing file), stop and report.
 
 ## Pipeline
@@ -53,7 +55,7 @@ Why this layout: the build scripts (`build_audio.py`, `build_transcripts.py`, `b
 REPO_URL=<github url>
 REPO_FOLDER=$(basename "$REPO_URL" .git)        # or owner-name if you prefer disambiguation
 git clone --depth 1 "$REPO_URL" "$REPO_FOLDER/repo"
-mkdir -p "$REPO_FOLDER/output"/{dossiers,research,sections,audio/chunks,site}
+mkdir -p "$REPO_FOLDER/output"/{dossiers,research,beats,sections,audio/chunks,site}
 ```
 
 Append the repo folder to `.gitignore` so the clone, audio, and site never enter version control.
@@ -75,8 +77,8 @@ Read [prompts/explore.md](prompts/explore.md).
 
 **Parallel agents — one per unit.** For a single-project repo, one agent. For a collection (skills monorepo, plugin set, sibling libraries), one agent per meaningful unit. Each agent writes a dossier to `<repo-folder>/output/dossiers/<unit>.md`.
 
-Agent prompt template (Explore subagent):
-> You are exploring a single project to produce a research dossier per [prompts/explore.md](prompts/explore.md). Project location: `<repo-folder>/repo/<subpath>`. Read as many files as needed. Record exact quotes, exact numbers, exact paths. Watch for surprises and pursue them on the spot. Write the dossier to `<repo-folder>/output/dossiers/<unit>.md`. Do not summarize — preserve detail.
+Agent type: `explorer` (`.claude/agents/explorer.md` — carries the methodology pointer and the Opus pin). Task prompt per unit:
+> Project location: `<repo-folder>/repo/<subpath>`. Write the dossier to `<repo-folder>/output/dossiers/<unit>.md`.
 
 Wait for all agents to finish before Phase 3.
 
@@ -97,23 +99,22 @@ Read [prompts/research_code.md](prompts/research_code.md) and [prompts/research_
 
 **Parallel agents — two per theme** (implementation verification + history/landscape), running concurrently. Each writes a markdown file to `<repo-folder>/output/research/`.
 
-Implementation-verification agent prompt:
-> Verify the implementation details of theme `<theme>` by re-reading source per [prompts/research_code.md](prompts/research_code.md). Source location: `<repo-folder>/repo/`. Extract exact variable names, constants, algorithm steps, design choices, with file:line references. Correct Phase 2 errors silently. Write to `<repo-folder>/output/research/<theme>-code.md`.
+Agent type `code-researcher`, task prompt per theme:
+> Theme: `<theme>` (one-line summary from themes.md). Source location: `<repo-folder>/repo/`. Write to `<repo-folder>/output/research/<theme>-code.md`.
 
-History/landscape agent prompt:
-> Research origins and current landscape for theme `<theme>` per [prompts/research_history.md](prompts/research_history.md). Lineage (who, when, what paper, what problem) and landscape (alternatives, where this sits). Use WebSearch/WebFetch as needed. Distinguish fact from inference. Write to `<repo-folder>/output/research/<theme>-history.md`.
+Agent type `history-researcher`, task prompt per theme:
+> Theme: `<theme>` (one-line summary from themes.md). Write to `<repo-folder>/output/research/<theme>-history.md`.
 
 If research contradicts the Phase 3 themes, revise `themes.md` before Phase 5 and mention the change in chat.
 
 ### Phase 5 — Narrate
 
-Read [prompts/narrate.md](prompts/narrate.md).
+**5a — Beats (main session).** For each theme, write `<repo-folder>/output/beats/<theme>.md`: the narrative arc, the must-hit facts (pointing at the research packets to pull from), and the transitions into and out of neighboring themes. This is planning work — it stays in the main session.
 
-Write one `section-<slug>.txt` to `<repo-folder>/output/sections/` per theme. Plain prose, no markdown formatting, no bullets — it will be read aloud. Audio considerations are in narrate.md.
+**5b — Sections (narrator agents).** One `narrator` agent per theme — parallel when themes are independent, sequential when they build on each other. Never write sections inline, regardless of theme count. Task prompt per theme:
+> Theme: `<theme>`. Beats: `<repo-folder>/output/beats/<theme>.md`. Research: `<repo-folder>/output/research/<theme>-*.md`. Write `<repo-folder>/output/sections/section-<slug>.txt`.
 
-After all sections are written, decide chapter order — narrative arc, not alphabetical, not by-repo. Write to `<repo-folder>/output/chapters.txt`, one filename per line.
-
-Themes that are independent can be written in parallel via narration subagents; themes that build on each other should be sequential. For 2–4 themes, parallelism rarely pays — write inline.
+After all sections are written, decide chapter order in the main session — narrative arc, not alphabetical, not by-repo. Write to `<repo-folder>/output/chapters.txt`, one filename per line.
 
 ### Phase 6 — Audio
 
