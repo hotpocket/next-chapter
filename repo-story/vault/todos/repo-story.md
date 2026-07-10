@@ -11,6 +11,7 @@ created: 2026-05-22
 - [ ] Offline-download stuck on "Preparing…" over plain-HTTP LAN. Pick: HTTPS-with-self-signed-cert serve.py, OR patch player to detect `!isSecureContext` and hide/disable the download button. — *from [[2026-05-22 - audiobook pipeline + multi-book deploy]]*
 - [ ] If the library grows past 2 books on [family-site], consider lazy-loading transcripts per book (current merged transcripts.json is 15 MB).
 - [ ] Move the per-repo-vault + symlink convention into the canonical skill's bundled template (so future `/vault init` runs get it for free).
+- [ ] If the narration-fluff complaint returns, redesign at the Phase 5a beats level (arc/framing, not word pruning) and prototype on one chapter for user judgment (~1–2 h; changed chapters need chunk WAVs re-rendered; word-pruning pass already tried and rejected 2026-07-10). — *from [[2026-07-10 - fable-opus model split]]*
 
 ## Completed
 
