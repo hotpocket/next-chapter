@@ -33,7 +33,8 @@ why), write it back to the vault. **At session end**, offer `/vault recap`.
 this session's user prompts from the Claude Code transcript (tool output,
 system events, and skill expansions excluded; private data redacted inline) and
 writes `vault/sessions/<name>-prompts.md` linking `[[<name>]]`. Add a
-`[[<name>-prompts]]` link in the recap note. If it errors or reports a prompt
+`[[<name>-prompts]]` link in the recap note, and add the recap/prompts pair
+to the "Sessions & prompts" table in README.md. If it errors or reports a prompt
 count implausibly low for the session, STOP and investigate (transcript-format
 drift) — never publish an empty/thin export. Before committing prompt files,
 check for glossary drift: every `/command` appearing in them must be in

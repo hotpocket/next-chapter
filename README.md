@@ -20,7 +20,7 @@ here will serve audiobooks about the two repos that power it —
 - [`vault/decisions/`](vault/decisions/) — ADRs: every architecture decision,
   its sources, and what was verified before deciding.
 - [`vault/sessions/`](vault/sessions/) — session recaps, each paired with a
-  `*-prompts.md` file of the verbatim prompts from that session.
+  `*-prompts.md` file of the verbatim prompts from that session (index below).
 - [`docs/reports/`](docs/reports/) — kept deliverables: security wargames and
   audits (public-repo hygiene, the landry-ui public-flip audit).
 - [`docs/vets/`](docs/vets/) + [`vault/vets/`](vault/vets/) — idea vets with
@@ -28,6 +28,35 @@ here will serve audiobooks about the two repos that power it —
 
 Planning docs live in [`docs/`](docs/); the project plan and README sections
 required by the course will grow here as the build proceeds.
+
+## Sessions & prompts
+
+Every working session ends in a recap note paired with the verbatim prompts
+that produced it (see [`config-history.md`](config-history.md) for the
+command glossary that makes the prompts readable):
+
+| Session | Recap | Prompts |
+|---------|-------|---------|
+| 2026-07-20 — Foundation | [recap](vault/sessions/2026-07-20-foundation.md) | [57 prompts](vault/sessions/2026-07-20-foundation-prompts.md) |
+| 2026-07-20 — Config mirror | [recap](vault/sessions/2026-07-20-config-mirror.md) | [4 prompts](vault/sessions/2026-07-20-config-mirror-prompts.md) |
+
+## Resources
+
+In-repo, for navigating:
+- [Session log](vault/sessions/Session%20Log.md) — one-line index of every session.
+- [ADRs 0001–0007](vault/decisions/) — architecture + process decisions.
+- [`.claude/README.md`](.claude/README.md) — the AI config mirror and its
+  machine-path → repo-path cross-reference.
+- [Reports](docs/reports/) — security wargames and audits;
+  [vets](docs/vets/) — idea verdicts.
+
+External:
+- [landry-ui](https://github.com/hotpocket/landry-ui) — the player this
+  project vendors (audited and flipped public for this project).
+- [Chatterbox TTS](https://github.com/resemble-ai/chatterbox) — the local
+  TTS engine used for offline audio generation (ADR 0003).
+- gstack — the open-source browser-driving skill suite (`/browse`); entry
+  points mirrored at [`.claude/skills/gstack/`](.claude/skills/gstack/).
 
 ## V1 shape (decided — see ADRs 0001–0006)
 
