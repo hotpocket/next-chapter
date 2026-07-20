@@ -16,4 +16,4 @@ repo-story's pipeline works today: prose via Claude Code session (the proven pat
 The existing pipeline generates the book(s) offline for one chosen target repo (3–5 chapters). The project repo documents the pipeline honestly as machine-side tooling — same reproducibility-boundary pattern as config-history.md. The reviewer's testable surface is the Pages site.
 
 ## Consequences
-Effort goes to the new, reviewable work (frontend + AWS publish). README must state the boundary plainly so nothing looks hidden. Publishing cloned-voice audio publicly is an explicit owner decision, recorded before first deploy.
+Effort goes to the new, reviewable work (frontend + AWS publish). README must state the boundary plainly so nothing looks hidden. Publishing cloned-voice audio publicly: **approved by owner, 2026-07-20** ("use my voice, that is fine").

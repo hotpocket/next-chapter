@@ -1,7 +1,7 @@
 ---
 tags: [adr]
 type: decision
-summary: "Reuse the landry-ui vanilla player (supersedes 0002). The tool is the audiobook generator+player; the AI demonstration is building it into a Pages product with a hardened S3 deploy"
+summary: "Reuse the landry-ui vanilla player (supersedes 0002). The product is the player + generator; the AI demonstration is their composition into a Pages site with a hardened SSO-based S3 deploy"
 status: accepted
 created: 2026-07-20
 concerns: [admissions-project, frontend, deploy, security]
@@ -19,13 +19,14 @@ A reduced rebuild would be optics-driven rework.
 ## Decision
 - Reuse `landry-ui/audiobook/vanilla` as the player, vendored in one isolated,
   cited commit (pinned upstream hash, provenance note).
-- **The tool is the audiobook generator + player** (pre-existing work, cited).
-- **The AI demonstration is the build-out in this repo**: assembling the tool
-  into a GitHub Pages product — library page, manifests, provenance records,
-  README spine — plus a deploy script to S3 using **local AWS profiles with SSO
-  tokens, never exposed via the web** (no credentials in repo, browser, or
-  bucket), and the hardening of that deployment path (ADR 0001 posture, secret
-  scanning, the wargamed public-repo hygiene) — all of it evidenced in this
+- **The product is the player + the generator** (both pre-existing, both mine,
+  cited).
+- **The AI demonstration is the composition of the two** into one shipped
+  thing in this repo: the GitHub Pages site — library page, manifests,
+  provenance records, README spine — plus a deploy script to S3 using **local
+  AWS profiles with SSO tokens, never exposed via the web** (no credentials in
+  repo, browser, or bucket), and the hardening of that path (ADR 0001 posture,
+  secret scanning, the wargamed public-repo hygiene) — all evidenced in this
   repo's prompt history, recaps, ADRs, and commits.
 
 ## Consequences
