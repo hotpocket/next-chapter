@@ -1,4 +1,5 @@
 # Claude conduct
+.claude/settings.local.json
 docs/logs/
 vault/.obsidian/workspace*.json
 vault/.obsidian/plugins/

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Global SessionStart orientation router, wired in ~/.claude/settings.json.
+# Its stdout is injected into context at session start. File-based only — no
+# Obsidian app/CLI/GUI — so it's safe headless and across parallel sessions.
+#
+# Routes by repo ownership:
+#   owned repo   → carries its own scripts/session-start.sh + repo-local vault/.
+#   un-owned repo→ keeps its vault OUTSIDE the tree at
+#                  ~/Documents/AgentMemory/<repo> (nothing committed to it).
+#   un-adopted   → prints nothing.
+set -u
+proj="${CLAUDE_PROJECT_DIR:-$PWD}"
+
+# Owned: delegate to the repo's committed hook script.
+if [[ -x "$proj/scripts/session-start.sh" ]]; then
+  exec "$proj/scripts/session-start.sh"
+fi
+
+# Un-owned: orient from the external vault, if one's been adopted for this repo.
+ext="$HOME/Documents/AgentMemory/$(basename "$proj")"
+[[ -d "$ext" ]] || exit 0
+digest="$HOME/bin/vault-digest"
+[[ -x "$digest" ]] || exit 0
+echo "Latest session recap: $(OBSIDIAN_VAULT_PATH="$ext" "$digest" recap)"
+echo "Open todos: $(OBSIDIAN_VAULT_PATH="$ext" "$digest" todos 2>/dev/null | grep -c '\[ \]' || true)"

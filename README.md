@@ -14,6 +14,9 @@ here will serve audiobooks about the two repos that power it —
 - [`config-history.md`](config-history.md) — how I work with AI: the tools,
   hooks, and skills you'll see invoked throughout the prompt history, and a
   glossary for reading it.
+- [`.claude/`](.claude/README.md) — the AI config itself, mirrored in-tree:
+  hook code, global conduct rules, and the bodies of every skill invoked in
+  the prompt history, with a machine-path → repo-path cross-reference.
 - [`vault/decisions/`](vault/decisions/) — ADRs: every architecture decision,
   its sources, and what was verified before deciding.
 - [`vault/sessions/`](vault/sessions/) — session recaps, each paired with a

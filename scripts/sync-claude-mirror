@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# sync-claude-mirror — derive this repo's .claude/ mirror from the machine's
+# global Claude config, so a reviewer of this PUBLIC repo can see exactly what
+# runs during development and cross-reference paths in vault notes / prompts:
+#
+#   ~/bin/claude-orient            -> .claude/bin/claude-orient
+#   ~/bin/deny-git-push.sh         -> .claude/bin/deny-git-push.sh
+#   ~/.claude/CLAUDE.md            -> .claude/CLAUDE.global.md
+#   ~/.claude/settings.json        -> .claude/settings.global.json
+#   ~/.claude/statusline-command.sh-> .claude/statusline-command.sh
+#   ~/.claude/skills/<name>        -> .claude/skills/<name>
+#
+# Source of truth is the GLOBAL config; the mirror is generated — never hand-edit
+# mirrored files (sync overwrites and prunes them). Hand-written files the sync
+# does not manage (.claude/README.md, .claude/settings.json) are left alone.
+#
+# Skill scope: the skills this repo actually runs (see CLAUDE.md). Skill tests/
+# dirs are excluded (dogfood records from other projects). gstack is a 1.7 GB
+# upstream repo — only its entry points (SKILL.md, browse/SKILL.md, LICENSE,
+# VERSION) are mirrored; see .claude/README.md.
+#
+# Usage: sync-claude-mirror [--sync|--check]
+#   --sync  (default) refresh the mirror from global sources
+#   --check exit 1 listing any drift between global sources and the mirror
+#
+# Durable: all roots are runtime-derived / env-overridable — no hardcoded
+# absolutes. Overrides (also how the tests run against fakes):
+#   CLAUDE_GLOBAL_DIR (default ~/.claude)   CLAUDE_BIN_DIR (default ~/bin)
+#   CLAUDE_MIRROR_DIR (default <repo>/.claude)
+set -euo pipefail
+
+repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+global="${CLAUDE_GLOBAL_DIR:-$HOME/.claude}"
+bin="${CLAUDE_BIN_DIR:-$HOME/bin}"
+mirror="${CLAUDE_MIRROR_DIR:-$repo/.claude}"
+mode="${1:---sync}"
+
+FULL_SKILLS=(conduct vault vet wargame)
+GSTACK_FILES=(SKILL.md browse/SKILL.md LICENSE VERSION)
+BIN_FILES=(claude-orient deny-git-push.sh)
+
+err() { echo "sync-claude-mirror: $*" >&2; }
+
+# Every source must exist — a silently thin mirror would misrepresent the setup.
+missing=0
+for f in "${BIN_FILES[@]}"; do [[ -f "$bin/$f" ]] || { err "missing source $bin/$f"; missing=1; }; done
+for f in CLAUDE.md settings.json statusline-command.sh; do
+  [[ -f "$global/$f" ]] || { err "missing source $global/$f"; missing=1; }
+done
+for s in "${FULL_SKILLS[@]}" gstack; do
+  [[ -d "$global/skills/$s" ]] || { err "missing source $global/skills/$s"; missing=1; }
+done
+[[ "$missing" -eq 0 ]] || exit 1
+
+# rsync flags: -a preserves exec bits; --delete prunes stale mirror files;
+# --copy-links because global skills are symlinks into the dotfiles repo.
+RSYNC=(rsync -a --copy-links --delete)
+
+drift=0
+sync_or_check() { # sync_or_check <src> <dst> [extra rsync args...]
+  local src="$1" dst="$2"; shift 2
+  if [[ "$mode" == "--check" ]]; then
+    local out
+    out="$("${RSYNC[@]}" --dry-run --itemize-changes "$@" "$src" "$dst" 2>/dev/null)" || out="(unreadable)"
+    if [[ -n "$out" ]]; then echo "DRIFT $dst"; echo "$out" | sed 's/^/  /'; drift=1; fi
+  else
+    mkdir -p "$(dirname "$dst")"
+    "${RSYNC[@]}" "$@" "$src" "$dst"
+  fi
+}
+
+for f in "${BIN_FILES[@]}"; do sync_or_check "$bin/$f" "$mirror/bin/$f"; done
+sync_or_check "$global/CLAUDE.md"             "$mirror/CLAUDE.global.md"
+sync_or_check "$global/settings.json"         "$mirror/settings.global.json"
+sync_or_check "$global/statusline-command.sh" "$mirror/statusline-command.sh"
+
+for s in "${FULL_SKILLS[@]}"; do
+  sync_or_check "$global/skills/$s/" "$mirror/skills/$s/" --exclude='tests/'
+done
+
+# gstack: allowlist only — walk the include list, exclude everything else.
+gstack_includes=()
+for f in "${GSTACK_FILES[@]}"; do
+  d="$(dirname "$f")"
+  while [[ "$d" != "." ]]; do gstack_includes+=(--include="/$d/"); d="$(dirname "$d")"; done
+  gstack_includes+=(--include="/$f")
+done
+sync_or_check "$global/skills/gstack/" "$mirror/skills/gstack/" \
+  "${gstack_includes[@]}" --exclude='*'
+
+if [[ "$mode" == "--check" ]]; then
+  [[ "$drift" -eq 0 ]] && echo "mirror in sync" || err "mirror drifted from global config — run scripts/sync-claude-mirror"
+  exit "$drift"
+fi
+echo "mirror refreshed at $mirror"

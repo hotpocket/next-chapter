@@ -1,0 +1,134 @@
+# Using Fable 5 to Maximum Effect — wargamed recipe
+> Sources: "A proper guide to Fable 5" [8GRmLR__OGQ] + "Do THIS Before You Lose Access to Fable 5" [nuwlyQXrADg] | Synthesized: 2026-07-06 | Rev 2: wargamed against its own SUCCESS.md standard (see Red-Team Record)
+> Principle: spend Fable's intelligence on **routing and route-finding** (dispatching work, wargaming missions, judging output), not bulk execution.
+> Move format: each step = instruction → **EXPECT** (what you see if it worked) → **FAIL** (likely failure, the cause it signals, counter-move) → **FORK** (if you observe X, take route B) where relevant.
+
+## Outcome
+(a) A Fable 5 environment that clears real backlogs in long unattended runs at subscription-level cost; (b) your highest-value projects converted into executor-blind blueprints cheaper models can run, so value survives access loss. Success is measured, not asserted — see Process Metrics.
+
+## Adoption Map (enter where you actually are)
+- **Phase A** (config): standalone; needed by C, improves B. Requires only Claude Code + (optionally) Codex.
+- **Phase B** (wargaming): standalone; needs nothing but a folder. Start here if you have no repo infrastructure.
+- **Phase C** (autonomous runs): requires Phase A + ALL three gates: CI, ≥1 external automated reviewer, staging-gated deploys with human-triggered prod. **FORK:** missing any gate → run Phase C in degraded mode: merges target a `staging` branch (never main), or stop at PR-creation and merge by hand. Never run the full auto-merge goal ungated.
+
+## Inputs — unfilled = BLOCKED, log in LEDGER.md, never invent
+- `{{MODELS_AVAILABLE}}` — which models/CLIs you can actually reach (Fable? Codex sub? GLM?)
+- `{{MODEL_SCORES}}` — your own cost/intelligence/taste table values (the videos' numbers are one person's July-2026 opinion)
+- `{{REPO}}`, `{{REVIEWERS}}` (which bots), `{{STAGING_URL}}`, `{{PROD_DEPLOY_MECHANISM}}`
+- `{{MISSIONS}}` — the ~10 projects worth wargaming, each with its own brief placeholders
+- `{{BUDGET}}` — usage limit share you'll spend per phase (see Abort Conditions)
+
+## RECON NEEDED (settle before relying on the step that assumes it)
+- Do `/goal` and `/loop` exist in your install? **Check:** type `/goal` in a session; if unrecognized, recreate both as project skills first. (They may be the creators' custom commands.)
+- Does your Claude Code version match assumed behavior (effort selector, workflows, `isolation: 'worktree'`)? **Check:** `claude --version` ≥ 2.1.201; run a 2-agent toy workflow.
+- Is Codex authed and current? **Check:** `codex exec -s read-only "print your model id"` succeeds from the target repo.
+- Are the reviewer bots alive? **Check:** open a trivial PR; all configured bots comment within their SLA before you trust them as merge gates.
+
+## Recipe
+
+### Phase A — Configure once (~30–60 min, then iterate)
+**A1. Set effort to `high`. Never xhigh/max/ultracode on Fable 5.**
+- EXPECT: status line shows "Fable 5 with high effort"; typical tasks complete without multi-minute single-step stalls.
+- FAIL: bills still high / runs slow → cause is usually fan-out volume or ceiling-effort subagents, not the main-loop setting; counter: audit spawned-agent efforts and workflow sizes before touching anything else.
+- FORK: driving Opus 4.7/4.8 instead → `xhigh` is the documented best coding setting there; "stay at high" is Fable-specific.
+
+**A2. Make `~/.claude/CLAUDE.md` a dispatcher's manual**: personal code/tooling rules; a glossary (*intelligence* = hardest problem handled unsupervised; *taste* = UI/copy/API quality; *cost* = what you actually pay); a model table over `{{MODELS_AVAILABLE}}` with `{{MODEL_SCORES}}` (describe post-cutoff models — the agent doesn't know them); routing rules as **defaults-not-limits** (bulk mechanical → cheapest capable; user-facing needs taste ≥7; reviews → Fable/Opus; standing permission to escalate when output misses the bar — "judge the output, not the price tag"); trigger line: **"If computer use is helpful for completing or verifying work, shell out to gpt-5.5 with Codex."**
+- EXPECT (canary): give it one bulk task ("rename this enum across the repo") and one taste task ("rewrite this landing headline") in fresh sessions → bulk routes to the cheap model, taste stays on Fable/Opus. Run tree shows the routing.
+- FAIL: everything runs inline on Fable → cause: rules too buried or phrased as prose, not directives; counter: move routing to the top, make the shell-out line imperative, re-run canary.
+- FAIL: model writes hallucinated rationale into the file when it edits it → counter: review every model-authored config diff (documented failure — happened to the source creator).
+
+**A3. Codex shell-out layer** — mechanics in CLAUDE.md + three skills (`codex-review`, `codex-implementation`, `codex-computer-use`). Commands: `codex exec -s read-only` for investigation; `codex -C "$PWD" review --uncommitted|--base main|--commit <sha> - < prompt.md > report.md`. Workflows accept only Claude models → bridge with a wrapper agent (`model: 'sonnet', effort: 'low'`) that writes a self-contained Codex prompt, runs it via Bash, returns the report (`schema` for structure). Label wrappers `gpt-5.5:`; set explicit timeouts (Codex overruns 10-min Bash default); parallel implementers get `isolation: 'worktree'`. Skill guardrails: "if Codex finds nothing, say so and name the target inspected"; "inspect Codex's diff before reporting done"; "if codex missing/fails, report and offer to implement directly"; prompt Codex simply.
+- EXPECT (canary): "test the login flow in a browser" in a fresh session → `codex-computer-use` skill fires without Codex being named.
+- FAIL: skill never triggers → cause: description too narrow (only fires when "Codex" is said); counter: broaden description to task-shaped triggers, re-canary. Descriptions are load-bearing — only they are in context pre-invocation.
+- FAIL: wrapper returns empty/garbage → cause: prompt not self-contained (Codex lacks your session context); counter: wrapper must inline all paths, branch names, acceptance criteria.
+- FORK: no Codex sub → delete the shell-out layer; route bulk work to Sonnet/Haiku-class Claude agents instead; skip A3 canaries. The rest of the recipe stands.
+
+**A4. Iterate your own files; never copy-paste someone else's.** After a bad run: ask the thread "what did you get wrong / what's the right structure?", halve its proposal, append.
+- EXPECT: CLAUDE.md/skills grow by small failure-derived patches, each traceable to an incident.
+- FAIL: file bloats into prose the model skims past → counter: prune quarterly; every line must have fired at least once.
+
+### Phase B — Wargame before executing (the planning layer)
+**B1. For each mission, don't ask for a plan — ask for a wargame** (action → likely reaction/failure → counter-move). Fable's unique value: dragging the unknowns matrix into the light. Cheap primitive first: a **blindspot pass** — "before I write this prompt, what am I likely missing?"
+- EXPECT: output organized as moves-with-failure-branches, not phases-with-milestones.
+- FAIL: you get a linear plan wearing wargame vocabulary → cause: prompt asked for format, not simulation; counter: require each move's failure to *change the route* (a counter-move that alters subsequent moves), not just annotate it.
+
+**B2. Folder machine:** `tasks/` (one mission each), `wargames/` (Fable fills), `SUCCESS.md` (8-point standard), `LEDGER.md` (every grade, patch, and blocker).
+
+**B3. Mission file = WARGAME ORDER header + MISSION BRIEF.** Header (verbatim-adaptable): "You are not executing this mission, you are wargaming it. A cheaper executor runs the brief later. Your job is the route it will follow. Recon first, read-only. Fight the mission on paper, move by move: every move states its expected observation; every move carries its most likely failure, the cause it signals, and the counter-move; every fork gets a trigger (if you observe X, take route B); assumptions recon couldn't settle get RECON NEEDED with the exact settling check; end with abort conditions and the executor's verification runs with what pass looks like. Write it so the executor runs end to end without asking a single question." Name the actual executor and tell Fable to tailor to it. Brief uses `{{PLACEHOLDER}}`s; unfilled = BLOCKED in LEDGER with inputs-needed, never invented.
+- EXPECT: recon phase runs read-only (no state changes in the transcript); BLOCKED missions list the exact missing inputs.
+- FAIL: Fable starts executing the mission → cause: brief's imperative language dominated the header; counter: header first, brief framed as "the executor's definition of done," re-run.
+
+**B4. SUCCESS.md = the 8-point executable-blind standard**: (1) expected observation per move; (2) failure+cause+counter per move; (3) trigger per fork, no judgment calls left; (4) RECON NEEDED marks with settling checks; (5) abort conditions; (6) verification runs spelled out with pass criteria; (7) survived a red-team pass, attack and patch recorded; (8) runnable blind by a mid-tier model. Optional premortem triage on point 7: tigers (verified high-severity), paper tigers (mitigated), elephants (unspoken systemic).
+
+**B5. Batch breadth-first, then refine:** `/goal` contract — first-draft wargame for every task, all drafted before any polished, via parallel subagents (**3–5 concurrent** — practitioner sweet spot; ~10 degrades cost/manageability), each self-graded point-by-point into LEDGER.md. Then `/loop` refinement: grade all drafts, red-team the weakest (find the breaking move, patch it), upgrade vague moves to expected observations, re-grade, repeat until each survives a kill attempt.
+- EXPECT: LEDGER fills with honest per-point grades; weakest-draft grades climb across loop iterations.
+- FAIL: self-grades are uniformly high → cause: grader = author; counter: grade with a different model or fresh session than the drafter.
+- FAIL: loop polishes one favorite draft repeatedly → counter: contract clause "always take the CURRENT weakest."
+
+**B6. Validate the payoff before scaling (the sources never did):** hand ONE finished wargame to the named cheap executor in a fresh session.
+- EXPECT: end-to-end run, zero questions asked, verification runs pass.
+- FAIL: executor asks questions → each question is a hole in that wargame (missing trigger or RECON) → patch the wargame AND the template, re-test.
+- FORK: executor completes but output quality is poor → the route was fine, the model tier wasn't; escalate executor one tier rather than fattening the wargame.
+
+### Phase C — Execute autonomously (requires Adoption Map gates)
+**C1. Triage with one prompt + a dynamic workflow:** investigate all open PRs/backlog items; classify ready / needs-touch-up / trumped / rewrite; "use a workflow to break up the work, and multiple reviewers to solidify your decisions" (one investigator per item; verdicts stress-tested by a Fable+Opus judge panel; contested calls surfaced).
+- EXPECT: per-item verdicts with named evidence; unanimous vs contested flagged.
+- FAIL: judges rubber-stamp investigators → counter: judge prompt must argue AGAINST the verdict first.
+
+**C2. Read the triage yourself; make the executive decisions.** Close trumped items; commission plans per survivor (plans link inspiring PRs + describe existing implementation; plans reviewed by subagents; honor simplicity). This step is not delegable — it's where product judgment enters.
+
+**C3. Ask Fable the execution-shape question before committing:** workflows for deterministic fan-out-and-verify (reviews, audits); checkpoint-driven programs (CI, review, merge, rebase, mid-stream calls) orchestrate from the session with worktrees per implementation.
+
+**C4. Write TODO.md, set the `/goal`:** explicit permissions (worktrees, rebase, branch, merge, close); mark todos done and commit TODO.md as you go; "break the work up logically, review thoroughly, merge with confidence"; hard gate: **do not merge until `{{REVIEWERS}}` have approved.**
+- EXPECT: TODO.md commits appear steadily; merges land on staging only; reviewer approvals precede every merge in the log.
+- FAIL: run stalls on rebase-conflict cascade → cause: parallel worktrees touching shared files; counter: goal clause "serialize PRs that touch the same modules."
+- FAIL: reviewer bot outage → merges silently blocked or (worse) gate skipped; counter: goal clause "if a reviewer does not respond within 30 min, STOP and flag — do not merge around it."
+
+**C5. Safety by pipeline shape, not trust:** merges → staging only; prod human-triggered; pre-clean staging to a shippable state before the run.
+- Verification (named runs, not vibes): (1) personally stress-test each shipped feature; (2) spawn agents to exercise new AND pre-existing features — pass = no regressions filed; (3) agents diff prod↔main and produce a de-risk list — pass = every diff item dispositioned. Expect verify tokens ≥ implement tokens.
+
+**C6. Parallelize from anywhere:** agents on multiple machines behind Tailscale + remote UI; phone loop = screenshot → machine/repo/model → image + short prompt → own worktree; later have Fable merge phone-spawned worktrees into one conflict-resolved branch.
+- FAIL: raw SSH → lost image-paste/scroll; counter: remote UI, not terminal-over-SSH.
+
+**C7. Time-to-fix as architecture probe:** <3 min = file it; ~15 min = pay attention; 1.5 h+ = architecture is talking — go deeper before merging. Interrogate suspiciously easy fixes ("do we even have a drawer anymore?").
+
+## Abort Conditions (autonomous runs — stop and flag, don't improvise)
+- Burn rate > `{{BUDGET}}`/hour, or projected run cost exceeds phase budget.
+- ≥3 consecutive reviewer rejections on one PR (the plan is wrong, not the code).
+- Any force-push, history rewrite, or push to a prod-deploying ref.
+- TODO.md claims done ≠ observable state (staging missing the feature) — trust-in-ledger is broken.
+- Reviewer gate unreachable > 30 min.
+- Same test flaking across ≥3 PRs (systemic, not per-PR).
+
+## Process Metrics (is this actually working?)
+- **Cost per merged-and-verified PR** — trend down across runs.
+- **Executor question-count per wargamed brief** — target 0; each question = template patch.
+- **Verify:implement token ratio** — healthy ≥1:1; if verification finds nothing twice running, it may be too shallow, not the code too clean.
+- **Post-run regression count on staging** — the number that actually licenses the autonomy.
+
+## Key Concepts
+- **Router, not laborer** — Fable's leverage is dispatching and route-finding; cheap models do volume.
+- **Effort-per-step** — `high` is the Fable sweet spot; ceilings overthink every tool call.
+- **Wargame > plan** — pre-simulated failure branches make output executable by weaker models without improvisation.
+- **Executable-blind standard** — the 8-point gate; executor questions are the defect metric.
+- **Safety by pipeline shape** — staging-only merges + external gates make autonomy recoverable.
+- **Shell-out pattern** — any CLI-reachable model is a tool; wrappers bridge non-Claude models into workflows.
+- **Ledger discipline** — BLOCKED + inputs-needed beats invented placeholders; the ledger is the audit trail.
+- **Time-to-fix heuristic** — agent effort per change probes codebase health.
+
+## Cross-cutting Fable 5 rules
+- One well-specified turn up front; memory surface (TODO.md/LEDGER.md); ground claims against tool results ("audit each claim against something you actually ran or read").
+- **Never ask Fable to reproduce its reasoning in output** — trips the `reasoning_extraction` classifier, reroutes to Opus 4.8. Ask for artifacts, findings, quotes, rewrites.
+- Benign security-adjacent work can return `stop_reason: "refusal"` — opt into Opus 4.8 fallback. Fable 5 requires 30-day data retention (ZDR orgs get 400s).
+- De-prescribe prompts written for older models: outcomes and constraints, not step-by-step babysitting.
+
+## Red-Team Record (SUCCESS.md point 7)
+- **Attack (2026-07-06):** graded Rev 1 of this file against its own 8-point standard; it failed 7 of 8 — no expected observations, no failure/counter-moves, no fork triggers, unmarked assumptions, no abort conditions, vague verification, not executable blind (a mid-tier model would ask which models/scores/repo).
+- **Patch:** Rev 2 — move format (EXPECT/FAIL/FORK) on every step; `{{PLACEHOLDER}}` inputs ledger; RECON NEEDED section with settling checks; Abort Conditions; named verification canaries (A2, A3, B6, C5) with pass criteria; Adoption Map for non-greenfield entry; Process Metrics so "maximum effect" is falsifiable.
+- **B6 run #1 (2026-07-06): PASS with 2 findings.** Mission: static marketing-site build (fully specified brief). Wargamer: Fable 5 high (8 moves, 2 RECON checks, 3 aborts, 4 verification runs; survived 1 self-red-team kill — a browser-vs-headless contradiction in the brief's verify clause, patched pre-handoff). Executor: Sonnet, blind, fresh context. Result: end-to-end completion, all 4 verification runs passed (independently audited), **0 blocking questions**, 2 logged judgment calls: (1) the wargame's form-validation spec was incomplete — native browser validation would pre-empt the specified JS path unless `novalidate` is added; a real wargame defect the question-metric surfaced exactly as designed; (2) body copy wording left unspecified — acceptable executor latitude for content, but specify voice/wording bounds if copy matters. Template patches: M4-style form specs must state `novalidate`; briefs should declare which content the executor may author freely. Cost: executor ran ~34k tokens on a cheap model. Verdict: the payoff claim holds on n=1 for a well-specified mission; the question-count metric works as a wargame-defect detector.
+
+## Caveats & Blind Spots
+- Model rankings, pricing, promo windows, subscription-exit deadline: early-July-2026 snapshots. The structure (routing manual, wargame machine, gated autonomy) is model-agnostic.
+- The $150 / 5-hour / 11-PR figures are one anecdote with admittedly muddy math.
+- Multi-account proxying (source 1) omitted deliberately — ToS/ban risk outweighs benefit.
+- This file's verbatim texts were OCR'd from video frames; minor transcription errors possible.

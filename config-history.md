@@ -118,6 +118,15 @@ being evaluated.
 `~/.claude` state and only run here. The artifacts they produce (session notes,
 prompt files) are all in the repo.
 
+**In-tree mirror — read the config yourself:** everything this document
+describes (the three hooks' code and registration, the global CLAUDE.md, the
+skill bodies behind every slash-command in the glossary) is mirrored inside
+this repo at [`.claude/`](.claude/README.md), with a table mapping the
+machine paths you'll see in vault notes (`~/bin/claude-orient`,
+`~/.claude/skills/…`) to their in-repo copies. The mirror is generated from
+the live config by `scripts/sync-claude-mirror` and drift-checked with
+`--check` — you are reading the actual files I run, not a description of them.
+
 ## Condensed timeline
 
 | Date | Event |
