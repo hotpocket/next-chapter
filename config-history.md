@@ -106,6 +106,7 @@ later sessions it gets added here (checked mechanically before each publish).
 | `/conduct` | stamps a repo with this whole setup (CLAUDE.md, vault, scripts) |
 | `/browse` (gstack) | drives a real headless browser: navigate, click, screenshot, verify |
 | `/gstack` | router into the gstack skill suite (browse, qa, review, …) |
+| `/clear` | Claude Code built-in (not a custom skill): wipes the conversation context to start fresh |
 
 **On tone:** my prompts read terse — fragments, "Wrong:", no pleasantries.
 That's a deliberate discipline enforced by a hook that re-injects a brevity
