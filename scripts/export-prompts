@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# export-prompts — publish this session's user prompts alongside a /vault recap.
+#
+# Extracts user-role messages from a Claude Code session transcript
+# (~/.claude/projects/<encoded-cwd>/<session>.jsonl), drops tool results and
+# system notifications, redacts obvious private data, and writes
+# vault/sessions/<name>-prompts.md linking the companion recap note [[<name>]].
+#
+# Usage:
+#   scripts/export-prompts <name>                # newest transcript for this repo
+#   scripts/export-prompts --transcript F --out-dir D --name <name>   # explicit (tests)
+#
+# The generated file is OUTWARD-FACING (public repo): after writing, it is
+# scanned with gitleaks when installed; findings are reported, not committed.
+set -euo pipefail
+
+TRANSCRIPT="" OUT_DIR="" NAME=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --transcript) TRANSCRIPT=$2; shift 2 ;;
+    --out-dir)    OUT_DIR=$2; shift 2 ;;
+    --name)       NAME=$2; shift 2 ;;
+    *)            NAME=$1; shift ;;
+  esac
+done
+[ -n "$NAME" ] || { echo "usage: export-prompts <recap-name>" >&2; exit 2; }
+
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+[ -n "$OUT_DIR" ] || OUT_DIR="$ROOT/vault/sessions"
+
+if [ -z "$TRANSCRIPT" ]; then
+  # Claude Code encodes the project cwd by mapping '/' and '.' to '-'.
+  ENC=$(printf '%s' "$ROOT" | tr '/.' '--')
+  PROJ_DIR="$HOME/.claude/projects/$ENC"
+  TRANSCRIPT=$(ls -t "$PROJ_DIR"/*.jsonl 2>/dev/null | head -1 || true)
+  [ -n "$TRANSCRIPT" ] || { echo "no transcript found under $PROJ_DIR" >&2; exit 1; }
+fi
+
+mkdir -p "$OUT_DIR"
+OUT="$OUT_DIR/$NAME-prompts.md"
+
+PROMPTS=$(jq -r '
+  select(.type == "user")
+  | .message.content
+  | if type == "string" then .
+    elif type == "array" then
+      ( if any(.[]; .type? == "tool_result") then empty
+        else [ .[] | select(.type? == "text") | .text ] | join("\n")
+        end )
+    else empty end
+  | select(length > 0)
+  | select(startswith("[SYSTEM NOTIFICATION") | not)
+  | select(startswith("<system-reminder") | not)
+  | select(startswith("<local-command") | not)
+  | select(startswith("Base directory for this skill:") | not)
+  | "---PROMPT---\n" + .
+' "$TRANSCRIPT")
+
+[ -n "$PROMPTS" ] || { echo "no user prompts found in $TRANSCRIPT" >&2; exit 1; }
+
+# Redact obvious private data inline; the value is replaced, the line survives.
+redact() {
+  sed -E \
+    -e 's/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/[REDACTED: email]/g' \
+    -e 's/((set-)?cookie|authorization|x-csrf-token)[:=][^;[:space:]]*/[REDACTED: credential]/Ig' \
+    -e 's/-----BEGIN [A-Z ]*PRIVATE KEY-----/[REDACTED: private key]/g' \
+    -e 's/\b(sk|ghp|gho|xox[bap]|AKIA)[-_A-Za-z0-9]{16,}/[REDACTED: token]/g'
+}
+
+COUNT=$(printf '%s\n' "$PROMPTS" | grep -c '^---PROMPT---$')
+{
+  printf -- '---\ntags: [prompts]\ntype: prompts\nsummary: "Verbatim user prompts for session [[%s]] (%s prompts)"\ncreated: %s\n---\n\n' \
+    "$NAME" "$COUNT" "$(date +%F)"
+  printf '# Prompts — %s\n\nCompanion to [[%s]]. Extracted from the session transcript; tool output and\nsystem events excluded; private data redacted inline.\n' "$NAME" "$NAME"
+  printf '%s\n' "$PROMPTS" | redact | awk '
+    /^---PROMPT---$/ { n++; printf "\n## Prompt %d\n\n", n; next }
+    { print }
+  '
+} > "$OUT"
+
+echo "wrote $OUT ($COUNT prompts)"
+
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks detect --no-git --source "$OUT" --no-banner --exit-code 9 >/dev/null 2>&1; then
+    echo "WARNING: gitleaks flagged $OUT — review before committing" >&2
+  fi
+fi
