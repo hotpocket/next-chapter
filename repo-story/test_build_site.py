@@ -38,6 +38,7 @@ def main():
         out = build(Path(d) / "a", extra_args=[])
         html = (out / "index.html").read_text()
         assert "feedbackUrl" not in html, "no feedbackUrl when flag omitted"
+        assert 'rel="icon"' in html, "favicon link missing"
         assert (out / "audio" / "chapter_0001.m4a").exists()
 
         out = build(Path(d) / "b", extra_args=["--feedback-url", "https://x.example/events"])

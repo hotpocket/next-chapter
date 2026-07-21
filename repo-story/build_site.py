@@ -105,6 +105,7 @@ def generate_html(books: list[dict], feedback_url: str = "",
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Repo Story</title>
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="stylesheet" href="player.css">
 </head>
 <body>

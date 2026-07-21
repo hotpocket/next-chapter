@@ -96,6 +96,7 @@ def generate_html(title: str, books: list, transcript_url: str) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="stylesheet" href="player.css">
 </head>
 <body>

@@ -86,6 +86,7 @@ def main():
         assert "transcripts.json?v=" in html, "content-hash cache-bust"
         assert (docs / "player.js").exists() and (docs / "sw.js").exists()
         assert "Test Trilogy" in html
+        assert 'rel="icon"' in html, "favicon link missing"
         assert '"description": "The player\'s origin."' in html, "registry description passthrough"
         # Provenance must not pin a commit from an unrelated enclosing repo
         # (the fetched player dir is not itself a landry-ui checkout here).
