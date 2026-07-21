@@ -65,13 +65,24 @@ def prefix_filenames(book: dict, slug: str):
 
 
 def player_provenance(player_src: Path) -> str:
+    """Pin a commit only when player_src actually lives in a landry-ui
+    checkout — a luinst-fetched copy sits inside whatever repo encloses it,
+    and pinning THAT repo's HEAD would be provenance theater."""
     try:
-        head = subprocess.run(
-            ["git", "-C", str(player_src), "rev-parse", "HEAD"],
-            capture_output=True, text=True, check=True).stdout.strip()
-        return f"{player_src} @ {head}"
+        def git(*args):
+            return subprocess.run(["git", "-C", str(player_src), *args],
+                                  capture_output=True, text=True, check=True).stdout.strip()
+        origin = ""
+        try:
+            origin = git("remote", "get-url", "origin")
+        except Exception:
+            pass
+        toplevel = Path(git("rev-parse", "--show-toplevel")).name
+        if "landry-ui" in origin or toplevel == "landry-ui":
+            return f"{player_src} @ {git('rev-parse', 'HEAD')}"
     except Exception:
-        return str(player_src)
+        pass
+    return f"{player_src} (luinst-fetched copy; pin is the landry-ui commit current at fetch time)"
 
 
 def generate_html(title: str, books: list, transcript_url: str) -> str:

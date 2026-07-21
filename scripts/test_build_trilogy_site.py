@@ -52,6 +52,11 @@ def main():
         tmp = Path(td)
         b1 = mk_book(tmp, "alpha", with_summary=True)
         b2 = mk_book(tmp, "beta", with_summary=False)
+        # Simulate a fetched (non-checkout) player dir inside an UNRELATED git
+        # repo — provenance must not pin that repo's HEAD.
+        subprocess.run(["git", "init", "-q", str(tmp)], check=True)
+        subprocess.run(["git", "-C", str(tmp), "-c", "user.email=t@t", "-c", "user.name=t",
+                        "commit", "-q", "--allow-empty", "-m", "x"], check=True)
         player = tmp / "player"
         player.mkdir()
         for f in ["player.js", "player.css", "feedback.js", "sw.js", "manifest.webmanifest"]:
@@ -80,6 +85,10 @@ def main():
         assert "transcripts.json?v=" in html, "content-hash cache-bust"
         assert (docs / "player.js").exists() and (docs / "sw.js").exists()
         assert "Test Trilogy" in html
+        # Provenance must not pin a commit from an unrelated enclosing repo
+        # (the fetched player dir is not itself a landry-ui checkout here).
+        prov = (docs / "PROVENANCE.md").read_text()
+        assert " @ " not in prov, f"provenance claims a hash it can't stand behind: {prov}"
     print("ok")
 
 
