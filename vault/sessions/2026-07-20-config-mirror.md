@@ -20,7 +20,7 @@ Verbatim prompts for this session: [[2026-07-20-config-mirror-prompts]].
 2. `scripts/sync-claude-mirror` + `scripts/test-sync-claude-mirror.sh` (23 assertions, red→green): derives the mirror from the global config, `--check` exits non-zero on drift, env-overridable roots, resolves the `~/.claude` symlinks, prunes stale mirror files, leaves hand-written `.claude/README.md` / `settings.json` alone.
 3. Live in-tree: `.claude/settings.json` wires the push guard from the in-tree copy; `.claude/skills/` load as project skills.
 4. `.claude/README.md`: machine-path → repo-path cross-reference table — the key for reading `~/bin` / `~/.claude` references in vault notes and prompt exports.
-5. Docs: CLAUDE.md (annotated refs + mirror/drift-check rule), README trail bullet, config-history "In-tree mirror" paragraph, addendum on [[../../docs/reports/2026-07-20_public-repo-and-legibility|the public-repo wargame report]] closing its T2 dependency-inventory gap, [[../decisions/0007-repo-local-claude-mirror|ADR 0007]], `.gitignore` +`.claude/settings.local.json`.
+5. Docs: CLAUDE.md (annotated refs + mirror/drift-check rule), README trail bullet, config-history "In-tree mirror" paragraph, addendum on [[../../llm-docs/reports/2026-07-20_public-repo-and-legibility|the public-repo wargame report]] closing its T2 dependency-inventory gap, [[../decisions/0007-repo-local-claude-mirror|ADR 0007]], `.gitignore` +`.claude/settings.local.json`.
 6. Hygiene: gitleaks + identity/path grep on mirror and staged diff — clean (only upstream placeholder examples). Committed `786a840` (unpushed).
 
 ## Decisions

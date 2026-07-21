@@ -36,9 +36,9 @@ EXCLUDE=(
 )
 
 # The redaction map (BANNED regex + SCRUB_SED array) is PRIVATE — it names the
-# identifiers being removed. It lives in gitignored docs/logs/vendor-scrub.rules
+# identifiers being removed. It lives in gitignored llm-docs/logs/vendor-scrub.rules
 # (override: VENDOR_SCRUB_RULES) and never gets committed.
-rules="${VENDOR_SCRUB_RULES:-$repo/docs/logs/vendor-scrub.rules}"
+rules="${VENDOR_SCRUB_RULES:-$repo/llm-docs/logs/vendor-scrub.rules}"
 [[ -f "$rules" ]] || { echo "scrub rules not found: $rules (private, gitignored — required)" >&2; exit 1; }
 # shellcheck source=/dev/null
 source "$rules"

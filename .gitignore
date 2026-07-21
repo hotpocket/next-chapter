@@ -1,6 +1,6 @@
 # Claude conduct
 .claude/settings.local.json
-docs/logs/
+llm-docs/logs/
 vault/.obsidian/workspace*.json
 vault/.obsidian/plugins/
 vault/.obsidian/themes/

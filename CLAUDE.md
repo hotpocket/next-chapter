@@ -44,9 +44,11 @@ the submission's curated `prompt-history.md`. Prompt exports are outward-facing
 
 ## Docs layout
 
-- `docs/` — generated documents: working notes, plans, analyses.
-- `docs/reports/` — persistent, prepared deliverables meant to be kept/shared.
-- `docs/logs/` — transient/ephemeral output of repeatable processes (gitignored).
+- `llm-docs/` — generated documents: working notes, plans, analyses. (Named
+  `llm-docs` because `docs/` is reserved for the GitHub Pages site.)
+- `llm-docs/reports/` — persistent, prepared deliverables meant to be kept/shared.
+- `llm-docs/logs/` — transient/ephemeral output of repeatable processes (gitignored).
+- `docs/` — the published site (GitHub Pages serves this directory).
 
 ## Skills available here
 
@@ -99,7 +101,7 @@ committing anything that touches config, run `scripts/sync-claude-mirror
   On any hit: do NOT commit; show the finding and let the user decide.
 - **Private token map scan (non-regex identifiers gitleaks can't see).** Also
   grep the staged diff — and every prompt export before publishing — against
-  the BANNED list in gitignored `docs/logs/vendor-scrub.rules` (family names,
+  the BANNED list in gitignored `llm-docs/logs/vendor-scrub.rules` (family names,
   infra IDs, private repo/project names). That file is the one home for such
   tokens; when a new private identifier is discovered, add it there, never in
   a tracked file. Lesson (2026-07-21): agent output quoted inside prompt
@@ -107,7 +109,7 @@ committing anything that touches config, run `scripts/sync-claude-mirror
   token scan, fixed by a full-history rewrite while still private.
 - **Never tracked, never force-added:** `course/` (paywalled curriculum),
   `.gstack/` (local daemon state incl. auth tokens), `vault/.obsidian/` UI state,
-  `docs/logs/`. These are gitignored — treat the ignore as a hard rule, not a hint.
+  `llm-docs/logs/`. These are gitignored — treat the ignore as a hard rule, not a hint.
 - **Prompt exports are outward-facing content.** Session-prompt files under
   `vault/sessions/` get the same scan before commit; redact hits inline
   (`[REDACTED: cookie]`) rather than dropping the whole prompt.

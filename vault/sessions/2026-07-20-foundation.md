@@ -19,7 +19,7 @@ Verbatim prompts for this session: [[2026-07-20-foundation-prompts]] (57 prompts
 2. `config-history.md` — reviewer legend: AI-workflow history, command glossary, tone note, reproducibility boundary
 3. `/conduct init`: CLAUDE.md (+ public-repo hygiene: staged gitleaks scan, never-track list, prompt-export rules), vault scaffold, `scripts/vault-digest` + `session-start.sh`
 4. `scripts/export-prompts` (+11 tests, red→green): extracts session prompts from the Claude Code transcript, redacts, gitleaks-scans, writes `vault/sessions/<name>-prompts.md`
-5. Wargames (promoted to `docs/reports/`): public-repo security + reviewer legibility; landry-ui public-flip audit (exhaustive full-history sweep)
+5. Wargames (promoted to `llm-docs/reports/` (renamed from docs/ 2026-07-21)): public-repo security + reviewer legibility; landry-ui public-flip audit (exhaustive full-history sweep)
 6. Vets: config-history-as-reviewer-context (proceed); two-books journey frame (proceed — reviewer IS the listener)
 7. ADRs 0001–0006 in `vault/decisions/`
 8. landry-ui flipped **public** after audit + owner sign-off; `luinst` defaults to https clone (committed in landry-ui, unpushed)

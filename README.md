@@ -21,15 +21,15 @@ here will serve audiobooks about the two repos that power it —
   its sources, and what was verified before deciding.
 - [`vault/sessions/`](vault/sessions/) — session recaps, each paired with a
   `*-prompts.md` file of the verbatim prompts from that session (index below).
-- [`docs/reports/`](docs/reports/) — kept deliverables: security wargames and
+- [`llm-docs/reports/`](llm-docs/reports/) — kept deliverables: security wargames and
   audits (public-repo hygiene, the landry-ui public-flip audit).
 - [`repo-story/`](repo-story/) — the audiobook-generation pipeline, vendored
   with its history replayed commit-by-commit (`Replayed-From:` trailers;
   private details redacted — see its README's provenance note).
-- [`docs/vets/`](docs/vets/) + [`vault/vets/`](vault/vets/) — idea vets with
+- [`llm-docs/vets/`](llm-docs/vets/) + [`vault/vets/`](vault/vets/) — idea vets with
   verdicts and probes.
 
-Planning docs live in [`docs/`](docs/); the project plan and README sections
+Planning docs live in [`llm-docs/`](llm-docs/); the project plan and README sections
 required by the course will grow here as the build proceeds.
 
 ## Sessions & prompts
@@ -50,8 +50,8 @@ In-repo, for navigating:
 - [ADRs 0001–0007](vault/decisions/) — architecture + process decisions.
 - [`.claude/README.md`](.claude/README.md) — the AI config mirror and its
   machine-path → repo-path cross-reference.
-- [Reports](docs/reports/) — security wargames and audits;
-  [vets](docs/vets/) — idea verdicts.
+- [Reports](llm-docs/reports/) — security wargames and audits;
+  [vets](llm-docs/vets/) — idea verdicts.
 
 External:
 - [landry-ui](https://github.com/hotpocket/landry-ui) — the player this

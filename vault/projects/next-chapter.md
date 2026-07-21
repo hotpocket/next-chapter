@@ -12,13 +12,13 @@ Workspace for the Next Chapter admissions submission.
 
 - `course/` — mirror of the 65-lesson pre-course (section 9 = project spec). Reference only; never publish.
 - `config-history.md` — first deliverable layer: the legend that lets the reviewer interpret the prompt history (vault, hooks, /browse, /wargame).
-- `docs/vets/config-history-as-reviewer-context.md` — vet of that strategy (verdict: proceed; open probe: submission-repo layout).
+- `llm-docs/vets/config-history-as-reviewer-context.md` — vet of that strategy (verdict: proceed; open probe: submission-repo layout).
 - Project (chosen 2026-07-20): **repo → podcast**, drawn from ~/git/repo-story.
   **V1 (the submission):** static player of pre-generated books. Generation is
   local-only: prose via Claude Code prompts (proven 2026-03-26 prompt flow), audio
   via python Chatterbox/chatterbook scripts on the local GPU; artifacts uploaded
   to S3; vanilla UI on GitHub Pages. No OpenRouter, no Lambdas in V1. ADRs
-  0001–0003 accepted; rough draft in docs/2026-07-20_project-rough-draft.md.
+  0001–0003 accepted; rough draft in llm-docs/2026-07-20_project-rough-draft.md.
   **V2 (deferred):** on-demand URL ingestion via Lambda + Tailscale, prose routed
   to OpenRouter — ADR 0004. OpenRouter is V2-only tooling. Content: two books, landry-ui +
   repo-story (ADR 0005 — self-demonstrating site). V1 work-list additions:

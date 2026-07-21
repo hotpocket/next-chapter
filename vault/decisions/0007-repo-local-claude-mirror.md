@@ -13,7 +13,7 @@ concerns: [legibility, process, public-repo]
 The `/conduct` init left this repo's docs and vault notes pointing at
 machine-level config (`~/bin/claude-orient`, `~/.claude/skills/…`, global
 hooks) that a Next Chapter reviewer cannot see. The public-repo wargame
-([[2026-07-20 report|../../docs/reports/2026-07-20_public-repo-and-legibility.md]])
+([[2026-07-20 report|../../llm-docs/reports/2026-07-20_public-repo-and-legibility.md]])
 had already flagged this as its dependency-inventory gap and an ELEPHANT
 ("reviewer must trust unverifiable process claims").
 
