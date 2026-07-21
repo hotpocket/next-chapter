@@ -25,9 +25,13 @@ audio goes in the repo.
 - Per-chapter M4As, `chapters_manifest.json`, and `transcripts.json` are
   committed in-tree under `docs/` and served by GitHub Pages (Pages source:
   `main` + `/docs`; existing working notes moved to `llm-docs/`).
-- **S3 is dead for this project** — no bucket, no CloudFront, no deploy
-  script, no AWS credentials surface at all. Publishing = the owner's
-  `git push`.
+- **S3/AWS is out of V1 entirely** — no bucket, no CloudFront, no deploy
+  script, no AWS credentials surface. Publishing = the owner's `git push`.
+- **S3 is the V2 answer, not a dead end**: with more time, V2 moves off
+  GitHub Pages to a properly hosted deploy (S3/CloudFront — the pattern the
+  owner already runs in production for other book sites). This is the
+  course's "what would you do with more time" answer, alongside ADR 0004's
+  ingestion pipeline.
 - Chapter size check is part of generation done-means (never brick a push).
 
 ## Consequences
@@ -40,5 +44,5 @@ audio goes in the repo.
 - [[0004-ingestion-pipeline-lambda-tailscale|ADR 0004]] (V2 ingestion) stays
   deferred; note it presumed the S3 architecture and would need redesign, not
   revival.
-- Bandwidth/size are bounded by book scope; if a future book outgrows git,
-  that is a new ADR, not a silent revival of S3.
+- Bandwidth/size are bounded by book scope; a book outgrowing git is a
+  trigger to pull V2 forward, recorded in a new ADR.

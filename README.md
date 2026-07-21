@@ -51,6 +51,7 @@ command glossary that makes the prompts readable):
 |---------|-------|---------|
 | 2026-07-20 — Foundation | [recap](vault/sessions/2026-07-20-foundation.md) | [57 prompts](vault/sessions/2026-07-20-foundation-prompts.md) |
 | 2026-07-20 — Config mirror | [recap](vault/sessions/2026-07-20-config-mirror.md) | [4 prompts](vault/sessions/2026-07-20-config-mirror-prompts.md) |
+| 2026-07-21 — repo-story vendored + in-repo pivot | [recap](vault/sessions/2026-07-21-repo-story-vendored.md) | [21 prompts](vault/sessions/2026-07-21-repo-story-vendored-prompts.md) |
 
 ## Resources
 

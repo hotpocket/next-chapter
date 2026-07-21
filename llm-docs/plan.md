@@ -57,8 +57,11 @@ publishing is the owner's `git push`.
 
 - **Required:** library page (3 books), player + chapter nav, read-along
   transcripts, complete trilogy, live Pages URL.
-- **Stretch only:** playback position memory, per-chapter deep links, audio
-  QA passes, V2 ingestion (ADR 0004 — stays deferred).
+- **Stretch / "with more time" (V2, the course's features-next answer):**
+  move off Pages to properly hosted delivery (S3/CloudFront — the pattern
+  already running in production for the owner's other book sites; ADR 0008)
+  and visitor-submitted ingestion (ADR 0004). Smaller stretch: playback
+  position memory, per-chapter deep links, audio QA passes.
 
 ## Standing rules
 

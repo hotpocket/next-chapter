@@ -13,5 +13,5 @@ decisions evolved, and this trail is the record.
 | [0005](0005-two-books-self-demonstrating.md) | Books narrate the project's own sources | **Active**, extended by 0009 |
 | [0006](0006-reuse-landry-ui-player.md) | Reuse the landry-ui player; demonstration is the assembly | **Active**, deploy framing amended by 0008 |
 | [0007](0007-repo-local-claude-mirror.md) | AI config mirrored in-tree at `.claude/` | **Active** |
-| [0008](0008-audio-in-repo-pages-only.md) | Audio in-repo, Pages serves everything, S3 retired | **Active** |
+| [0008](0008-audio-in-repo-pages-only.md) | Audio in-repo, Pages serves everything; S3/CloudFront hosting is the V2 path | **Active** |
 | [0009](0009-three-books-trilogy.md) | Three books: landry-ui → repo-story → next-chapter (generated last, range pinned) | **Active** |

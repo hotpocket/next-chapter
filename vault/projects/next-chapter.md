@@ -1,7 +1,7 @@
 ---
 tags: [project]
 type: project
-summary: "Next Chapter admissions project workspace — course mirror, config-history baseline, project TBD"
+summary: "Next Chapter admissions project — a Pages site (docs/) playing a trilogy of audiobooks narrating its own lineage (landry-ui → repo-story → next-chapter). All in-repo: audio in git, no AWS. repo-story vendored as scrubbed commit replay. Plan: llm-docs/plan.md; decisions: vault/decisions/README.md."
 created: 2026-07-20
 concerns: [admissions-project]
 ---
@@ -10,20 +10,28 @@ concerns: [admissions-project]
 
 Workspace for the Next Chapter admissions submission.
 
-- `course/` — mirror of the 65-lesson pre-course (section 9 = project spec). Reference only; never publish.
-- `config-history.md` — first deliverable layer: the legend that lets the reviewer interpret the prompt history (vault, hooks, /browse, /wargame).
-- `llm-docs/vets/config-history-as-reviewer-context.md` — vet of that strategy (verdict: proceed; open probe: submission-repo layout).
-- Project (chosen 2026-07-20): **repo → podcast**, drawn from ~/git/repo-story.
-  **V1 (the submission):** static player of pre-generated books. Generation is
-  local-only: prose via Claude Code prompts (proven 2026-03-26 prompt flow), audio
-  via python Chatterbox/chatterbook scripts on the local GPU; artifacts uploaded
-  to S3; vanilla UI on GitHub Pages. No OpenRouter, no Lambdas in V1. ADRs
-  0001–0003 accepted; rough draft in llm-docs/2026-07-20_project-rough-draft.md.
-  **V2 (deferred):** on-demand URL ingestion via Lambda + Tailscale, prose routed
-  to OpenRouter — ADR 0004. OpenRouter is V2-only tooling. Content: two books, landry-ui +
-  repo-story (ADR 0005 — self-demonstrating site). V1 work-list additions:
-  README spine, SOURCES.md (pinned hashes), per-book provenance records.
-  Decided: reuse landry-ui player — ADR 0006 supersedes 0002. The AI
-  demonstration = assembly into Pages + hardened S3 deploy (local AWS SSO
-  profiles, never web-exposed).
+**The product (as of 2026-07-21):** GitHub Pages site served from `docs/`
+playing a **trilogy** of audiobooks about its own lineage: landry-ui (the
+player's origin) → repo-story (the generator's origin) → next-chapter (their
+assembly). Audio + transcripts committed in-tree — **no AWS, no backend**
+(ADR 0008 retired S3); publishing = owner's `git push`. Generation offline:
+Claude Code prose + Chatterbox TTS on the local GPU, via the pipeline
+vendored at `repo-story/` (scrubbed commit replay of the private original,
+`Replayed-From:` trailers; next-chapter's book generates **last**, narrated
+range pinned — ADR 0009).
+
+Navigation (read in this order in a fresh session):
+- [[../todos/next-chapter|TODOs]] — milestone-shaped, mirrors the plan.
+- `llm-docs/plan.md` — the sequenced build plan (M0 probe → M1 scaffold →
+  M2 Pages → M3 books → M4 polish), owner-reviewed 2026-07-21.
+- `vault/decisions/README.md` — decisions index; 0008/0009 are the current
+  architecture, banners mark superseded ones.
+- `config-history.md` + README "5-minute path" — the reviewer-facing spine.
+
+Standing constraints: dual hygiene scan before every commit (gitleaks +
+private token map in gitignored `llm-docs/logs/vendor-scrub.rules` — that
+file is the ONE home for private identifiers); /browse-verify features;
+recap + prompt export every session; owner pushes.
+
+- `course/` — mirror of the 65-lesson pre-course (section 9 = spec). Never publish.
 - Workflow fixed: vet → wargame → build → browse-verify → vault recap.
