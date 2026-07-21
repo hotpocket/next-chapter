@@ -131,6 +131,8 @@ def main():
         slug = entry["slug"]
         manifest_path = resolve(entry["manifest"])
         book = book_from_manifest(manifest_path, slug)
+        if entry.get("description"):
+            book["description"] = entry["description"]
         copy_book_audio(manifest_path.parent, book, audio_dir, slug)
         prefix_filenames(book, slug)
         books.append(book)

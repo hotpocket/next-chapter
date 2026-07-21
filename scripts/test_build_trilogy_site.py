@@ -65,7 +65,8 @@ def main():
         registry = tmp / "trilogy.json"
         registry.write_text(json.dumps({"title": "Test Trilogy", "books": [
             {"slug": "alpha", "manifest": str(b1 / "m4a" / "chapters_manifest.json"),
-             "transcripts": str(b1 / "site" / "transcripts.json")},
+             "transcripts": str(b1 / "site" / "transcripts.json"),
+             "description": "The player's origin."},
             {"slug": "beta", "manifest": str(b2 / "m4a" / "chapters_manifest.json"),
              "transcripts": str(b2 / "site" / "transcripts.json")},
         ]}))
@@ -85,6 +86,7 @@ def main():
         assert "transcripts.json?v=" in html, "content-hash cache-bust"
         assert (docs / "player.js").exists() and (docs / "sw.js").exists()
         assert "Test Trilogy" in html
+        assert '"description": "The player\'s origin."' in html, "registry description passthrough"
         # Provenance must not pin a commit from an unrelated enclosing repo
         # (the fetched player dir is not itself a landry-ui checkout here).
         prov = (docs / "PROVENANCE.md").read_text()
