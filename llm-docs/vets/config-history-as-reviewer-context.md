@@ -29,9 +29,9 @@ Inline stress pass (proportionate to a strategy doc; full /wargame reserved for 
 
 ## Probes
 
-- [ ] probe: decide submission-repo layout (new public repo vs. this repo with `course/` excluded) → confirms/kills "right home for submission"
+- [x] probe: submission-repo layout → RESOLVED: this repo, public, course/ gitignored (long-standing; trilogy shipped from it 2026-07-21)
 - [ ] probe: add a one-line pointer to config-history.md under the README "AI Tools Used" section when the README is written → confirms "reviewer opens it"
-- [ ] probe: after the first build session, check the prompt log actually shows /wargame, /browse, vault recaps → confirms "prompt history contains the tools"
+- [x] probe: prompt log shows the tools → CONFIRMED 2026-07-21: exports carry /vet, /wargame, /vault, /clear across four sessions; glossary drift-check enforced pre-publish
 
 ## Verdict
 

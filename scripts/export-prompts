@@ -50,6 +50,7 @@ PROMPTS=$(jq -r '
     else empty end
   | select(length > 0)
   | select(startswith("[SYSTEM NOTIFICATION") | not)
+  | select(startswith("<task-notification") | not)
   | select(startswith("<system-reminder") | not)
   | select(startswith("<local-command") | not)
   | select(startswith("Base directory for this skill:") | not)

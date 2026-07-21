@@ -17,6 +17,7 @@ cat > "$TMP/fixture.jsonl" <<'EOF'
 {"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":"tool output not a prompt"}]}}
 {"type":"user","message":{"role":"user","content":[{"type":"text","text":"second real prompt with secret user@example.com inside"}]}}
 {"type":"user","message":{"role":"user","content":"[SYSTEM NOTIFICATION - NOT USER INPUT]\nbackground task event"}}
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"<task-notification>\n<task-id>abc123</task-id>\n<result>agent result body</result>\n</task-notification>"}]}}
 {"type":"user","message":{"role":"user","content":"Base directory for this skill: /home/x/.claude/skills/foo\n\n# foo skill body"}}
 EOF
 
@@ -32,6 +33,7 @@ grep -q "first real prompt" "$OUT"; check "includes string-content prompt" $?
 grep -q "second real prompt" "$OUT"; check "includes array-content prompt" $?
 grep -q "tool output not a prompt" "$OUT"; check "excludes tool_result" $((! $?))
 grep -q "SYSTEM NOTIFICATION" "$OUT"; check "excludes system notifications" $((! $?))
+grep -q "task-notification" "$OUT"; check "excludes task notifications" $((! $?))
 grep -q "foo skill body" "$OUT"; check "excludes skill-file expansions" $((! $?))
 grep -q "user@example.com" "$OUT"; check "redacts email" $((! $?))
 grep -q "REDACTED" "$OUT"; check "redaction marker present" $?

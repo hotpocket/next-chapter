@@ -36,9 +36,9 @@ Inline stress (proportionate; the full /wargame stays reserved for build plans):
 
 ## Probes
 
-- [ ] probe: generate one journey-focused landry-ui chapter with the proven prompt flow and judge consumability + journey-fit → confirms/kills claims 1 and 4
+- [x] probe: generate one journey-focused landry-ui chapter → RESOLVED 2026-07-21: M0.1 Performance War chapter, owner approved ("enjoyable to listen to"); claims 1 and 4 confirmed — full trilogy subsequently generated
 - [x] probe: reconcile Part 2 value statement with the journey frame → RESOLVED 2026-07-20: reviewer IS the listener the value statement describes; claim 3 confirmed, no amendment needed
-- [ ] probe: player/site design includes visible read-along transcript as the skim path → confirms claim 2
+- [x] probe: read-along transcript as the skim path → CONFIRMED 2026-07-21: transcript pane + reading mode + Full/Summary toggle in docs/, /browse-verified; claim 2 confirmed
 
 ## Verdict
 
