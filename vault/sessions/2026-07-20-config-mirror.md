@@ -3,7 +3,7 @@ tags: [session]
 type: session
 concerns: [legibility, process, public-repo]
 audience: []
-summary: "Mirrored the machine-level AI config into the repo at .claude/ (hook scripts, global conduct + settings, skill bodies: vault/wargame/vet/conduct full, gstack slim) so reviewers can read the actual config behind vault notes and prompts. Built scripts/sync-claude-mirror (generated mirror, --check drift gate, 23-assertion test red→green). Push guard and skills now load live from in-tree copies; *.global.* mirrors deliberately inert to avoid double hook registration. Docs cross-referenced (CLAUDE.md, README, config-history, wargame addendum, ADR 0007); hygiene-scanned; committed 73feb54 (unpushed)."
+summary: "Mirrored the machine-level AI config into the repo at .claude/ (hook scripts, global conduct + settings, skill bodies: vault/wargame/vet/conduct full, gstack slim) so reviewers can read the actual config behind vault notes and prompts. Built scripts/sync-claude-mirror (generated mirror, --check drift gate, 23-assertion test red→green). Push guard and skills now load live from in-tree copies; *.global.* mirrors deliberately inert to avoid double hook registration. Docs cross-referenced (CLAUDE.md, README, config-history, wargame addendum, ADR 0007); hygiene-scanned; committed 786a840 (unpushed)."
 created: 2026-07-20
 status: completed
 projects: [next-chapter]
@@ -21,7 +21,7 @@ Verbatim prompts for this session: [[2026-07-20-config-mirror-prompts]].
 3. Live in-tree: `.claude/settings.json` wires the push guard from the in-tree copy; `.claude/skills/` load as project skills.
 4. `.claude/README.md`: machine-path → repo-path cross-reference table — the key for reading `~/bin` / `~/.claude` references in vault notes and prompt exports.
 5. Docs: CLAUDE.md (annotated refs + mirror/drift-check rule), README trail bullet, config-history "In-tree mirror" paragraph, addendum on [[../../docs/reports/2026-07-20_public-repo-and-legibility|the public-repo wargame report]] closing its T2 dependency-inventory gap, [[../decisions/0007-repo-local-claude-mirror|ADR 0007]], `.gitignore` +`.claude/settings.local.json`.
-6. Hygiene: gitleaks + identity/path grep on mirror and staged diff — clean (only upstream placeholder examples). Committed `73feb54` (unpushed).
+6. Hygiene: gitleaks + identity/path grep on mirror and staged diff — clean (only upstream placeholder examples). Committed `786a840` (unpushed).
 
 ## Decisions
 

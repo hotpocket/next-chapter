@@ -97,6 +97,14 @@ committing anything that touches config, run `scripts/sync-claude-mirror
   - machine internals: absolute `/home/<user>/…` paths, hostnames, IPs,
     port/token pairs from local daemons (e.g. `.gstack/browse.json`)
   On any hit: do NOT commit; show the finding and let the user decide.
+- **Private token map scan (non-regex identifiers gitleaks can't see).** Also
+  grep the staged diff — and every prompt export before publishing — against
+  the BANNED list in gitignored `docs/logs/vendor-scrub.rules` (family names,
+  infra IDs, private repo/project names). That file is the one home for such
+  tokens; when a new private identifier is discovered, add it there, never in
+  a tracked file. Lesson (2026-07-21): agent output quoted inside prompt
+  exports leaked infra IDs and family names past gitleaks; caught only by a
+  token scan, fixed by a full-history rewrite while still private.
 - **Never tracked, never force-added:** `course/` (paywalled curriculum),
   `.gstack/` (local daemon state incl. auth tokens), `vault/.obsidian/` UI state,
   `docs/logs/`. These are gitignored — treat the ignore as a hard rule, not a hint.
