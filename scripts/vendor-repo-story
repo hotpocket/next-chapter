@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# vendor-repo-story — replay repo-story's commit history into this repo as
+# repo-story/, scrubbed of private/unnecessary content, per the 2026-07-21
+# flip audit (llm-docs/logs — gitignored). The original repo stays private;
+# this replayed history is the public cross-reference the audiobook narrates.
+#
+# What each replayed commit gets:
+#   - tracked snapshot of the original commit (git archive — never the 2 GB
+#     of gitignored outputs/voices)
+#   - EXCLUDED files removed (AWS deploy path, un-deployed infra blueprint,
+#     brandonlandry.com manifest script, machine-setup session note)
+#   - text scrubs (family domain redacted, machine paths generalized,
+#     private-project ignore line dropped)
+#   - original message (two AWS-era messages overridden) + original author
+#     date + "Replayed-From: repo-story@<sha>" trailer
+#   Commits whose content is entirely excluded are skipped (logged).
+#
+# Safety: replays onto CURRENT branch — run it on a temp branch, then run
+#   scripts/vendor-repo-story verify   (per-commit banned-token scan)
+# and only then ff-merge into main.
+#
+# Durable: source repo overridable via REPO_STORY_SRC; dest derived from
+# script location.
+set -euo pipefail
+
+repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+src="${REPO_STORY_SRC:-$HOME/git/repo-story}"
+folder="repo-story"
+mode="${1:-replay}"
+
+EXCLUDE=(
+  "deploy.sh"
+  "infra"
+  "scripts/generate-manifest.sh"
+  "vault/sessions/2026-06-03 - dictation toasts + setup.sh doctor.md"
+)
+
+# The redaction map (BANNED regex + SCRUB_SED array) is PRIVATE — it names the
+# identifiers being removed. It lives in gitignored docs/logs/vendor-scrub.rules
+# (override: VENDOR_SCRUB_RULES) and never gets committed.
+rules="${VENDOR_SCRUB_RULES:-$repo/docs/logs/vendor-scrub.rules}"
+[[ -f "$rules" ]] || { echo "scrub rules not found: $rules (private, gitignored — required)" >&2; exit 1; }
+# shellcheck source=/dev/null
+source "$rules"
+[[ -n "${BANNED:-}" && "${#SCRUB_SED[@]}" -gt 0 ]] || { echo "rules file must define BANNED and SCRUB_SED" >&2; exit 1; }
+
+declare -A MSG_OVERRIDE=(
+  [a39b5e8]="Add static site player"
+  [a0af666]="Add transcript generation and landry-ui integration"
+)
+
+scrub() { # scrub <dir>
+  local d="$1" f
+  for e in "${EXCLUDE[@]}"; do rm -rf "${d:?}/$e"; done
+  find "$d" -type f | while read -r f; do
+    sed -i -E "${SCRUB_SED[@]}" "$f"
+  done
+}
+
+case "$mode" in
+replay)
+  [[ -d "$src/.git" ]] || { echo "source repo not found: $src" >&2; exit 1; }
+  branch="$(git -C "$repo" branch --show-current)"
+  [[ "$branch" != "main" ]] || { echo "refusing to replay directly on main — use a temp branch" >&2; exit 1; }
+  git -C "$src" log --reverse --format='%h' | while read -r sha; do
+    stage="$(mktemp -d)"
+    git -C "$src" archive "$sha" | tar -x -C "$stage"
+    scrub "$stage"
+    mkdir -p "$repo/$folder"
+    rsync -a --delete "$stage/" "$repo/$folder/"
+    rm -rf "$stage"
+    git -C "$repo" add -A "$folder"
+    if git -C "$repo" diff --cached --quiet; then
+      echo "SKIP  $sha (fully excluded)"
+      continue
+    fi
+    msg="${MSG_OVERRIDE[$sha]:-$(git -C "$src" log -1 --format=%s "$sha")}"
+    GIT_AUTHOR_DATE="$(git -C "$src" log -1 --format=%aD "$sha")" \
+      git -C "$repo" commit -q -m "repo-story: $msg" -m "Replayed-From: repo-story@$sha (scrubbed vendor replay)"
+    echo "OK    $sha → $(git -C "$repo" rev-parse --short HEAD)"
+  done
+  ;;
+verify)
+  fail=0
+  for c in $(git -C "$repo" log --format=%h -- "$folder"); do
+    hits="$(git -C "$repo" grep -iE "$BANNED" "$c" -- "$folder" 2>/dev/null || true)"
+    if [[ -n "$hits" ]]; then echo "BANNED TOKENS in $c:"; echo "$hits"; fail=1; fi
+  done
+  for e in "${EXCLUDE[@]}"; do
+    for c in $(git -C "$repo" log --format=%h -- "$folder"); do
+      if git -C "$repo" cat-file -e "$c:$folder/$e" 2>/dev/null; then
+        echo "EXCLUDED FILE present in $c: $e"; fail=1
+      fi
+    done
+  done
+  [[ "$fail" -eq 0 ]] && echo "VERIFY PASSED: no banned tokens, no excluded files, in any replayed commit"
+  exit "$fail"
+  ;;
+*) echo "usage: vendor-repo-story [replay|verify]" >&2; exit 2 ;;
+esac
