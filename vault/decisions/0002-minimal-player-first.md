@@ -9,6 +9,8 @@ concerns: [admissions-project, frontend]
 
 # ADR 0002 — Minimal player built fresh; landry-ui player as stretch
 
+> **SUPERSEDED by [[0006-reuse-landry-ui-player|ADR 0006]]** (2026-07-20): the landry-ui player is reused, not rebuilt. Kept for the record.
+
 ## Context
 landry-ui ships a mature 1,061-line vanilla audiobook player (PWA, transcript sync, resume). Importing it day one would demo well but read poorly against the rubric: incremental commits, one-feature-at-a-time, "code you can explain."
 

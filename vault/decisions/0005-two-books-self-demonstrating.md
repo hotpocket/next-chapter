@@ -9,6 +9,8 @@ concerns: [admissions-project, content, scope]
 
 # ADR 0005 — V1 content: audiobooks for landry-ui and repo-story
 
+> **EXTENDED by [[0009-three-books-trilogy|ADR 0009]]** (2026-07-21): a third book — next-chapter itself — joins the two decided here.
+
 ## Context
 The project's purpose (owner, 2026-07-20): the GitHub Pages site is the
 product — the interface to audiobooks *about repositories*. For admissions, the

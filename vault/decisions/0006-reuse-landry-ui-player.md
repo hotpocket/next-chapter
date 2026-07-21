@@ -9,6 +9,8 @@ concerns: [admissions-project, frontend, deploy, security]
 
 # ADR 0006 — Reuse the landry-ui player; the demonstration is the assembly
 
+> **AMENDED by [[0008-audio-in-repo-pages-only|ADR 0008]]** (2026-07-21): the hardened-S3-deploy framing below is retired; the player-reuse decision stands.
+
 Supersedes ADR 0002.
 
 ## Context

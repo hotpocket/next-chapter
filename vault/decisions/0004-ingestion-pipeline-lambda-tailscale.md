@@ -9,6 +9,8 @@ concerns: [architecture, security, aws, scope]
 
 # ADR 0004 — On-demand ingestion pipeline (V2 — deferred)
 
+> **Deferred (V2), and note (2026-07-21):** this design presumed the S3 architecture retired by [[0008-audio-in-repo-pages-only|ADR 0008]] — reviving it means redesign, not resumption.
+
 **Scope decision (2026-07-20):** V1 (the admissions submission) is rendering/
 reading/playing of a pre-generated book — generation on the local machine,
 artifacts uploaded to S3, UI on Pages (ADRs 0001–0003). Everything below is V2,

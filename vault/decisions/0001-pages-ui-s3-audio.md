@@ -2,12 +2,14 @@
 tags: [adr]
 type: decision
 summary: "UI + JSON on GitHub Pages, audio on dedicated public-read S3 bucket; no request-time backend for playback"
-status: accepted
+status: superseded
 created: 2026-07-20
 concerns: [architecture, security, aws]
 ---
 
 # ADR 0001 — Frontend on Pages, audio on S3, no playback backend
+
+> **SUPERSEDED by [[0008-audio-in-repo-pages-only|ADR 0008]]** (2026-07-21): audio moved in-repo, S3 retired. The Pages-for-UI half carries forward. Kept for the record.
 
 ## Context
 Course requires the UI on GitHub Pages (vanilla HTML/CSS/JS). repo-story analysis confirmed every listener-facing artifact (M4A chapters, manifest, transcripts, player) is pre-generated static; nothing runs at request time. Pages could technically host the audio too, but S3 keeps large binaries out of git and is the justified AWS surface.
