@@ -3,11 +3,20 @@
 Turn a GitHub repository into a narrated audiobook: explore its history and
 core concepts, write a documentary arc, render it to audio, and play it in the
 browser. This repo is my Next Chapter admissions project: the GitHub Pages site
-here will serve audiobooks about the two repos that power it —
-[landry-ui](https://github.com/hotpocket/landry-ui) (the player) and repo-story
-(the generation pipeline).
+here serves a trilogy of audiobooks about its own lineage —
+[landry-ui](https://github.com/hotpocket/landry-ui) (the player's origin),
+[repo-story](repo-story/) (the generator's origin, vendored here), and
+next-chapter itself (their assembly into this site).
 
 **Status:** foundation phase — architecture decided, build not yet started.
+
+## The 5-minute path (for the reviewer)
+
+1. This README's [V1 shape](#v1-shape-decided--see-the-decisions-index) — what ships and why.
+2. [`config-history.md`](config-history.md) — the AI workflow, and the glossary for reading the prompts.
+3. [Decisions index](vault/decisions/README.md) — every architecture call, active vs superseded, one line each.
+4. One [session recap + its verbatim prompts](#sessions--prompts) — how a working session actually runs.
+5. Press play on the live site (link lands here at M2).
 
 ## How to read this repo (the trail)
 
@@ -17,8 +26,8 @@ here will serve audiobooks about the two repos that power it —
 - [`.claude/`](.claude/README.md) — the AI config itself, mirrored in-tree:
   hook code, global conduct rules, and the bodies of every skill invoked in
   the prompt history, with a machine-path → repo-path cross-reference.
-- [`vault/decisions/`](vault/decisions/) — ADRs: every architecture decision,
-  its sources, and what was verified before deciding.
+- [Decisions index](vault/decisions/README.md) — ADRs: every architecture
+  decision, its sources, active vs superseded at a glance.
 - [`vault/sessions/`](vault/sessions/) — session recaps, each paired with a
   `*-prompts.md` file of the verbatim prompts from that session (index below).
 - [`llm-docs/reports/`](llm-docs/reports/) — kept deliverables: security wargames and
@@ -47,7 +56,7 @@ command glossary that makes the prompts readable):
 
 In-repo, for navigating:
 - [Session log](vault/sessions/Session%20Log.md) — one-line index of every session.
-- [ADRs 0001–0007](vault/decisions/) — architecture + process decisions.
+- [Decisions index](vault/decisions/README.md) — all ADRs: active vs superseded, one line each.
 - [`.claude/README.md`](.claude/README.md) — the AI config mirror and its
   machine-path → repo-path cross-reference.
 - [Reports](llm-docs/reports/) — security wargames and audits;
@@ -61,7 +70,7 @@ External:
 - gstack — the open-source browser-driving skill suite (`/browse`); entry
   points mirrored at [`.claude/skills/gstack/`](.claude/skills/gstack/).
 
-## V1 shape (decided — see ADRs in [`vault/decisions/`](vault/decisions/))
+## V1 shape (decided — see the [decisions index](vault/decisions/README.md))
 
 Everything ships from this repo: a static library + player page (landry-ui,
 vendored at a pinned hash) on GitHub Pages, with per-chapter M4A audio and
@@ -70,6 +79,6 @@ deploy scripts, no request-time backend. Publishing is a `git push`.
 Generation runs offline on my machine (Claude Code prose + Chatterbox TTS)
 using the [`repo-story/`](repo-story/) pipeline, vendored into this repo as a
 scrubbed replay of its original commit history — it is both the generator and
-the subject of one of the two audiobooks (the other narrates landry-ui). An
-ADR recording the S3 retirement (superseding 0001/0006's deploy framing) is
-queued for the next planning pass.
+a book subject. Three books, generated in forced order (ADR 0009): landry-ui,
+repo-story, then next-chapter last with its narrated range pinned — a book
+cannot contain its own generation. S3/AWS fully retired (ADR 0008).

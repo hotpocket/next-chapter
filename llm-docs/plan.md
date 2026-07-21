@@ -1,74 +1,76 @@
 # Build plan — next-chapter V1
 
-Sequenced build plan, synthesized from the [before-AI rough draft](2026-07-20_project-rough-draft.md),
-ADRs 0001–0006, and the [two-books vet](../vault/vets/two-books-journey.md).
-This is the source for the README's required "Project Plan" section.
-Status: DRAFT (pending owner review, then /wargame).
+Sequenced build plan. Sources: the [before-AI rough draft](2026-07-20_project-rough-draft.md),
+the [decisions index](../vault/decisions/README.md) (ADRs 0003, 0005–0009),
+the [two-books vet](../vault/vets/two-books-journey.md), and the build-plan
+wargame (red-team record promoted into the moves below). This feeds the
+README's required "Project Plan" section.
+Status: owner-reviewed 2026-07-21 (supersedes the S3-era draft; wargame
+amendments + owner decisions applied). Scheduling/deadlines are the owner's
+concern and deliberately absent here.
 
-**Goal.** A GitHub Pages site playing two audiobooks — landry-ui and
-repo-story — that narrate this project's own sources: the reviewer listens
-(or skim-reads the transcript) to the backstory of the code powering the page
-they're using. Player + JSON on Pages; audio on public-read S3; generation
-offline on my GPU; zero request-time backend.
+**Goal.** A GitHub Pages site — served from `docs/` of this repo — playing a
+trilogy of audiobooks that narrate the site's own lineage: landry-ui (the
+player), repo-story (the generator, vendored at `repo-story/`), next-chapter
+(the assembly). Audio + transcripts committed in-tree; no AWS, no backend;
+publishing is the owner's `git push`.
 
 ## Milestones
 
-### M0 — Gates (before any site code)
-| # | Item | Done means | Effort |
-|---|------|-----------|--------|
-| 0.1 | One-chapter landry-ui probe: generate one journey-focused chapter with the proven repo-story prompt flow | Owner judges it consumable + journey-fit → confirms/kills two-book shape (vet claims 1, 4). Kill → re-scope to single repo-story book | GPU session, ~1–2 h |
-| 0.2 | repo-story visibility decision | scrub-then-public vs private + SOURCES.md trail decided, recorded (extends ADR 0005) | decision, ~15 min |
-| 0.3 | /wargame this plan | plan survives or is amended; doc saved to docs/reports/ | ~30 min |
+### M0 — Content probe (independent of M1; only M3 gates on it)
+| # | Item | Done means | Notes |
+|---|------|-----------|-------|
+| 0.1 | One landry-ui chapter via the repo-story pipeline, prompts as-is | Owner runs the regenerate-and-tweak loop and ends it when satisfied | Doubles as GPU-environment smoke; kill of journey frame → re-scope per vet |
 
-### M1 — Site scaffold (static, stub content)
-| # | Item | Done means | Effort |
-|---|------|-----------|--------|
-| 1.1 | Vendor landry-ui player at pinned hash + provenance note (ADR 0006) | player files in-tree, hash + source recorded | ~30 min |
-| 1.2 | Pages layout: library page (two books) + player page + manifest schema | site serves locally; stub book (probe chapter audio + manifest) plays end-to-end | ~half day |
-| 1.3 | Read-along transcript visible in player — the skim path (vet claim 2, design requirement) | transcript renders alongside audio, usable without pressing play | in 1.2 |
-| 1.4 | /browse verification | screenshots: library → book → chapter plays, transcript scrolls | ~15 min |
+### M1 — Site scaffold (stub content; may start immediately)
+| # | Item | Done means | Notes |
+|---|------|-----------|-------|
+| 1.1 | Manifest-format recon: diff repo-story output JSON vs vendored player expectations | Mismatches listed or "compatible" recorded | First build task (wargame RECON) |
+| 1.2 | Vendor landry-ui player into `docs/` at pinned hash + provenance note | Player files in-tree, hash + source recorded | ADR 0006 |
+| 1.3 | Library page (3 books) + player page + manifests in `docs/` | Stub book (any short M4A + hand-written manifest) plays end-to-end locally | Stub ≠ probe chapter (decoupled) |
+| 1.4 | Read-along transcript visible — the skim path | Transcript readable without pressing play | Vet claim 2; player already supports it |
+| 1.5 | /browse verification | Screenshots: library → book → chapter plays + seeks, transcript scrolls | Audio same-origin — SW works as designed (ADR 0008) |
 
-### M2 — Deploy rail (public URL live)
-| # | Item | Done means | Effort |
-|---|------|-----------|--------|
-| 2.1 | S3 bucket per ADR 0001 posture (GetObject-only prefix, no ListBucket, ACL blocks on) | policy applied, verified from unauthenticated curl | ~1 h |
-| 2.2 | Deploy script: audio→S3 sync via local AWS SSO profile, fail-loud credential hygiene; **owner runs it** | stub audio served from S3, site on Pages plays it at the public URL | ~1–2 h |
-| 2.3 | Pages deployment of the site itself | live demo link exists (README requirement) | ~30 min |
+### M2 — Pages live
+| # | Item | Done means | Notes |
+|---|------|-----------|-------|
+| 2.1 | Enable Pages: `main` + `/docs` (owner clicks repo settings) | Stub book plays at the public URL; /browse re-verify | Repo public flip is the owner's gate |
+| 2.2 | README gains the live-demo link | Link resolves | Part-8 requirement |
 
-### M3 — Content (start early; runs in parallel with M1/M2 after 0.1)
-| # | Item | Done means | Effort |
-|---|------|-----------|--------|
-| 3.1 | Generation run: landry-ui book (probe chapter warms this) | full book: M4A chapters + manifest + transcripts, resumable checkpoints kept | GPU hours |
-| 3.2 | Generation run: repo-story book | same | GPU hours |
-| 3.3 | SOURCES.md: pinned commit hashes + per-book provenance | every narrated claim traceable to a source commit/note | ~1 h |
-| 3.4 | Swap stub → real books; /browse re-verify both | both books play at the live URL | ~30 min |
+### M3 — Books (order forced by ADR 0009; starts after 0.1)
+| # | Item | Done means | Notes |
+|---|------|-----------|-------|
+| 3.1 | landry-ui book | M4As + manifest + transcripts in `docs/`, every chapter <50 MB, plays at live URL | Probe chapter warms it |
+| 3.2 | repo-story book | same | Narrates the vendored replayed history |
+| 3.3 | next-chapter book — **last** | same + provenance pins narrated range ("through commit X") | Cannot contain its own generation |
+| 3.4 | SOURCES.md: pinned hashes + per-book provenance records | Every narrated claim traceable | repo-story cites `Replayed-From` trailers |
+| 3.5 | Owner listens to ≥1 full chapter per book before ship | Recorded in recap | Wargame elephant: self-referential QA |
 
 ### M4 — Submission polish
-| # | Item | Done means | Effort |
-|---|------|-----------|--------|
-| 4.1 | README required sections (Part 8): problem, value, plan, features, technologies, AI tools (→ config-history.md), running, live demo link | every Part-8 heading present and true | ~1 h |
-| 4.2 | prompt-history.md: curated index into vault/sessions/*-prompts.md | reviewer-navigable story of the build (Part 9) | ~1–2 h |
-| 4.3 | Part-11 checklist pass + final hygiene scan + commit tidy-up (owner squashes) | every checklist box verified, not assumed | ~1 h |
+| # | Item | Done means |
+|---|------|-----------|
+| 4.1 | README Part-8 sections: problem, value, plan, features, technologies, AI tools (→ config-history.md), running, live link | Every heading present and true |
+| 4.2 | prompt-history.md — curated index into vault/sessions/*-prompts.md | Reviewer-navigable build story (Part 9) |
+| 4.3 | Part-11 checklist pass + hygiene scans (gitleaks + private token map) + commit tidy (owner squashes/pushes) | Every box verified, not assumed |
 
 ## Feature cut
 
-- **Required (delivers the value):** library page, player with chapter nav,
-  read-along transcript, two complete books, live public URL.
-- **Stretch (only if time remains, per rough draft):** playback
-  speed/position memory, per-chapter deep links, audio QA passes
-  (pronunciation/cadence), V2 ingestion (ADR 0004 — deferred, stays deferred).
+- **Required:** library page (3 books), player + chapter nav, read-along
+  transcripts, complete trilogy, live Pages URL.
+- **Stretch only:** playback position memory, per-chapter deep links, audio
+  QA passes, V2 ingestion (ADR 0004 — stays deferred).
 
-## Standing rules during build
+## Standing rules
 
 - Every feature /browse-verified before called done; recap + prompt export
-  every session; hygiene scan before every commit; owner runs pushes and
-  deploys.
-- Generation (M3) is the schedule risk — start 3.1 immediately after 0.1
-  passes, never leave GPU runs for deadline week.
+  every session; dual hygiene scan (gitleaks + private token map) before
+  every commit; owner runs pushes; publishing = push.
+- Chapter size check (<50 MB) inside generation done-means — never brick a
+  push (ADR 0008).
 
 ## Course-requirement map
 
-Working app + HTML/CSS/JS → M1–M2 · public repo → done · Pages deployment +
-live link → M2 · README sections → M4.1 · prompt history → M4.2 (raw exports
-already publish per-session) · meaningful commits → ongoing · value
-demonstrated → the two books themselves (M3).
+Working app + HTML/CSS/JS → M1 · public repo + Pages + live link → M2 ·
+README sections → M4.1 · prompt history → M4.2 (raw exports publish
+per-session) · value demonstrated → the trilogy (M3) · code you can explain →
+the books themselves + the decisions index.
