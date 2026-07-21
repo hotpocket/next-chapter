@@ -1,0 +1,160 @@
+#!/usr/bin/env python3
+"""build-trilogy-site — assemble docs/ (the GitHub Pages site) from per-book
+repo-story run folders.
+
+Reads a registry (default scripts/trilogy.json):
+    {"title": "...", "books": [{"slug", "manifest", "transcripts"}, ...]}
+paths relative to the repo root (absolute also accepted).
+
+For each book: converts its chapters_manifest.json to the player's book dict
+(reusing repo-story's build_site.book_from_manifest — one source of truth),
+prefixes audio filenames with <slug>/, copies chapter + summary M4As into
+docs/audio/<slug>/, and merges the per-book transcripts into one
+docs/transcripts.json referenced as transcripts.json?v=<sha8 content hash>
+(cache-busting keys on content — landry-ui's own lesson).
+
+The player component is copied from --player-src (default repo-story/player,
+the luinst-fetched copy); provenance (source + commit if resolvable) is
+recorded in docs/PROVENANCE.md. Publishing is the owner's git push.
+"""
+
+import argparse
+import hashlib
+import json
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "repo-story"))
+from build_site import book_from_manifest  # noqa: E402
+
+PLAYER_FILES = ["player.js", "player.css", "feedback.js", "sw.js", "manifest.webmanifest"]
+
+
+def resolve(p: str) -> Path:
+    path = Path(p)
+    return path if path.is_absolute() else REPO_ROOT / path
+
+
+def copy_book_audio(manifest_dir: Path, book: dict, audio_dir: Path, slug: str):
+    dest = audio_dir / slug
+    dest.mkdir(parents=True, exist_ok=True)
+    files = []
+    for ch in book["chapters"]:
+        files.append(ch["filename"])
+        if ch.get("summary"):
+            files.append(ch["summary"]["filename"])
+    for f in files:
+        src = manifest_dir / f
+        d = dest / f
+        if not d.exists() or d.stat().st_size != src.stat().st_size:
+            shutil.copy2(src, d)
+    for stale in dest.iterdir():
+        if stale.name not in files:
+            print(f"  removing stale {slug}/{stale.name}")
+            stale.unlink()
+
+
+def prefix_filenames(book: dict, slug: str):
+    for ch in book["chapters"]:
+        ch["filename"] = f"{slug}/{ch['filename']}"
+        if ch.get("summary"):
+            ch["summary"]["filename"] = f"{slug}/{ch['summary']['filename']}"
+
+
+def player_provenance(player_src: Path) -> str:
+    try:
+        head = subprocess.run(
+            ["git", "-C", str(player_src), "rev-parse", "HEAD"],
+            capture_output=True, text=True, check=True).stdout.strip()
+        return f"{player_src} @ {head}"
+    except Exception:
+        return str(player_src)
+
+
+def generate_html(title: str, books: list, transcript_url: str) -> str:
+    books_json = json.dumps(books, indent=2)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title}</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="player.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="feedback.js"></script>
+<script src="player.js"></script>
+<script>
+RepoStoryPlayer.init({{
+    container: document.getElementById('app'),
+    books: {books_json},
+    audioBaseUrl: 'audio/',
+    transcriptUrl: {json.dumps(transcript_url)},
+    title: {json.dumps(title)}
+}});
+</script>
+</body>
+</html>"""
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Assemble the trilogy Pages site into docs/")
+    parser.add_argument("--registry", default=str(REPO_ROOT / "scripts" / "trilogy.json"))
+    parser.add_argument("--docs-dir", default=str(REPO_ROOT / "docs"))
+    parser.add_argument("--player-src", default=str(REPO_ROOT / "repo-story" / "player"))
+    args = parser.parse_args()
+
+    registry = json.loads(Path(args.registry).read_text())
+    docs = Path(args.docs_dir)
+    audio_dir = docs / "audio"
+    docs.mkdir(parents=True, exist_ok=True)
+
+    books = []
+    merged_transcripts = {"books": []}
+    for entry in registry["books"]:
+        slug = entry["slug"]
+        manifest_path = resolve(entry["manifest"])
+        book = book_from_manifest(manifest_path, slug)
+        copy_book_audio(manifest_path.parent, book, audio_dir, slug)
+        prefix_filenames(book, slug)
+        books.append(book)
+        tr = json.loads(resolve(entry["transcripts"]).read_text())
+        for tb in tr["books"]:
+            if tb["slug"] != slug:
+                print(f"  warn: transcripts slug {tb['slug']!r} != registry slug {slug!r}")
+            merged_transcripts["books"].append(tb)
+        summaries = sum(1 for ch in book["chapters"] if ch.get("summary"))
+        print(f"Book {slug}: {len(book['chapters'])} chapters "
+              f"({summaries} with summaries), {book['duration']:.0f}s")
+
+    tr_bytes = json.dumps(merged_transcripts, indent=2).encode()
+    (docs / "transcripts.json").write_bytes(tr_bytes)
+    tr_url = "transcripts.json?v=" + hashlib.sha256(tr_bytes).hexdigest()[:8]
+
+    player_src = Path(args.player_src)
+    for f in PLAYER_FILES:
+        src = player_src / f
+        if src.exists():
+            shutil.copy2(src, docs / f)
+        else:
+            print(f"  warn: {src} missing")
+    icons = player_src / "icons"
+    if icons.exists():
+        shutil.copytree(icons, docs / "icons", dirs_exist_ok=True)
+    (docs / "PROVENANCE.md").write_text(
+        "# Site provenance\n\n"
+        f"Player component: landry-ui `audiobook/vanilla`, copied from {player_provenance(player_src)}\n"
+        f"Audio + transcripts: repo-story pipeline run folders (see scripts/trilogy.json)\n")
+
+    (docs / "index.html").write_text(generate_html(registry.get("title", "Audiobooks"), books, tr_url))
+    total = sum(b["duration"] for b in books)
+    print(f"\nSite assembled at {docs}/ — {len(books)} books, {total/3600:.1f}h total")
+
+
+if __name__ == "__main__":
+    main()

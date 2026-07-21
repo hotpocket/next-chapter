@@ -65,13 +65,13 @@ python serve.py
 
 The audio script prints progress continuously and supports resume — if interrupted, re-run and it skips already-generated chunks.
 
-### 4. Deploy
+### 4. Publish
 
-```bash
-./deploy.sh
-```
-
-Syncs HTML, player files, transcripts, and audio to S3 + CloudFront.
+Copy the book's artifacts (per-chapter M4As, `chapters_manifest.json`,
+`transcripts.json`) into the parent next-chapter repo's Pages site and
+register the book in its library manifest; the owner publishes with
+`git push`. (The pre-vendoring `deploy.sh` → S3/CloudFront path was retired
+and excluded from the replay — see the banner above.)
 
 ## Requirements
 
@@ -93,7 +93,6 @@ repo-story/
 ├── build_audio.py       # Text sections → chaptered M4B audiobook
 ├── build_transcripts.py # Chunk WAVs + text → transcripts.json
 ├── build_site.py        # M4B + player → static site
-├── deploy.sh            # Deploy to S3 + CloudFront
 ├── serve.py             # Local dev server with Range support
 ├── luinst               # Fetch landry-ui components
 ├── player/              # Fetched from landry-ui (gitignored)
