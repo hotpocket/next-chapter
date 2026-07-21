@@ -63,7 +63,9 @@ def main():
             (player / f).write_text(f"/* {f} */")
         docs = tmp / "docs"
         registry = tmp / "trilogy.json"
-        registry.write_text(json.dumps({"title": "Test Trilogy", "books": [
+        fav = tmp / "fav.png"
+        fav.write_bytes(b"\x89PNG-fake")
+        registry.write_text(json.dumps({"title": "Test Trilogy", "favicon": str(fav), "books": [
             {"slug": "alpha", "manifest": str(b1 / "m4a" / "chapters_manifest.json"),
              "transcripts": str(b1 / "site" / "transcripts.json"),
              "description": "The player's origin."},
@@ -86,7 +88,9 @@ def main():
         assert "transcripts.json?v=" in html, "content-hash cache-bust"
         assert (docs / "player.js").exists() and (docs / "sw.js").exists()
         assert "Test Trilogy" in html
-        assert 'rel="icon"' in html, "favicon link missing"
+        assert 'rel="icon"' in html and 'href="favicon.png"' in html, "registry favicon not linked"
+        assert (docs / "favicon.png").read_bytes() == b"\x89PNG-fake", "favicon not copied"
+        assert "icon-192" not in html, "player icon link should be replaced by registry favicon"
         assert '"description": "The player\'s origin."' in html, "registry description passthrough"
         # Provenance must not pin a commit from an unrelated enclosing repo
         # (the fetched player dir is not itself a landry-ui checkout here).

@@ -19,5 +19,6 @@
       "transcripts": "repo-story/next-chapter/output/site/transcripts.json",
       "description": "The assembly: how this site was decided, scrubbed, and built in public \u2014 narrated through a pinned commit it cannot see past."
     }
-  ]
+  ],
+  "favicon": "assets/favicon.png"
 }

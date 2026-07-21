@@ -87,7 +87,8 @@ def player_provenance(player_src: Path) -> str:
     return "luinst-fetched copy of landry-ui audiobook/vanilla (pin = the landry-ui commit current at fetch time)"
 
 
-def generate_html(title: str, books: list, transcript_url: str) -> str:
+def generate_html(title: str, books: list, transcript_url: str,
+                  favicon: str = "icons/icon-192.png") -> str:
     books_json = json.dumps(books, indent=2)
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -96,7 +97,7 @@ def generate_html(title: str, books: list, transcript_url: str) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" href="{favicon}">
 <link rel="stylesheet" href="player.css">
 </head>
 <body>
@@ -167,7 +168,11 @@ def main():
         f"Player component: landry-ui `audiobook/vanilla`, copied from {player_provenance(player_src)}\n"
         f"Audio + transcripts: repo-story pipeline run folders (see scripts/trilogy.json)\n")
 
-    (docs / "index.html").write_text(generate_html(registry.get("title", "Audiobooks"), books, tr_url))
+    favicon = "icons/icon-192.png"
+    if registry.get("favicon"):
+        shutil.copy2(resolve(registry["favicon"]), docs / "favicon.png")
+        favicon = "favicon.png"
+    (docs / "index.html").write_text(generate_html(registry.get("title", "Audiobooks"), books, tr_url, favicon))
     total = sum(b["duration"] for b in books)
     print(f"\nSite assembled at {docs}/ — {len(books)} books, {total/3600:.1f}h total")
 
