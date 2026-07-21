@@ -1,7 +1,7 @@
 ---
 tags: [prompts]
 type: prompts
-summary: "Verbatim user prompts for session [[2026-07-21-trilogy-built]] (26 prompts)"
+summary: "Verbatim user prompts for session [[2026-07-21-trilogy-built]] (30 prompts)"
 created: 2026-07-21
 ---
 
@@ -42,12 +42,12 @@ no, no server, a local only build. a index file i can point my browser at. no ru
 
 ## Prompt 8
 
-<bash-stdout></bash-stdout><bash-stderr>gio: file:///home/brandon/git/next-chapter/repo-story/repo-story/landry-ui/book/build/site/index.html: Error when getting information for file “/home/brandon/git/next-chapter/repo-story/repo-story/landry-ui/book/build/site/index.html”: No such file or directory
+<bash-stdout></bash-stdout><bash-stderr>gio: file://~/git/next-chapter/repo-story/repo-story/landry-ui/book/build/site/index.html: Error when getting information for file “~/git/next-chapter/repo-story/repo-story/landry-ui/book/build/site/index.html”: No such file or directory
 </bash-stderr>
 
 ## Prompt 9
 
-<bash-input>xdg-open /home/brandon/git/next-chapter/repo-story/landry-ui/book/build/site/index.html</bash-input>
+<bash-input>xdg-open ~/git/next-chapter/repo-story/landry-ui/book/build/site/index.html</bash-input>
 
 ## Prompt 10
 
@@ -59,7 +59,7 @@ I like how this tells a story, and it is enjoyable to listen to, but I fear the 
 
 ## Prompt 12
 
-[Image: source: /home/brandon/.claude/image-cache/61b7f744-f956-4e39-8d66-95ce38b2e80e/1.png]
+[Image: source: ~/.claude/image-cache/61b7f744-f956-4e39-8d66-95ce38b2e80e/1.png]
 
 ## Prompt 13
 
@@ -67,7 +67,7 @@ I like how this tells a story, and it is enjoyable to listen to, but I fear the 
 
 ## Prompt 14
 
-[Image: source: /home/brandon/.claude/image-cache/61b7f744-f956-4e39-8d66-95ce38b2e80e/1.png]
+[Image: source: ~/.claude/image-cache/61b7f744-f956-4e39-8d66-95ce38b2e80e/1.png]
 
 ## Prompt 15
 
@@ -79,7 +79,7 @@ this is good. move the full/summary buttons to appear after the word TRANSCRIPT 
 
 ## Prompt 17
 
-[Image: source: /home/brandon/.claude/image-cache/61b7f744-f956-4e39-8d66-95ce38b2e80e/2.png]
+[Image: source: ~/.claude/image-cache/61b7f744-f956-4e39-8d66-95ce38b2e80e/2.png]
 
 ## Prompt 18
 
@@ -118,3 +118,19 @@ this looks like it will do the trick. are all of our file sizes and total size f
 ## Prompt 26
 
 write it w/ the prompts and checks we have codified in our rules here.
+
+## Prompt 27
+
+what is M4.1 README Part-8 sections ? and did you clean up the todos in the summary that writing the summary squashed? also let's review the remaining todos, there shouldn't be any at this point, and amend the commit
+
+## Prompt 28
+
+do M4.1 and M4.2 now, yes. let's also add a brief ~1 short sentence that describes each "book" on the index page [Image #3]
+
+## Prompt 29
+
+[Image: source: ~/.claude/image-cache/61b7f744-f956-4e39-8d66-95ce38b2e80e/3.png]
+
+## Prompt 30
+
+listen-qa is good, do a final check for personal info on all files in the repo that you will push. if it all checks out, give me the command to flip it public (the gh command), and i'll push it after that

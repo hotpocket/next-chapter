@@ -79,10 +79,12 @@ def player_provenance(player_src: Path) -> str:
             pass
         toplevel = Path(git("rev-parse", "--show-toplevel")).name
         if "landry-ui" in origin or toplevel == "landry-ui":
-            return f"{player_src} @ {git('rev-parse', 'HEAD')}"
+            # Repo-relative source only — never a machine path in the published site.
+            rel = git("rev-parse", "--show-prefix").rstrip("/") or "."
+            return f"landry-ui:{rel} @ {git('rev-parse', 'HEAD')}"
     except Exception:
         pass
-    return f"{player_src} (luinst-fetched copy; pin is the landry-ui commit current at fetch time)"
+    return "luinst-fetched copy of landry-ui audiobook/vanilla (pin = the landry-ui commit current at fetch time)"
 
 
 def generate_html(title: str, books: list, transcript_url: str) -> str:

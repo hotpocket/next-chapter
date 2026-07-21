@@ -139,7 +139,7 @@ command glossary that makes the prompts readable):
 | 2026-07-20 — Foundation | [recap](vault/sessions/2026-07-20-foundation.md) | [46 prompts](vault/sessions/2026-07-20-foundation-prompts.md) |
 | 2026-07-20 — Config mirror | [recap](vault/sessions/2026-07-20-config-mirror.md) | [4 prompts](vault/sessions/2026-07-20-config-mirror-prompts.md) |
 | 2026-07-21 — repo-story vendored + in-repo pivot | [recap](vault/sessions/2026-07-21-repo-story-vendored.md) | [27 prompts](vault/sessions/2026-07-21-repo-story-vendored-prompts.md) |
-| 2026-07-21 — Trilogy built | [recap](vault/sessions/2026-07-21-trilogy-built.md) | [26 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md) |
+| 2026-07-21 — Trilogy built | [recap](vault/sessions/2026-07-21-trilogy-built.md) | [30 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md) |
 
 ## Resources
 

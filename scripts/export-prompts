@@ -65,7 +65,8 @@ redact() {
     -e 's/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/[REDACTED: email]/g' \
     -e 's/((set-)?cookie|authorization|x-csrf-token)[:=][^;[:space:]]*/[REDACTED: credential]/Ig' \
     -e 's/-----BEGIN [A-Z ]*PRIVATE KEY-----/[REDACTED: private key]/g' \
-    -e 's/\b(sk|ghp|gho|xox[bap]|AKIA)[-_A-Za-z0-9]{16,}/[REDACTED: token]/g'
+    -e 's/\b(sk|ghp|gho|xox[bap]|AKIA)[-_A-Za-z0-9]{16,}/[REDACTED: token]/g' \
+    -e 's|/home/[a-z_][a-z0-9_-]*|~|g'
 }
 
 COUNT=$(printf '%s\n' "$PROMPTS" | grep -c '^---PROMPT---$')
