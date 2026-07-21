@@ -2,6 +2,16 @@
 
 Analyze code repositories and produce documentary audio narratives about the techniques, ideas, and history within them.
 
+> **Vendored into next-chapter (2026-07-21).** This folder is a scrubbed
+> commit-replay of the private `hotpocket/repo-story` repo — the generation
+> pipeline behind this project's audiobooks, and the subject of one of them.
+> Each replayed commit carries a `Replayed-From: repo-story@<sha>` trailer and
+> its original author date; excluded from the replay: an AWS deploy path, an
+> un-deployed infra blueprint, and personal/machine details (redactions appear
+> as `[bracketed]` placeholders). Replay tooling: `../scripts/vendor-repo-story`.
+> Publishing now targets the next-chapter GitHub Pages site, not the retired
+> deploy paths mentioned in older notes.
+
 ## How it works
 
 repo-story is a Claude Code skill. The research and writing happens inside a Claude Code session. The audio production happens via a Python script that uses Chatterbox TTS.

@@ -42,7 +42,7 @@ Why this layout: the build scripts (`build_audio.py`, `build_transcripts.py`, `b
 ## Constraints — read these before running anything
 
 - **No SSH commands.** The user manages ssh-agent manually. `luinst` defaults to `git@github.com:`; override with `LANDRY_UI_REPO=https://github.com/hotpocket/landry-ui.git`. If HTTPS fails because the repo is private, fall back to whatever is already in `player/` and skip PWA assets — the site will still work, just without offline support. See `memory/feedback_no_ssh.md`.
-- **Don't deploy without explicit ask.** `deploy.sh` syncs to S3 + CloudFront. Stop after `build_site.py`.
+- **Don't publish without explicit ask.** Publishing is the user's `git push` of the parent next-chapter repo (Pages). Stop after the build steps.
 - **Don't clobber prior runs.** Each repo gets its own folder. Never write into the repo-story root `output/`.
 - **Model split — Fable plans, Opus executes.** The main session is pinned to Fable via `.claude/settings.json` (loud failure if unavailable — do not fall back silently) and does the planning phases: 1 survey, 3 themes, 5a beats, chapter ordering. Phases 2, 4, and 5b run only via the named agent types in `.claude/agents/` (`explorer`, `code-researcher`, `history-researcher`, `narrator`), each pinned to Opus. Never spawn generic subagents for those phases and never write sections inline. See [docs/adr/0001](docs/adr/0001-fable-plans-opus-executes.md).
 - **Don't pause for approval mid-pipeline.** PLAN.md says Phase 3 "presented to the user for review" — AUTORUN mode overrides that to present-and-continue. The user invoked AUTORUN precisely so they could walk away. If a real problem arises (auth prompt, GPU OOM, missing file), stop and report.
@@ -143,37 +143,21 @@ python ../build_transcripts.py --slug <repo-folder>
 
 ### Phase 8 — Publish
 
-**Primary path — [family-site]/books ([family-site-deploy]):** add an entry to `~/git/[family-repo]/[family-site-deploy]/books.json`:
+**Single path — the parent next-chapter repo's GitHub Pages site:** copy the
+book's artifacts (per-chapter M4As, `chapters_manifest.json`,
+`transcripts.json`) into the parent repo's Pages site directory and register
+the book in its library manifest (see the parent repo's plan for exact paths —
+they are defined there, not here). No AWS, no deploy scripts.
 
-```json
-{
-  "slug": "<repo-folder>",
-  "title": "<Book Title>",
-  "artist": "<Author>",
-  "manifest": "~/git/repo-story/<repo-folder>/output/m4a/chapters_manifest.json",
-  "transcripts_path": "~/git/repo-story/<repo-folder>/output/site/transcripts.json",
-  "audio_prefix": "<repo-folder>/"
-}
-```
-
-Then the user runs `[family-site-deploy]/deploy.sh` (SSH fetch + AWS — **do not run it yourself**; it handles player fetch, multi-book site build, S3, CloudFront).
-
-**Secondary path — brandonlandry.com (single M4B, optional):** build the standalone site only if asked:
-
-```bash
-LANDRY_UI_REPO=https://github.com/hotpocket/landry-ui.git ./luinst audiobook/vanilla player/   # from repo-story root; on failure reuse existing player/ (loses PWA assets — report it)
-cd <repo-folder> && python ../build_site.py
-../scripts/generate-manifest.sh   # manifest.json for brandonlandry.com, reads M4B tags
-```
-
-Preview `output/site/` over HTTP (file:// won't support Range requests) — `python ../serve.py` from the repo folder.
+Preview over HTTP (file:// won't support Range requests) — `python ../serve.py`
+from the repo folder.
 
 ### Phase 9 — Done
 
 Report to the user:
 - Path to the M4B and `output/m4a/` (chapter count, total duration)
-- The books.json entry added (or proposed)
-- Reminder that deploy is theirs to run: `[family-site-deploy]/deploy.sh` ([family-site]) or `./deploy.sh` (brandonlandry.com)
+- The library-manifest entry added (or proposed)
+- Reminder that publishing is theirs to run: `git push` of the parent repo
 
 ---
 

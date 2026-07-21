@@ -8,9 +8,11 @@ Claude Code skill that analyzes repositories and produces documentary audio narr
 2. `build_audio.py` — sections → chunk WAVs → chapter WAVs → chaptered M4B (pass `--title`/`--artist`; album is always `Repo Story`)
 3. `build_m4a.py` — chapter WAVs → per-chapter M4As + `chapters_manifest.json` (**production format** for the landry-ui player)
 4. `build_transcripts.py` — chunk WAVs + section text → `transcripts.json` (per-chapter timestamps)
-5. Publish, two targets:
-   - **[family-site]/books (primary)** — register the book in `~/git/[family-repo]/[family-site-deploy]/books.json` (manifest + transcripts_path + audio_prefix), then user runs `[family-site-deploy]/deploy.sh`. That script fetches the player, builds the multi-book site via `landry-ui-playground/audiobook/build_*.py --config`, and syncs S3/CloudFront.
-   - **brandonlandry.com (single M4B)** — `build_site.py` → static site in `output/site/`, `scripts/generate-manifest.sh` (reads M4B tags), `deploy.sh`.
+5. Publish, one target:
+   - **next-chapter GitHub Pages (this repo's parent)** — copy per-chapter
+     M4As, `chapters_manifest.json`, and `transcripts.json` into the parent
+     repo's Pages site; the user publishes with `git push`. No AWS, no deploy
+     scripts (see the parent repo's plan + ADRs).
 
 `AUTORUN.md` is the end-to-end execution contract for unattended runs.
 
@@ -38,4 +40,3 @@ Use `/vault` commands (or natural-language vault requests like "show me the todo
 ## See also
 
 - [TODOS.md](TODOS.md) — project TODO list
-- `scripts/generate-manifest.sh` — generates manifest.json for brandonlandry.com

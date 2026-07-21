@@ -3,9 +3,9 @@
 build_m4a.py — Encode chapter WAVs into per-chapter M4As + chapters_manifest.json.
 
 This is the production audio format: the landry-ui player consumes per-chapter
-M4As via chapters_manifest.json (registered in [family-site-deploy]/books.json for the
-[family-site]/books deploy). The single-file M4B from build_audio.py remains
-the format for brandonlandry.com (see scripts/generate-manifest.sh).
+M4As via chapters_manifest.json. In the next-chapter vendored setup these are
+published on the parent repo's GitHub Pages site. The single-file M4B from
+build_audio.py remains available as a standalone/legacy format.
 
 Reads chapter WAVs produced by build_audio.py (output/audio/chapter-NN-*.wav)
 and section text/order for titles. Encodes AAC 24kHz mono 64k +faststart with
