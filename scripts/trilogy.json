@@ -1,0 +1,20 @@
+{
+  "title": "Next Chapter — a trilogy about its own making",
+  "books": [
+    {
+      "slug": "landry-ui",
+      "manifest": "repo-story/landry-ui/output/m4a/chapters_manifest.json",
+      "transcripts": "repo-story/landry-ui/output/site/transcripts.json"
+    },
+    {
+      "slug": "repo-story",
+      "manifest": "repo-story/repo-story/output/m4a/chapters_manifest.json",
+      "transcripts": "repo-story/repo-story/output/site/transcripts.json"
+    },
+    {
+      "slug": "next-chapter",
+      "manifest": "repo-story/next-chapter/output/m4a/chapters_manifest.json",
+      "transcripts": "repo-story/next-chapter/output/site/transcripts.json"
+    }
+  ]
+}
