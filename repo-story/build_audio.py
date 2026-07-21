@@ -87,23 +87,33 @@ def generate_chapter_audio(
     model,
     voice_path: str,
     total_chapters: int,
+    variant: str = "chunk",
 ) -> Path:
-    """Generate audio for one chapter, chunk by chunk. Returns path to chapter WAV."""
+    """Generate audio for one chapter, chunk by chunk. Returns path to chapter WAV.
+
+    variant: 'chunk' (full chapter) or 'summary' (condensed track) — controls
+    the chunk-cache prefix (chNN_<variant>_*) and the output WAV name
+    (chapter-NN-*.wav vs summary-NN-*.wav, keeping summaries out of
+    build_m4a's chapter-*.wav glob and the M4B).
+    """
     import torchaudio
 
     chunks = split_into_chunks(text)
     total_chunks = len(chunks)
-    chapter_wav_path = chunks_dir.parent / f"chapter-{chapter_idx:02d}-{chapter_title.lower().replace(' ', '-')}.wav"
+    slug = chapter_title.lower().replace(' ', '-')
+    prefix = "chapter" if variant == "chunk" else "summary"
+    chapter_wav_path = chunks_dir.parent / f"{prefix}-{chapter_idx:02d}-{slug}.wav"
 
     # Clean up any temp files from a previously killed run
-    for stale in chunks_dir.glob(f"ch{chapter_idx:02d}_chunk_*.tmp.wav"):
+    for stale in chunks_dir.glob(f"ch{chapter_idx:02d}_{variant}_*.tmp.wav"):
         stale.unlink()
 
-    print(f"\n[Chapter {chapter_idx}/{total_chapters}] {chapter_title} — {total_chunks} chunks")
+    label = chapter_title if variant == "chunk" else f"{chapter_title} (summary)"
+    print(f"\n[Chapter {chapter_idx}/{total_chapters}] {label} — {total_chunks} chunks")
 
     chunk_wavs = []
     for i, chunk_text in enumerate(chunks):
-        chunk_path = chunks_dir / f"ch{chapter_idx:02d}_chunk_{i:05d}.wav"
+        chunk_path = chunks_dir / f"ch{chapter_idx:02d}_{variant}_{i:05d}.wav"
         chunk_wavs.append(chunk_path)
 
         if chunk_path.exists():
@@ -127,7 +137,7 @@ def generate_chapter_audio(
 
     # Concatenate chunks into chapter WAV via ffmpeg (no memory accumulation)
     print(f"  Concatenating {total_chunks} chunks into chapter audio...")
-    filelist = chunks_dir / f"ch{chapter_idx:02d}_filelist.txt"
+    filelist = chunks_dir / f"ch{chapter_idx:02d}_{variant}_filelist.txt"
     with open(filelist, "w") as f:
         for chunk_path in chunk_wavs:
             f.write(f"file '{chunk_path.resolve()}'\n")
@@ -216,6 +226,7 @@ def main():
     parser = argparse.ArgumentParser(description="Build chaptered audiobook from repo-story sections")
     parser.add_argument("--voice", default=None, help="Path to voice reference WAV file (default: auto-detect from voices/)")
     parser.add_argument("--sections-dir", default="output/sections", help="Directory containing section-*.txt files")
+    parser.add_argument("--summaries-dir", default="output/summaries", help="Directory containing per-chapter summary text (optional; generates the player's Summary track)")
     parser.add_argument("--output", default="output/book.m4b", help="Output M4B file path")
     parser.add_argument("--chunks-dir", default="output/audio/chunks", help="Directory for intermediate chunk WAVs")
     parser.add_argument("--title", default="Repo Story", help="Episode title (M4B title tag; album is always 'Repo Story')")
@@ -276,6 +287,8 @@ def main():
     chapter_paths = []
     chapter_titles = []
 
+    summaries_dir = Path(args.summaries_dir)
+
     t_start = time.time()
     for i, section_path in enumerate(sections, 1):
         text = section_path.read_text()
@@ -292,6 +305,21 @@ def main():
             total_chapters=len(sections),
         )
         chapter_paths.append(chapter_path)
+
+        # Optional condensed track: same TTS path, separate chunk cache and
+        # WAV name; never enters the M4B (per-chapter M4A/manifest only).
+        summary_path = summaries_dir / section_path.name
+        if summary_path.exists():
+            generate_chapter_audio(
+                text=summary_path.read_text(),
+                chapter_idx=i,
+                chapter_title=title,
+                chunks_dir=chunks_dir,
+                model=model,
+                voice_path=voice_path,
+                total_chapters=len(sections),
+                variant="summary",
+            )
 
     t_generation = time.time() - t_start
     print(f"\nAll audio generated in {t_generation:.0f}s ({t_generation/60:.1f}m)")

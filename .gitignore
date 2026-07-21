@@ -12,3 +12,10 @@ vault/.obsidian/graph.json
 course/
 .gstack/
 .war/
+
+# repo-story run folders + personal voice refs (AUTORUN convention; public repo)
+repo-story/*/repo/
+repo-story/*/output/
+repo-story/*/book/
+repo-story/voices/*.wav
+repo-story/.python-version

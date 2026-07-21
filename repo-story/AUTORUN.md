@@ -27,6 +27,7 @@ Everything for a single run lives under one top-level folder at the repo-story r
     ├── research/                  Phase 4 — one .md per theme
     ├── beats/                     Phase 5a — per-theme arc notes (main session)
     ├── sections/                  Phase 5b — section-*.txt per theme
+    ├── summaries/                 Phase 5c — condensed section-*.txt (Summary track)
     ├── chapters.txt               narrative-arc order of sections
     ├── audio/
     │   ├── chunks/                intermediate chunk WAVs (resume cache)
@@ -113,6 +114,8 @@ If research contradicts the Phase 3 themes, revise `themes.md` before Phase 5 an
 
 **5b — Sections (narrator agents).** One `narrator` agent per theme — parallel when themes are independent, sequential when they build on each other. Never write sections inline, regardless of theme count. Task prompt per theme:
 > Theme: `<theme>`. Beats: `<repo-folder>/output/beats/<theme>.md`. Research: `<repo-folder>/output/research/<theme>-*.md`. Write `<repo-folder>/output/sections/section-<slug>.txt`.
+
+**5c — Summaries (final step of each chapter).** After each section, one `narrator` agent condenses it to `<repo-folder>/output/summaries/<same filename>` — every load-bearing fact, no scenic build-up, ~12–18% of the section length. Same audio-prose rules. The build scripts pick these up automatically (summary audio + manifest + transcript → the player's Full/Summary toggle).
 
 After all sections are written, decide chapter order in the main session — narrative arc, not alphabetical, not by-repo. Write to `<repo-folder>/output/chapters.txt`, one filename per line.
 

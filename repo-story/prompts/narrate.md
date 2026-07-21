@@ -54,3 +54,12 @@ The narrative is as long as the theme requires and no longer. A simple idea well
 ## Output
 
 Write a single text file. Plain text, no markdown formatting (it will be read aloud). Name it by content: `section-optimizer-composition.txt`, `section-fail-fast.txt`, etc.
+
+## Summaries (Phase 5c)
+
+Each finished section also gets a condensed companion in `output/summaries/`, same filename. The summary serves a listener who wants the chapter's actual knowledge without the arc's time investment:
+
+- Every load-bearing fact, constant, and lesson survives; the scenic build-up, analogies, and restatement do not
+- Roughly 12–18% of the section's length (~450–600 words for a typical chapter)
+- It must stand alone — heard instead of the chapter, not alongside it
+- All audio-prose and honesty-about-certainty rules above apply unchanged

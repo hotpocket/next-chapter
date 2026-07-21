@@ -129,6 +129,75 @@ if grep -q '"slug": "test-book"' "$TMP/site13/index.html" 2>/dev/null; then ok "
 # and indexes DOM arrays by id); manifest n is 1-based
 if grep -q '"id": 0' "$TMP/site13/index.html" 2>/dev/null; then ok "chapter ids 0-based"; else fail "chapter id should be n-1 (0-based)"; fi
 
+# --- 14: summaries/ staged alongside chapters (same NN- strip, .md -> .txt)
+SRC4="$TMP/book4"; mkdir -p "$SRC4/chapters" "$SRC4/summaries"
+printf 'Full one.\n' > "$SRC4/chapters/01-one.txt"
+printf 'Full two.\n' > "$SRC4/chapters/02-two.txt"
+printf 'Short one.\n' > "$SRC4/summaries/01-one.txt"
+"$BB" "$SRC4" --stage-only >/dev/null 2>&1
+assert_file "$SRC4/build/summaries/one.txt"
+assert_absent "$SRC4/build/summaries/two.txt"
+assert_eq "$(cat "$SRC4/build/summaries/one.txt" 2>/dev/null)" "Short one." "summary content staged verbatim"
+
+# --- 15: changed summary text clears only that chapter's summary chunks
+CH4="$SRC4/build/audio/chunks"; mkdir -p "$CH4"
+touch "$CH4/ch01_chunk_00000.wav" "$CH4/ch01_summary_00000.wav" "$CH4/ch02_chunk_00000.wav"
+printf 'Short one, revised.\n' > "$SRC4/summaries/01-one.txt"
+"$BB" "$SRC4" --stage-only >/dev/null 2>&1
+assert_file   "$CH4/ch01_chunk_00000.wav"
+assert_absent "$CH4/ch01_summary_00000.wav"
+assert_file   "$CH4/ch02_chunk_00000.wav"
+
+# --- 16: chapter-list change clears summary chunks along with full chunks
+touch "$CH4/ch01_summary_00000.wav"
+printf 'Zero.\n' > "$SRC4/chapters/00-zero.txt"
+"$BB" "$SRC4" --stage-only >/dev/null 2>&1
+assert_absent "$CH4/ch01_chunk_00000.wav"
+assert_absent "$CH4/ch01_summary_00000.wav"
+
+# --- 17: build_site passes manifest summary through to the page and copies
+#         summary M4As (and keeps them out of the stale sweep)
+M4A2="$TMP/m4a2"; mkdir -p "$M4A2"
+printf 'fake-m4a' > "$M4A2/chapter_0001.m4a"
+printf 'fake-sum' > "$M4A2/chapter_0001.summary.m4a"
+cat > "$M4A2/chapters_manifest.json" <<'EOF'
+{"version":"deadbeef",
+ "book":{"title":"Sum Book","artist":"Tester","total_duration_s":10.0,"chapter_count":1},
+ "chapters":[{"n":1,"title":"Chapter 1: One","filename":"chapter_0001.m4a","duration_s":10.0,"size_bytes":8,
+              "summary":{"filename":"chapter_0001.summary.m4a","duration_s":2.0,"size_bytes":8}}]}
+EOF
+printf '{"books":[{"slug":"sum-book","chapters":[]}]}' > "$TMP/tr2.json"
+python3 "$REPO_ROOT/build_site.py" --manifest "$M4A2/chapters_manifest.json" --slug sum-book \
+  --output-dir "$TMP/site17" --transcripts-file "$TMP/tr2.json" >/dev/null 2>&1
+assert_file "$TMP/site17/audio/chapter_0001.summary.m4a"
+if grep -q '"summary"' "$TMP/site17/index.html" 2>/dev/null && \
+   grep -q 'chapter_0001.summary.m4a' "$TMP/site17/index.html" 2>/dev/null; then
+  ok "summary track in page books json"
+else
+  fail "summary track missing from books json"
+fi
+# re-run: summary file must survive the stale sweep
+python3 "$REPO_ROOT/build_site.py" --manifest "$M4A2/chapters_manifest.json" --slug sum-book \
+  --output-dir "$TMP/site17" --transcripts-file "$TMP/tr2.json" >/dev/null 2>&1
+assert_file "$TMP/site17/audio/chapter_0001.summary.m4a"
+
+# --- 18: build_transcripts emits summary_chunks from ch*_summary_* WAVs
+TR="$TMP/tr-run"; mkdir -p "$TR/sections" "$TR/summaries" "$TR/chunks"
+printf 'One sentence.\n' > "$TR/sections/one.txt"
+printf 'one.txt\n' > "$TR/chapters.txt"
+printf 'Summary sentence.\n' > "$TR/summaries/one.txt"
+ffmpeg -y -f lavfi -i anullsrc=r=24000:cl=mono -t 0.3 "$TR/chunks/ch01_chunk_00000.wav" -loglevel error
+ffmpeg -y -f lavfi -i anullsrc=r=24000:cl=mono -t 0.3 "$TR/chunks/ch01_summary_00000.wav" -loglevel error
+python3 "$REPO_ROOT/build_transcripts.py" --sections-dir "$TR/sections" --chunks-dir "$TR/chunks" \
+  --summaries-dir "$TR/summaries" --output "$TR/transcripts.json" --slug t >/dev/null 2>&1
+if python3 -c '
+import json,sys
+d=json.load(open(sys.argv[1]))
+ch=d["books"][0]["chapters"][0]
+sc=ch.get("summary_chunks")
+assert sc and sc[0]["text"]=="Summary sentence." and sc[0]["end"]>0, sc
+' "$TR/transcripts.json" 2>/dev/null; then ok "summary_chunks in transcripts.json"; else fail "summary_chunks missing/wrong"; fi
+
 echo
 echo "$PASS passed, $FAIL failed"
 [[ $FAIL -eq 0 ]]

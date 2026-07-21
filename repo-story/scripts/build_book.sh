@@ -16,11 +16,13 @@ set -euo pipefail
 # <book_dir> may contain chapter files directly or a chapters/ subfolder
 # (--init layout: output/books/<name>/{chapters/, build/}); passing the
 # chapters/ path itself also works. Chapter order = lexical filename sort.
-# Pipeline: stage sections/ + chapters.txt → build_audio.py (chapter WAVs +
-# M4B) → build_m4a.py (per-chapter M4As + manifest, the format the player
-# consumes) → build_transcripts.py → build_site.py --manifest with transcripts
-# inlined as a data: URI, so site/ works from file:// with no server.
-# Prints (never runs) the zip command.
+# A summaries/ folder beside chapters/ holds optional per-chapter condensed
+# text (same filenames); staged summaries become the player's Summary track.
+# Pipeline: stage sections/ + summaries/ + chapters.txt → build_audio.py
+# (chapter + summary WAVs + M4B) → build_m4a.py (per-chapter M4As + manifest,
+# the format the player consumes) → build_transcripts.py → build_site.py
+# --manifest with transcripts inlined as a data: URI, so site/ works from
+# file:// with no server. Prints (never runs) the zip command.
 #
 # Chunk WAVs are cached by (chapter index, chunk index), not content — a
 # changed chapter's cache is cleared here, and any chapter-list change clears
@@ -142,7 +144,7 @@ NEW_LIST="$(printf '%s\n' "${STAGED[@]}")"
 OLD_LIST="$(cat "$OUT/chapters.txt" 2>/dev/null || true)"
 if [[ -n $OLD_LIST && $OLD_LIST != "$NEW_LIST" && -d $CHUNKS ]]; then
   echo "Chapter list changed — clearing whole chunk cache (chapter indices shifted)"
-  rm -f "$CHUNKS"/ch*_chunk_*.wav
+  rm -f "$CHUNKS"/ch*_chunk_*.wav "$CHUNKS"/ch*_summary_*.wav
 fi
 
 for i in "${!SRC_FILES[@]}"; do
@@ -167,11 +169,42 @@ for i in "${!SRC_FILES[@]}"; do
 done
 printf '%s\n' "${STAGED[@]}" > "$OUT/chapters.txt"
 
+# Stage summaries/ (optional): same source names as chapters, same staged
+# names as sections — a chapter's summary is summaries/<staged-section-name>.
+# Change detection mirrors sections: changed text clears that chapter's
+# summary chunks; stale/orphan staged summaries are removed.
+SUMMARIES_SRC="$BOOK_DIR/summaries"
+SUMMARIES="$OUT/summaries"
+mkdir -p "$SUMMARIES"
+STAGED_SUMS=0
+for i in "${!SRC_FILES[@]}"; do
+  ssrc=""
+  for cand in "$SUMMARIES_SRC/${SRC_FILES[$i]}" "$SUMMARIES_SRC/${SRC_FILES[$i]%.*}.txt" "$SUMMARIES_SRC/${SRC_FILES[$i]%.*}.md"; do
+    if [[ -f $cand ]]; then ssrc=$cand; break; fi
+  done
+  sdst="$SUMMARIES/${STAGED[$i]}"
+  idx="$(printf 'ch%02d' $((i + 1)))"
+  if [[ -z $ssrc ]]; then
+    if [[ -f $sdst ]]; then rm -f "$sdst" "$CHUNKS/${idx}"_summary_*.wav; fi
+    continue
+  fi
+  if [[ -f $sdst ]] && ! cmp -s "$ssrc" "$sdst"; then
+    if compgen -G "$CHUNKS/${idx}_summary_*.wav" >/dev/null; then
+      echo "Chapter $((i + 1)) (${STAGED[$i]}) summary changed — clearing its cached summary chunks"
+      rm -f "$CHUNKS/${idx}"_summary_*.wav
+    fi
+  fi
+  cp "$ssrc" "$sdst"
+  STAGED_SUMS=$((STAGED_SUMS + 1))
+done
+if [[ $STAGED_SUMS -gt 0 ]]; then echo "Staged $STAGED_SUMS summaries → $SUMMARIES"; fi
+
 echo "Staged ${#SRC_FILES[@]} chapters → $SECTIONS"
 if [[ $STAGE_ONLY -eq 1 ]]; then exit 0; fi
 
 M4B="$OUT/$SLUG.m4b"
 AUDIO_ARGS=(--sections-dir "$SECTIONS" --chunks-dir "$CHUNKS" --output "$M4B"
+            --summaries-dir "$SUMMARIES"
             --title "$TITLE" --date "$(date +%F)")
 if [[ -n $ARTIST ]]; then AUDIO_ARGS+=(--artist "$ARTIST"); fi
 if [[ -n $VOICE ]];  then AUDIO_ARGS+=(--voice "$VOICE"); fi
@@ -187,7 +220,7 @@ if [[ -n $ARTIST ]]; then M4A_ARGS+=(--artist "$ARTIST"); fi
 python build_m4a.py "${M4A_ARGS[@]}"
 
 python build_transcripts.py --sections-dir "$SECTIONS" --chunks-dir "$CHUNKS" \
-  --output "$OUT/transcripts.json" --slug "$SLUG"
+  --summaries-dir "$SUMMARIES" --output "$OUT/transcripts.json" --slug "$SLUG"
 python build_site.py --manifest "$OUT/m4a/chapters_manifest.json" --slug "$SLUG" \
   --transcripts-file "$OUT/transcripts.json" --output-dir "$OUT/site"
 

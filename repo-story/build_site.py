@@ -58,7 +58,7 @@ def book_from_manifest(manifest_path: Path, slug: str) -> dict:
     offset = 0.0
     for ch in data["chapters"]:
         duration = float(ch["duration_s"])
-        chapters.append({
+        chapter = {
             # Player contract: id is 0-based (indexes DOM arrays, id+1 →
             # transcript chapter index); manifest n is 1-based.
             "id": ch["n"] - 1,
@@ -69,7 +69,15 @@ def book_from_manifest(manifest_path: Path, slug: str) -> dict:
             "end": round(offset + duration, 3),
             "duration": duration,
             "size": ch.get("size_bytes", 0),
-        })
+        }
+        if ch.get("summary"):
+            s = ch["summary"]
+            chapter["summary"] = {
+                "filename": s["filename"],
+                "duration": float(s["duration_s"]),
+                "size": s.get("size_bytes", 0),
+            }
+        chapters.append(chapter)
         offset += duration
     book = data["book"]
     return {
@@ -122,6 +130,7 @@ def main():
     parser.add_argument("--slug", default="book", help="Book slug (per-chapter mode; must match transcripts.json)")
     parser.add_argument("--transcripts-file", default="", help="Inline this transcripts JSON as a data: URI so the site works from file:// (standalone)")
     parser.add_argument("--output-dir", default="output/site", help="Output directory for static site")
+    parser.add_argument("--feedback-url", default="", help="Feedback API events URL (omit to disable feedback)")
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
@@ -134,10 +143,15 @@ def main():
         book = book_from_manifest(manifest_path, args.slug)
         books = [book]
         print(f"Book: {book['title']} — {len(book['chapters'])} chapters, {book['duration']:.0f}s")
-        wanted = {ch["filename"] for ch in book["chapters"]}
+        files = []
         for ch in book["chapters"]:
-            src = manifest_path.parent / ch["filename"]
-            dest = audio_out / ch["filename"]
+            files.append(ch["filename"])
+            if ch.get("summary"):
+                files.append(ch["summary"]["filename"])
+        wanted = set(files)
+        for filename in files:
+            src = manifest_path.parent / filename
+            dest = audio_out / filename
             if not dest.exists() or dest.stat().st_size != src.stat().st_size:
                 shutil.copy2(src, dest)
         for stale in audio_out.iterdir():

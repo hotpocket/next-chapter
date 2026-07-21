@@ -26,10 +26,13 @@ Then register in [family-site-deploy]/books.json:
 """
 
 import argparse
+import hashlib
+import json
 import subprocess
 import sys
 from pathlib import Path
 
+from chatterbook.audio import get_wav_duration
 from chatterbook.manifest import write_chapters_manifest
 
 from build_audio import find_sections, section_title
@@ -82,6 +85,29 @@ def main():
             print(f"  Ch{i}: {chapter_title} — encoding...")
             encode_m4a(wav, m4a, chapter_title, args.title, args.artist, i, len(wavs))
 
+    # Summary tracks (optional): build_audio writes summary-NN-*.wav beside
+    # the chapter WAVs for chapters that have condensed text. Encode them as
+    # chapter_NNNN.summary.m4a; attached to the manifest after the shared
+    # writer runs (chatterbook's manifest format knows nothing of summaries).
+    summaries = {}
+    for i in range(1, len(wavs) + 1):
+        match = sorted(audio_dir.glob(f"summary-{i:02d}-*.wav"))
+        if not match:
+            continue
+        swav = match[0]
+        sm4a = m4a_dir / f"chapter_{i:04d}.summary.m4a"
+        if sm4a.exists() and sm4a.stat().st_mtime > swav.stat().st_mtime:
+            print(f"  Ch{i} summary — up to date")
+        else:
+            print(f"  Ch{i} summary — encoding...")
+            encode_m4a(swav, sm4a, f"Chapter {i} (summary): {titles_map[str(i)]}",
+                       args.title, args.artist, i, len(wavs))
+        summaries[i] = {
+            "filename": sm4a.name,
+            "duration_s": round(get_wav_duration(sm4a), 3),
+            "size_bytes": sm4a.stat().st_size,
+        }
+
     # Shared writer: sha8 content-hash version (replaces the old fixed "v1"),
     # duration cache keyed by (filename, size), atomic write.
     manifest_path = m4a_dir / "chapters_manifest.json"
@@ -89,6 +115,20 @@ def main():
         range(1, len(wavs) + 1), titles_map, m4a_dir, manifest_path,
         args.title, args.artist,
     )
+
+    if summaries:
+        for ch in manifest["chapters"]:
+            if ch["n"] in summaries:
+                ch["summary"] = summaries[ch["n"]]
+        # Fold summary tuples into the version so summary-only changes still
+        # bust caches (the shared writer hashes full tracks only).
+        hasher = hashlib.sha256(manifest["version"].encode())
+        for n in sorted(summaries):
+            s = summaries[n]
+            hasher.update(f"{s['filename']}:{s['size_bytes']}:{s['duration_s']}".encode())
+        manifest["version"] = hasher.hexdigest()[:8]
+        manifest_path.write_text(json.dumps(manifest, indent=2))
+        print(f"  Attached {len(summaries)} summary track(s) to the manifest")
 
     print(f"\nWrote {manifest_path}")
     print(f"  {len(manifest['chapters'])} chapters, "

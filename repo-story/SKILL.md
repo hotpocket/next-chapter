@@ -63,6 +63,8 @@ Read the detailed guidance in `prompts/narrate.md`.
 
 **5b — Sections (`narrator` agents).** One `narrator` agent per theme — parallel when independent, sequential when they build on each other. Never write sections inline. Each expands its beats + research into a documentary audio narrative. Full detail. Real people, real history, real technical substance. The material determines the structure — do not force every theme into the same template.
 
+**5c — Summaries (final step of each chapter).** After a section is written, a `narrator` agent condenses it into `output/summaries/<same filename>`: every load-bearing fact and lesson, none of the scenic build-up — roughly 12–18% of the section's length (~450–600 words for a typical chapter). Same audio-prose rules as sections (`prompts/narrate.md`). The build pipeline turns these into the player's Summary track (condensed audio + transcript per chapter) for time-pressed listeners.
+
 Key principles:
 - This is documentary work — factual, grounded, committed to reality
 - Details are not reduced, they are contextualized within narrative flow
