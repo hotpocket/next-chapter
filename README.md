@@ -23,6 +23,9 @@ here will serve audiobooks about the two repos that power it —
   `*-prompts.md` file of the verbatim prompts from that session (index below).
 - [`docs/reports/`](docs/reports/) — kept deliverables: security wargames and
   audits (public-repo hygiene, the landry-ui public-flip audit).
+- [`repo-story/`](repo-story/) — the audiobook-generation pipeline, vendored
+  with its history replayed commit-by-commit (`Replayed-From:` trailers;
+  private details redacted — see its README's provenance note).
 - [`docs/vets/`](docs/vets/) + [`vault/vets/`](vault/vets/) — idea vets with
   verdicts and probes.
 
@@ -58,9 +61,15 @@ External:
 - gstack — the open-source browser-driving skill suite (`/browse`); entry
   points mirrored at [`.claude/skills/gstack/`](.claude/skills/gstack/).
 
-## V1 shape (decided — see ADRs 0001–0006)
+## V1 shape (decided — see ADRs in [`vault/decisions/`](vault/decisions/))
 
-Static player (landry-ui, vendored) + library page on GitHub Pages; audio in a
-dedicated public-read S3 bucket; generation runs offline on my machine (Claude
-Code prose + Chatterbox TTS); deploys via local AWS SSO profiles — no
-credentials ever web-exposed; zero request-time backend.
+Everything ships from this repo: a static library + player page (landry-ui,
+vendored at a pinned hash) on GitHub Pages, with per-chapter M4A audio and
+read-along transcripts committed in-tree and served by Pages — no AWS, no
+deploy scripts, no request-time backend. Publishing is a `git push`.
+Generation runs offline on my machine (Claude Code prose + Chatterbox TTS)
+using the [`repo-story/`](repo-story/) pipeline, vendored into this repo as a
+scrubbed replay of its original commit history — it is both the generator and
+the subject of one of the two audiobooks (the other narrates landry-ui). An
+ADR recording the S3 retirement (superseding 0001/0006's deploy framing) is
+queued for the next planning pass.
