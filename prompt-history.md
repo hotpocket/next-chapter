@@ -8,7 +8,7 @@ no pleasantries — because a hook enforces brevity; the decoder ring is
 [`config-history.md`](config-history.md)'s command glossary.
 
 **Reading one session end-to-end beats sampling all four.** If you read only
-one, read [Trilogy built](#4--2026-07-21--trilogy-built-30-prompts) — the
+one, read [Trilogy built](#4--2026-07-21--trilogy-built-33-prompts) — the
 session where the product went from one probe chapter to the shipped site.
 
 *(Housekeeping note: the exports were regenerated 2026-07-21 after a
@@ -54,7 +54,7 @@ trilogy decided (ADR 0009), and the generator vendored with its history.
   caught what gitleaks structurally cannot (non-regex identifiers), fixed by
   a two-pass full-history rewrite before going public.
 
-## 4 — 2026-07-21 · Trilogy built ([30 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md))
+## 4 — 2026-07-21 · Trilogy built ([33 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md))
 
 Probe → feature → all three books → assembled site.
 
@@ -74,7 +74,7 @@ Probe → feature → all three books → assembled site.
 
 ---
 
-**Totals:** 107 prompts across 4 sessions. The unabridged exports live in
+**Totals:** 110 prompts across 4 sessions. The unabridged exports live in
 [`vault/sessions/`](vault/sessions/); each links its session recap, and the
 [decisions index](vault/decisions/README.md) holds the ADRs those prompts
 produced.

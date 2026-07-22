@@ -1,8 +1,8 @@
 ---
 tags: [prompts]
 type: prompts
-summary: "Verbatim user prompts for session [[2026-07-21-trilogy-built]] (30 prompts)"
-created: 2026-07-21
+summary: "Verbatim user prompts for session [[2026-07-21-trilogy-built]] (33 prompts)"
+created: 2026-07-22
 ---
 
 # Prompts — 2026-07-21-trilogy-built
@@ -134,3 +134,16 @@ do M4.1 and M4.2 now, yes. let's also add a brief ~1 short sentence that describ
 ## Prompt 30
 
 listen-qa is good, do a final check for personal info on all files in the repo that you will push. if it all checks out, give me the command to flip it public (the gh command), and i'll push it after that
+
+## Prompt 31
+
+one small bug, no favicon:
+GET https://hotpocket.github.io/favicon.ico 404 (Not Found)
+
+## Prompt 32
+
+no use the favicon from their site, not my old wbt icon .https://www.nextchapterproject.org/
+
+## Prompt 33
+
+pushed, favicon looks right now. check the history of this session and what we've recorded. I want to clear context and address how the narrative is constructed. it's a bit stilted. am i good to clear? anything to clean up before ?

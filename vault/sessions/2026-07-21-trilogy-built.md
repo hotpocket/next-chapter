@@ -89,4 +89,22 @@ branch: main
 - M4.3 Part-11 checklist pass + dual hygiene scans + commit tidy
   (dedicated session; owner squash/push decisions).
 
+## Addendum (session continued through ship)
+
+- Owner listen-QA passed; M4.1 (README Part-8 truthing) + M4.2
+  (prompt-history.md) done; library book descriptions added (landry-ui
+  e0c5ad6). Chapter-pane durations bug fixed on the summary clock
+  (landry-ui df00047).
+- Prompt exports regenerated CLEAN for all sessions: task-notification
+  contamination predated this session (foundation 57→46, vendored 21→27);
+  standing /home/<user> → ~ redaction added; both drifts regression-tested.
+- Pre-public sweep (gitleaks full history, token map over files + commit
+  messages, PII greps) → repo flipped PUBLIC, pushed, Pages live at
+  https://hotpocket.github.io/next-chapter/ — M2 done. Favicon = Next
+  Chapter program mark via registry favicon key.
+- Provenance hardening: PROVENANCE.md records landry-ui:<path> @ <hash>,
+  never machine paths; only real landry-ui checkouts get pinned.
+- Owner verdict for next session: narration reads "a bit stilted" —
+  address at the beats level (see todos).
+
 Prompts: [[2026-07-21-trilogy-built-prompts]]
