@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# regen-trilogy-audio — regenerate audio + m4a + transcripts for every book in
+# the trilogy registry, in registry order. Audio is GPU-bound (Chatterbox TTS)
+# and resume-safe: re-running skips chunk WAVs that already exist.
+#
+# Usage: scripts/regen-trilogy-audio [--registry F] [--repo-story D]
+#                                    [--artist S] [--dry-run]
+# Env:   PYTHON  interpreter (default python3)
+#        VOICE   voice WAV passed to build_audio.py (default: its auto-detect
+#                from repo-story/voices/)
+#
+# After it finishes: python3 scripts/build-trilogy-site, then the owner pushes.
+set -euo pipefail
+
+repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+registry="$repo/scripts/trilogy.json"
+rs="$repo/repo-story"
+artist="Brandon Landry"
+dry=0
+PYTHON="${PYTHON:-python3}"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --registry)   registry="$2"; shift 2 ;;
+    --repo-story) rs="$2"; shift 2 ;;
+    --artist)     artist="$2"; shift 2 ;;
+    --dry-run)    dry=1; shift ;;
+    *) echo "unknown arg: $1" >&2; exit 2 ;;
+  esac
+done
+
+# build_audio.py auto-detects voices/ relative to its CWD — which is the book
+# folder, not the repo-story root where voices/ actually lives. Resolve here:
+# VOICE env wins; else exactly one wav in <repo-story>/voices/.
+if [ -z "${VOICE:-}" ]; then
+  wavs=("$rs"/voices/*.wav)
+  if [ ${#wavs[@]} -eq 1 ] && [ -e "${wavs[0]}" ]; then
+    VOICE="${wavs[0]}"
+  elif [ -e "${wavs[0]:-}" ]; then
+    echo "ERROR: multiple wavs in $rs/voices/ — set VOICE=<path>" >&2
+    exit 1
+  else
+    echo "ERROR: no wav in $rs/voices/ — set VOICE=<path>" >&2
+    exit 1
+  fi
+fi
+
+slugs="$(python3 -c '
+import json, sys
+print("\n".join(b["slug"] for b in json.load(open(sys.argv[1]))["books"]))
+' "$registry")"
+
+# Preflight every book before burning GPU time on any of them.
+for slug in $slugs; do
+  out="$rs/$slug/output"
+  if [ ! -s "$out/chapters.txt" ]; then
+    echo "ERROR: $slug has no $out/chapters.txt — sections not generated?" >&2
+    exit 1
+  fi
+  if ! ls "$out/sections/"section-*.txt >/dev/null 2>&1; then
+    echo "ERROR: $slug has no section files in $out/sections/" >&2
+    exit 1
+  fi
+done
+
+run() { # run <bookdir> <cmd...>
+  local dir="$1"; shift
+  if [ "$dry" = 1 ]; then
+    echo "[dry-run] (cd $dir && $PYTHON $*)"
+  else
+    ( cd "$dir" && "$PYTHON" "$@" )
+  fi
+}
+
+# Text content hash — the freshness key for the audio cache. build_audio.py's
+# chunk cache is index-keyed, not content-keyed, so after a text change it
+# would silently reuse stale audio. Content changed (or never recorded) →
+# wipe the book's derived audio artifacts; unchanged → keep them so an
+# interrupted GPU run still resumes.
+text_hash() {
+  cat "$1/output/chapters.txt" \
+      $(ls "$1"/output/sections/*.txt "$1"/output/summaries/*.txt 2>/dev/null | sort) \
+    | sha256sum | cut -c1-64
+}
+
+for slug in $slugs; do
+  dir="$rs/$slug"
+  echo "=== $slug ==="
+  hash="$(text_hash "$dir")"
+  recorded="$(cat "$dir/output/.text-hash" 2>/dev/null || true)"
+  if [ "$hash" != "$recorded" ]; then
+    echo "text changed since last audio build — full regen (clearing cached audio)"
+    if [ "$dry" = 1 ]; then
+      echo "[dry-run] would clear output/{audio,m4a,book.m4b,site/transcripts.json} for $slug"
+    else
+      rm -rf "$dir/output/audio" "$dir/output/m4a" "$dir/output/book.m4b" \
+             "$dir/output/site/transcripts.json"
+      mkdir -p "$dir/output/audio/chunks"
+      echo "$hash" > "$dir/output/.text-hash"
+    fi
+  else
+    echo "text unchanged — resuming any cached audio"
+  fi
+  audio_args=(../build_audio.py --title "$slug" --artist "$artist")
+  [ -n "${VOICE:-}" ] && audio_args+=(--voice "$VOICE")
+  if [ "$dry" = 0 ] && [ -e "$dir/output/book.m4b" ]; then
+    # build_audio.py prompts before overwriting an existing M4B; regenerating
+    # a derived artifact is this script's purpose, so answer yes.
+    ( cd "$dir" && echo y | "$PYTHON" "${audio_args[@]}" )
+  else
+    run "$dir" "${audio_args[@]}"
+  fi
+  run "$dir" ../build_m4a.py --title "$slug" --artist "$artist"
+  run "$dir" ../build_transcripts.py --slug "$slug"
+done
+
+echo "All books rebuilt. Next: python3 scripts/build-trilogy-site  (then push when ready)"
