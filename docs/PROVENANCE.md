@@ -1,4 +1,4 @@
 # Site provenance
 
-Player component: landry-ui `audiobook/vanilla`, copied from landry-ui:audiobook/vanilla @ e0c5ad67d2445ab8eaffe39d9c960b28ff43efad
+Player component: landry-ui `audiobook/vanilla`, copied from luinst-fetched copy of landry-ui audiobook/vanilla (pin = the landry-ui commit current at fetch time)
 Audio + transcripts: repo-story pipeline run folders (see scripts/trilogy.json)

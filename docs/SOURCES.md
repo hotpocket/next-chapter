@@ -25,11 +25,11 @@ ADR 0003: generation is offline; this site only plays).
 
 ## Book 3 — next-chapter
 
-- Source: this repository, **narrated through commit `8295cae`**
+- Source: this repository, **narrated through commit `8ab693d`**
   (ADR 0009: the closing book cannot contain its own generation — it was
   generated last and trails HEAD by construction). Everything after that
-  commit — including the assembly of this site — is outside the book's
-  narrated range.
+  commit — including the walkthrough rewrite that produced this edition and
+  the assembly of this site — is outside the book's narrated range.
 - The checkable record the book defers to: [`vault/decisions/`](../vault/decisions/)
   (ADRs + index), `vault/sessions/` (recaps + verbatim prompt exports),
   `llm-docs/` (plan, wargames, vets).
@@ -37,7 +37,11 @@ ADR 0003: generation is offline; this site only plays).
 ## Pipeline
 
 - Generation: `repo-story/` (SKILL.md phases + build scripts), run via the
-  in-repo run folders (gitignored). Summary tracks are Phase 5c artifacts —
-  condensed by the same pipeline, ~12–18% of each chapter.
+  in-repo run folders; the narration text (sections, summaries, chapter
+  order, transcripts) is tracked in-tree per book. This is the walkthrough
+  edition (2026-07-23): each chapter tours features and traces them to the
+  prompts that shaped them, attributions labeled verbatim / paraphrase /
+  inference. Summary tracks are Phase 5c artifacts — a ~2-minute orientation
+  per chapter.
 - Site assembly: [`scripts/build-trilogy-site`](../scripts/build-trilogy-site)
   from [`scripts/trilogy.json`](../scripts/trilogy.json).
