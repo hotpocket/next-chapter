@@ -1,0 +1,929 @@
+{
+  "books": [
+    {
+      "slug": "next-chapter",
+      "chapters": [
+        {
+          "index": 1,
+          "title": "The Live Site",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "This is next-chapter, the public assembly repository. The site you are listening on right now is itself the feature set \u2014 a library of three audiobooks about their own making, served as static files with no backend.",
+              "start": 0.0,
+              "end": 13.24
+            },
+            {
+              "index": 1,
+              "text": "This chapter tours that site: what you see and hear, then the prompts that shaped each piece. Start where the listener starts: the landing page, the file index dot h-t-m-l.",
+              "start": 13.24,
+              "end": 24.68
+            },
+            {
+              "index": 2,
+              "text": "Its browser title reads \"Next Chapter \u2014 a trilogy about its own making.\" The page is nearly empty markup \u2014 a single app container, the player script, then one inline call that hands the player the entire library as data.",
+              "start": 24.68,
+              "end": 39.6
+            },
+            {
+              "index": 3,
+              "text": "Inlined there is an array of three books: landry-ui, then repo-story, then next-chapter itself. Every book credits the same narrator, Brandon Landry, and every chapter title carries a \"Chapter N\" prefix.",
+              "start": 39.6,
+              "end": 54.32
+            },
+            {
+              "index": 4,
+              "text": "Across the three books there are sixteen chapters and sixteen matching summary tracks, about four and a half hours of audio in total. That the library holds three books, and in that order, is the product of two scoping prompts.",
+              "start": 54.32,
+              "end": 68.56
+            },
+            {
+              "index": 5,
+              "text": "The kernel is verbatim from the July twentieth foundation session, prompt twenty-eight: \"the purpose of this project is to create the github page that is the interface to the audio books that talks about the repositories...",
+              "start": 68.56,
+              "end": 80.16
+            },
+            {
+              "index": 6,
+              "text": "i want there to be the audiobook for the landry ui repository and the repo story repository.\" That fixed the site as a library of self-narrating books \u2014 at first, two.",
+              "start": 80.16,
+              "end": 90.52
+            },
+            {
+              "index": 7,
+              "text": "The third arrived the next day, in the July twenty-first vendored session, prompt twenty-one: \"I want to add one more repo to the ones that will appear on the project page, this one: next-chapter.",
+              "start": 90.52,
+              "end": 102.64
+            },
+            {
+              "index": 8,
+              "text": "the history of it itself will point to the history of repo-story and landry-ui which will complete the journey story of all of it and put a bow on it.\" Two books became three, recorded as decision record nine.",
+              "start": 102.64,
+              "end": 114.96
+            },
+            {
+              "index": 9,
+              "text": "The one-line description under each book comes from the July twenty-first trilogy-built session, prompt twenty-eight: \"let's also add a brief, one short sentence that describes each book on the index page.\" The exact title wording \u2014 \"a trilogy about its own making\" \u2014 has no dictating prompt; it follows from that trilogy framing, an inference.",
+              "start": 114.96,
+              "end": 136.44
+            },
+            {
+              "index": 10,
+              "text": "Next, the player itself, which gets its own book, so one paragraph here. It gives you a library view, per-chapter navigation with resume, adjustable playback speed, a time-synced transcript with follow and reading modes, and text-size control.",
+              "start": 136.44,
+              "end": 151.72
+            },
+            {
+              "index": 11,
+              "text": "It is vanilla JavaScript, a global called RepoStoryPlayer, with no build step \u2014 the landry-ui audiobook component, vendored rather than rebuilt. That reuse was a live decision.",
+              "start": 151.72,
+              "end": 163.72
+            },
+            {
+              "index": 12,
+              "text": "The foundation session records the hesitation, prompt twenty-eight, verbatim: \"i am still conflicted about creating from scratch a reduced functionality user interface as opposed to reusing the landry ui.\" Prompt thirty-five resolves it: \"reuse the landry ui, supersede adr 0002 \u2014 the tool is the audio book generator and player.\" And prompt forty-three locks the framing the whole site exists to show: \"the product is the player and generator,\" the demonstration being their composition.",
+              "start": 163.72,
+              "end": 191.08
+            },
+            {
+              "index": 13,
+              "text": "Now the feature built for the reviewer's clock: the Full and Summary toggle. Each chapter ships two tracks \u2014 the full arc, running roughly fifteen to twenty minutes, and a summary running three to four. The toggle sits beside the transcript label and flips between them.",
+              "start": 191.08,
+              "end": 206.44
+            },
+            {
+              "index": 14,
+              "text": "It is the best-documented feature in the repo. Its origin, from the trilogy-built session, prompt eleven, verbatim: \"I fear the reviewer won't spend the time on it due to the workload they have. I propose a new feature...",
+              "start": 206.44,
+              "end": 218.32
+            },
+            {
+              "index": 15,
+              "text": "add two buttons to the right of the TRANSCRIPT pane label: Full and Summary.\" The re-issue adds discipline \u2014 \"Don't do anything yet except generate the summary and show it to me\" \u2014 so the summary was reviewed as text before any audio or interface existed.",
+              "start": 218.32,
+              "end": 232.44
+            },
+            {
+              "index": 16,
+              "text": "Prompt fifteen approved it and set the build order: \"add the summary text as the final step of generating a chapter.\" Two corrections followed, both verbatim: prompt sixteen moved the buttons \"to appear after the word TRANSCRIPT,\" and prompt twenty-three caught a bug where the chapter pane \"is still the running length of the full length chapter\" while summary was selected.",
+              "start": 232.44,
+              "end": 252.68
+            },
+            {
+              "index": 17,
+              "text": "The recap records the fix threading a computed summary clock through the whole time model. Underneath the transcript is one durability detail. The read-along data lives in transcripts dot j-s-o-n, about five hundred thirty-six kilobytes of merged timing text.",
+              "start": 252.68,
+              "end": 268.88
+            },
+            {
+              "index": 18,
+              "text": "The page requests it with a cache key that reads v equals a-six-four-a-a-five-five-nine \u2014 the first eight characters of the file's own content hash, verified to match the bytes. Change the content, the key changes; leave it, the browser keeps its copy.",
+              "start": 268.88,
+              "end": 284.88
+            },
+            {
+              "index": 19,
+              "text": "No prompt asks for this; it is the repo's \"durable over accurate\" rule \u2014 key on content, not on modification time \u2014 an inference. One feature is present but inert, and honesty requires saying so plainly.",
+              "start": 284.88,
+              "end": 299.08
+            },
+            {
+              "index": 20,
+              "text": "The site ships feedback dot j-s: a flag-a-transcription-error control, styled, with the logic to POST flags to a server. But the published page never passes it a feedback URL, and the site has no backend, so a flagged line is saved to local storage and goes no further.",
+              "start": 299.08,
+              "end": 317.24
+            },
+            {
+              "index": 21,
+              "text": "This is partial by design \u2014 the backend was retired in decision eight \u2014 and the feature degrades quietly rather than breaking. It is vendored code with no next-chapter prompt behind it.",
+              "start": 317.24,
+              "end": 327.68
+            },
+            {
+              "index": 22,
+              "text": "The site is also installable and works offline, through a service worker in the file s-w dot j-s and a web manifest. It precaches the shell, caches each chapter's audio on first play, and slices cached files into partial byte-range responses so you can seek while offline.",
+              "start": 327.68,
+              "end": 344.2
+            },
+            {
+              "index": 23,
+              "text": "Its cleanup list evicts two stale entries: a legacy single-file book, and one recalled bad-generation chapter \u2014 chapter one-zero-seven-three \u2014 whose bytes had to be replaced under the same name.",
+              "start": 344.2,
+              "end": 357.8
+            },
+            {
+              "index": 24,
+              "text": "This machinery is vendored from the player, with no next-chapter prompt behind it, an inference \u2014 though an earlier war-game of the build plan is what forced the same-origin design that makes it work here at all.",
+              "start": 357.8,
+              "end": 369.96
+            },
+            {
+              "index": 25,
+              "text": "A small thing you see in the browser tab: the favicon, in the file favicon dot p-n-g, is the Next Chapter program mark.",
+              "start": 369.96,
+              "end": 377.48
+            },
+            {
+              "index": 26,
+              "text": "Prompt thirty-one from the trilogy-built session reported the bug \u2014 \"one small bug, no favicon\" \u2014 and prompt thirty-two corrected the choice: \"no, use the favicon from their site, not my old wbt icon,\" pointing at nextchapterproject dot org.",
+              "start": 377.48,
+              "end": 392.96
+            },
+            {
+              "index": 27,
+              "text": "It is wired through a registry key so the assembler copies it into place. Last, the trail that lets a reviewer check all of this: the files provenance dot m-d and sources dot m-d. The first, auto-generated, pins the player to an exact landry-ui commit.",
+              "start": 392.96,
+              "end": 408.88
+            },
+            {
+              "index": 28,
+              "text": "The second, hand-written, pins each book's source \u2014 and records that this third book is narrated only through commit eight-two-nine-five-c-a-e, because, per decision record nine, a book cannot contain its own generation.",
+              "start": 408.88,
+              "end": 422.48
+            },
+            {
+              "index": 29,
+              "text": "That breadcrumb layer answers a foundation-session prompt, twenty-seven: \"what mechanism does this repo provide so that the reviewer has an unambiguous breadcrumb trail to follow.\"\n\nNone of the files in the docs folder are hand-written. A script assembles every one of them. That is the next chapter.",
+              "start": 422.48,
+              "end": 439.2
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "This is next-chapter, the public assembly repository, and the static site you are listening on is the artifact this chapter tours.",
+              "start": 0.0,
+              "end": 7.08
+            },
+            {
+              "index": 1,
+              "text": "The landing page, index dot h-t-m-l, carries the whole library inline: three books \u2014 landry-ui, repo-story, and next-chapter \u2014 each crediting the narrator Brandon Landry, together sixteen chapters and sixteen summary tracks, about four and a half hours.",
+              "start": 7.08,
+              "end": 25.04
+            },
+            {
+              "index": 2,
+              "text": "That three-book shape came from two prompts: a two-book kernel in the July twentieth foundation session and a trilogy addition the next day.",
+              "start": 25.04,
+              "end": 32.48
+            },
+            {
+              "index": 3,
+              "text": "Inside each book runs the player, the vendored landry-ui vanilla component, giving chapter navigation, resume, playback speed, time-synced transcripts with follow and reading modes, and text sizing \u2014 a reuse decided live across three foundation-session prompts.",
+              "start": 32.48,
+              "end": 48.44
+            },
+            {
+              "index": 4,
+              "text": "The Full and Summary toggle is the reviewer's time-budget feature, three-minute summaries against roughly twenty-minute chapters, and the most heavily documented feature in the repo, driven by a prompt chain from origin through two corrections.",
+              "start": 48.44,
+              "end": 62.32
+            },
+            {
+              "index": 5,
+              "text": "Supporting pieces: a transcripts file cache-keyed on its own content hash rather than modification time; a transcription-error feedback flag that is present but inert, saving only to local storage with no backend wired; an installable offline service worker with byte-range slicing and legacy eviction; the Next Chapter favicon fixed by a two-prompt exchange; and provenance documents pinning each book's source commit.",
+              "start": 62.32,
+              "end": 87.48
+            },
+            {
+              "index": 6,
+              "text": "The favicon and toggle carry verbatim prompts; the service worker, feedback, and cache key are vendored and stated as inference.",
+              "start": 87.48,
+              "end": 95.4
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "title": "Assembling The Trilogy",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "Chapter two. The player from chapter one plays whatever a registry hands it. This chapter is how the published site, the docs directory, gets built from three separate pipeline runs into one thing the player can load. Start with the registry itself: scripts slash trilogy dot json.",
+              "start": 0.0,
+              "end": 17.68
+            },
+            {
+              "index": 1,
+              "text": "It is a small configuration file, and it is the whole plan for the site in data form. It carries a title \u2014 \"Next Chapter, a trilogy about its own making\" \u2014 a favicon key, and a list of three books. Each book entry names a slug, a manifest path, a transcripts path, and a one-line description.",
+              "start": 17.68,
+              "end": 35.8
+            },
+            {
+              "index": 2,
+              "text": "The manifest and transcript paths point into per-book pipeline run folders under repo-story, and those folders are gitignored: the inputs are generated outputs, not committed files. No prompt dictates this file line by line.",
+              "start": 35.8,
+              "end": 50.52
+            },
+            {
+              "index": 3,
+              "text": "It is the place where decisions made elsewhere \u2014 which three books, what the site is called, which favicon \u2014 get written down as config for the assembler to read. Next, the assembler: scripts slash build dash trilogy dash site.",
+              "start": 50.52,
+              "end": 65.0
+            },
+            {
+              "index": 4,
+              "text": "It reads the registry and, for each of the three books, runs the same sequence. It converts that book's chapters manifest into the player's book structure by calling a function named book from manifest \u2014 and here is the design choice worth naming. It does not reimplement that conversion.",
+              "start": 65.0,
+              "end": 81.48
+            },
+            {
+              "index": 5,
+              "text": "It imports book from manifest from build underscore site dot py inside the repo-story tree, the same function the pipeline itself uses to build a single book. One source of truth, derived from rather than copied, so the two can never drift apart.",
+              "start": 81.48,
+              "end": 97.56
+            },
+            {
+              "index": 6,
+              "text": "That reuse is the project's standing \"durable over accurate\" rule applied: no prompt says reuse this function, the rule says it. Having built each book, the assembler copies that book's audio into docs slash audio slash the slug.",
+              "start": 97.56,
+              "end": 114.4
+            },
+            {
+              "index": 7,
+              "text": "It copies each chapter file and, when a chapter has one, its summary file \u2014 but only when the destination is missing or a different size on disk. A size-compare skip, so re-running the build does not recopy unchanged audio.",
+              "start": 114.4,
+              "end": 128.48
+            },
+            {
+              "index": 8,
+              "text": "Then it prunes: any file already in the destination that the new manifest does not expect gets reported as removing stale, and unlinked.",
+              "start": 128.48,
+              "end": 136.44
+            },
+            {
+              "index": 9,
+              "text": "Only after the copy does it prefix every filename with the slug, so a book's first chapter becomes, for example, its slug then slash then chapter underscore zero zero zero one, keeping the three books from colliding in one flat player.",
+              "start": 136.44,
+              "end": 150.0
+            },
+            {
+              "index": 10,
+              "text": "The order matters \u2014 the copy uses the plain names to find the source files, and prefixing happens after.",
+              "start": 150.0,
+              "end": 156.52
+            },
+            {
+              "index": 11,
+              "text": "The transcripts from all three books get merged into a single transcripts dot json, and the assembler builds the player's cache-busting URL from the content itself: it takes a sha256 hash of the merged bytes and uses the first eight hex characters as a version query string.",
+              "start": 156.52,
+              "end": 174.96
+            },
+            {
+              "index": 12,
+              "text": "Change the transcript content, the key changes; leave it unchanged, the key holds, and the browser keeps its cache. A content hash, not a timestamp.",
+              "start": 174.96,
+              "end": 183.52
+            },
+            {
+              "index": 13,
+              "text": "Then it copies the player's own files \u2014 player dot js, player dot css, the service worker, and the rest \u2014 from the player source directory, copies the icons folder if present, and generates index dot html with all three books inlined directly into the player's init call.",
+              "start": 183.52,
+              "end": 201.16
+            },
+            {
+              "index": 14,
+              "text": "Notably this generator writes no feedback URL, which is why, as chapter one noted, the feedback panel on the live site is inert. Now the provenance rule, and this is the sharp one. The player component is a copy of an external UI project, landry dash u i.",
+              "start": 201.16,
+              "end": 217.88
+            },
+            {
+              "index": 15,
+              "text": "When the assembler records where the player came from, it will pin an exact commit only when the player directory is genuinely a checkout of that project \u2014 it shells out to git, reads the origin remote and the repository's top-level name, and pins the commit hash only if landry dash u i actually appears there.",
+              "start": 217.88,
+              "end": 237.52
+            },
+            {
+              "index": 16,
+              "text": "Otherwise it writes a plain, unpinned description instead. The in-code comment gives the reason: pinning that repository's HEAD would be, quote, provenance theater. A hash that looks like provenance but points at whatever repo happens to enclose the directory is worse than no hash.",
+              "start": 237.52,
+              "end": 253.8
+            },
+            {
+              "index": 17,
+              "text": "It writes the result into docs slash PROVENANCE dot md, two honest lines: where the player was copied from, and that the audio and transcripts come from the pipeline run folders named in the registry.",
+              "start": 253.8,
+              "end": 267.16
+            },
+            {
+              "index": 18,
+              "text": "The recap for the twenty-first records that this fix came out of a research and QA pass \u2014 the assembler had been pinning the enclosing repo's HEAD when the player directory was not a real checkout \u2014 not from a prompt. That fix is frozen into the tests.",
+              "start": 267.16,
+              "end": 281.72
+            },
+            {
+              "index": 19,
+              "text": "The assembler ships with test underscore build underscore trilogy underscore site dot py, and it exists because of one instruction.",
+              "start": 281.72,
+              "end": 288.8
+            },
+            {
+              "index": 20,
+              "text": "From the twenty-first, the trilogy-built session, before any build code was written, the prompt read: \"you see your directives to test first write code second right?\" The test builds two fake books in a temporary directory, with a fake player placed inside an unrelated git repository, and asserts the whole contract in fourteen checks \u2014 that filenames come out slug-prefixed, that a summary file passes through, that the registry's favicon replaces the player's default icon.",
+              "start": 288.8,
+              "end": 316.4
+            },
+            {
+              "index": 21,
+              "text": "And the load-bearing negative one: it asserts that the provenance string contains no \" at \" marker \u2014 no pinned hash \u2014 precisely because the fake player sits in an unrelated repo. That single assertion encodes the provenance-theater fix as a regression test.",
+              "start": 316.4,
+              "end": 332.92
+            },
+            {
+              "index": 22,
+              "text": "The test runs on the standard library alone, no audio tooling required. One more piece, covered in full by book two but named here: the vendored generator.",
+              "start": 332.92,
+              "end": 342.48
+            },
+            {
+              "index": 23,
+              "text": "The entire repo-story tree inside this project, and its build script scripts slash vendor dash repo dash story, exist because of a decision from the twenty-first vendored session. The prompt: \"let's create this repo as a folder within next-chapter...",
+              "start": 342.48,
+              "end": 357.16
+            },
+            {
+              "index": 24,
+              "text": "let's replay the commits excluding all personal info and unnecessary info you found.\" Rather than flip a private repository public, the owner had it replayed commit by commit into this repo, each snapshot scrubbed of excluded files and private text, each carrying a Replayed-From trailer back to its original.",
+              "start": 357.16,
+              "end": 377.24
+            },
+            {
+              "index": 25,
+              "text": "The script refuses to run on main, and ships a verify mode that scans every replayed commit for banned tokens. That is the vendoring decision; book three tells how a leak was caught mid-flight. And nothing here deploys. The assembler assembles docs and stops.",
+              "start": 377.24,
+              "end": 393.12
+            },
+            {
+              "index": 26,
+              "text": "Publishing is the owner's git push \u2014 the policy a PreToolUse hook enforces mechanically by blocking any agent push. The prompt from the twenty-first states it directly: do a final check for personal info on all files, then, quote, give me the command to flip it public, and i'll push it after that.",
+              "start": 393.12,
+              "end": 412.24
+            },
+            {
+              "index": 27,
+              "text": "The assembler and the registry themselves have no single authorizing prompt; their existence traces to an approved plan milestone and dated commits, and I am labeling that as inference. The same public-by-default stance applies to the prompts themselves \u2014 next.",
+              "start": 412.24,
+              "end": 428.08
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "This chapter is the assembly: how three separate pipeline runs become the single published site the player loads.",
+              "start": 0.0,
+              "end": 6.12
+            },
+            {
+              "index": 1,
+              "text": "The registry, scripts slash trilogy dot json, is the plan in data form \u2014 a title, a favicon, and three books, each naming a slug, a manifest, a transcripts file, and a description, all pointing into gitignored run folders.",
+              "start": 6.12,
+              "end": 22.0
+            },
+            {
+              "index": 2,
+              "text": "The assembler, scripts slash build dash trilogy dash site, reads that registry and, per book, converts the manifest by reusing one shared function imported from the pipeline's own code rather than reimplementing it.",
+              "start": 22.0,
+              "end": 35.0
+            },
+            {
+              "index": 3,
+              "text": "It copies audio with a size-compare skip and stale-file pruning, prefixes filenames with each book's slug, merges all transcripts into one file, and cache-busts that file with the first eight characters of its content hash. It generates index dot html with the books inlined.",
+              "start": 35.0,
+              "end": 51.8
+            },
+            {
+              "index": 4,
+              "text": "Its sharpest rule is provenance: it pins an exact commit for the player only when the player directory is a real checkout of the external landry-ui project, because pinning any enclosing repo's HEAD would be, in the code's words, provenance theater.",
+              "start": 51.8,
+              "end": 67.64
+            },
+            {
+              "index": 5,
+              "text": "That fix is frozen as a negative assertion in the fourteen-check test file, which exists because a prompt held the agent to test-first discipline. The vendored generator brought the pipeline in as scrubbed, replayed history.",
+              "start": 67.64,
+              "end": 81.6
+            },
+            {
+              "index": 6,
+              "text": "Nothing here deploys \u2014 the owner pushes, a hook enforces it \u2014 the same public-by-default stance the prompts get next.",
+              "start": 81.6,
+              "end": 90.08
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "title": "The Prompt Trail",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "This repo publishes not just the code but the prompts that made it. Every user message from every session is exported verbatim and shipped alongside the code. At last count that is one hundred ten prompts across four sessions, and the curated index, prompt-history.md, states exactly that total.",
+              "start": 0.0,
+              "end": 21.36
+            },
+            {
+              "index": 1,
+              "text": "The tool that produces those exports is a bash script named export-prompts. You give it a session name, and it finds the newest Claude Code transcript for this repository, reads it, and writes a companion file next to that session's recap. It keeps only the user's messages.",
+              "start": 21.36,
+              "end": 38.24
+            },
+            {
+              "index": 2,
+              "text": "Everything else is dropped: the assistant's replies, tool results, system notifications, and the skill-expansion blocks that appear when a slash command loads its instructions.",
+              "start": 38.24,
+              "end": 48.36
+            },
+            {
+              "index": 3,
+              "text": "Concretely, the extraction selects records of type user, and when a message's content is an array that contains a tool result, it drops the whole message rather than risk leaking tool output into the record.",
+              "start": 48.36,
+              "end": 59.28
+            },
+            {
+              "index": 4,
+              "text": "Then it filters by prefix: a prompt is thrown out if it begins with a system-notification marker, a task-notification tag, a system-reminder tag, a local-command tag, or the line that starts a skill body. Empty prompts go too. What survives is the human half of the conversation and nothing else.",
+              "start": 59.28,
+              "end": 78.0
+            },
+            {
+              "index": 5,
+              "text": "Before any of that is written, each surviving prompt passes through inline redaction. The rule here is that the value is replaced but the line survives, so the prompt stays readable and its shape is preserved. An email address becomes the token redacted-email.",
+              "start": 78.0,
+              "end": 95.72
+            },
+            {
+              "index": 6,
+              "text": "Anything that looks like a cookie, an authorization header, or a CSRF token becomes redacted-credential. A private-key header becomes redacted-private-key. Strings that match known API-token shapes become redacted-token.",
+              "start": 95.72,
+              "end": 109.8
+            },
+            {
+              "index": 7,
+              "text": "And any home-directory path is collapsed to a tilde, so no machine's internal layout ships in a prompt. All of this exists because of a single prompt from the July twentieth foundation session. It read, verbatim: \"ok, this will be a public repo.",
+              "start": 109.8,
+              "end": 125.28
+            },
+            {
+              "index": 8,
+              "text": "add scanning verbage to the claude.md to ensure no private data leeks into commits. Along with this I will want to be publishing the prompts alongside each session note that is captured with a slash vault recap.\" That one message seeds both the hygiene rules and the export pipeline.",
+              "start": 125.28,
+              "end": 143.12
+            },
+            {
+              "index": 9,
+              "text": "The build order came a few prompts later, just as verbatim: \"installed, build export-prompts and wire it in.\" The foundation recap records the result as the script plus eleven tests, written test-first, red to green.",
+              "start": 143.12,
+              "end": 159.12
+            },
+            {
+              "index": 10,
+              "text": "The export writes frontmatter tagging the file as type prompts, a header noting that tool output and system events are excluded and private data is redacted inline, and then each prompt numbered in sequence.",
+              "start": 159.12,
+              "end": 171.4
+            },
+            {
+              "index": 11,
+              "text": "After it writes, if the leak-scanner gitleaks is on the path, it runs it against the output file and warns, but never blocks, if anything is flagged. There is one more rule around the count, and it was earned rather than designed.",
+              "start": 171.4,
+              "end": 185.8
+            },
+            {
+              "index": 12,
+              "text": "The instruction now standing in the project's CLAUDE.md is that an implausibly low prompt count means the transcript format has drifted, and the correct response is to stop and investigate rather than publish a thin export. This rule exists because of a real miss.",
+              "start": 185.8,
+              "end": 202.8
+            },
+            {
+              "index": 13,
+              "text": "On July twenty-first, the counts were wrong: background task-notification blocks had been counted as prompts, inflating earlier numbers.",
+              "start": 202.8,
+              "end": 210.52
+            },
+            {
+              "index": 14,
+              "text": "When the extractor learned to exclude those blocks, the foundation session's count fell from fifty-seven to forty-six, and the vendored session's rose from twenty-one to twenty-seven as other fixes landed. All four exports were regenerated clean.",
+              "start": 210.52,
+              "end": 224.12
+            },
+            {
+              "index": 15,
+              "text": "The trigger for the whole chain was a sanity-check prompt from the July twenty-first vendored session: \"we are persisting the prompts, but not any of the responses.",
+              "start": 224.12,
+              "end": 232.96
+            },
+            {
+              "index": 16,
+              "text": "do the requirements want us to preserve the responses from the AI also?\" The old pre-fix recap line still shows the stale fifty-seven, left in place on purpose so the correction stays auditable. Next, the tests.",
+              "start": 232.96,
+              "end": 246.6
+            },
+            {
+              "index": 17,
+              "text": "A script named test-export-prompts.sh runs the exporter against a tiny fixture transcript and asserts thirteen checks.",
+              "start": 246.6,
+              "end": 254.88
+            },
+            {
+              "index": 18,
+              "text": "Two of them are the load-bearing ones: a tool result in the fixture must not appear in the output, and a home path written as the string slash home slash testuser must be redacted to a tilde. The fixture also carries a planted email address so the test can confirm redaction fires.",
+              "start": 254.88,
+              "end": 272.64
+            },
+            {
+              "index": 19,
+              "text": "That email is there because the public-repo wargame from the foundation session caught a real address in the author's own test fixture. The recap's phrasing was that fixtures are leak surface too, and that finding is why the redaction assertions exist at all. The prompts do not just ship raw.",
+              "start": 272.64,
+              "end": 288.4
+            },
+            {
+              "index": 20,
+              "text": "The README carries a Sessions and prompts table, one row per session linking the recap to its prompt export with the count beside it: forty-six, four, twenty-seven, thirty-three. That table traces to a July twenty-first instruction, verbatim: \"ensure the links to prompts are on the readme.",
+              "start": 288.4,
+              "end": 306.92
+            },
+            {
+              "index": 21,
+              "text": "and include any links to resources there ...",
+              "start": 306.92,
+              "end": 309.24
+            },
+            {
+              "index": 22,
+              "text": "so the reviewer can navigate easily.\" Behind it sits an earlier foundation prompt asking what mechanism gives the reviewer, quote, \"an unambigous breadcrumb trail to follow of how I am building this.\" The curated map over the four raw exports is prompt-history.md, and a decoder document, config-history.md, explains the tools and slash commands the prompts invoke.",
+              "start": 309.24,
+              "end": 335.92
+            },
+            {
+              "index": 23,
+              "text": "A standing rule requires that every slash command appearing in an export already be defined in that file's glossary before publish, so a reviewer never meets an unexplained command. All of this is wrapped in hygiene.",
+              "start": 335.92,
+              "end": 349.28
+            },
+            {
+              "index": 24,
+              "text": "Before every commit, the staged diff is scanned, by gitleaks or by grep, across three classes: credentials, identity, and machine internals. That rule traces to the same July twentieth public-repo prompt and a follow-up asking to wargame the strategy for securing a public repo.",
+              "start": 349.28,
+              "end": 371.48
+            },
+            {
+              "index": 25,
+              "text": "On top of it sits a private token-map scan for identifiers a regular expression cannot catch.",
+              "start": 371.48,
+              "end": 377.84
+            },
+            {
+              "index": 26,
+              "text": "That second scan exists because of the July twenty-first lesson, told straight: quoted agent output inside prompt exports had leaked infrastructure identifiers and family names past gitleaks and into pushed history.",
+              "start": 377.84,
+              "end": 389.68
+            },
+            {
+              "index": 27,
+              "text": "The prompt that met it was verbatim: \"this is still private and we can force push to rewrite the remote history.",
+              "start": 389.68,
+              "end": 395.6
+            },
+            {
+              "index": 28,
+              "text": "this does expose that we need to scan our prompts also as a source of private data leakage.\" It was fixed by a full-history rewrite while the repo was still private, and turned into a new standing rule that checks every staged diff and every prompt export against a gitignored banned-token list.",
+              "start": 395.6,
+              "end": 414.92
+            },
+            {
+              "index": 29,
+              "text": "Prompts are half the audit trail. The config they ran under is the other half, and that is the last chapter.",
+              "start": 414.92,
+              "end": 421.24
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "This part of the repo is the prompt trail: the machinery that publishes not just the code but the prompts that made it. Its core is a bash script named export-prompts.",
+              "start": 0.0,
+              "end": 10.8
+            },
+            {
+              "index": 1,
+              "text": "It finds the newest Claude Code transcript for the repository, keeps only the human's user messages, and drops assistant replies, tool results, system notifications, and skill-expansion blocks.",
+              "start": 10.8,
+              "end": 21.72
+            },
+            {
+              "index": 2,
+              "text": "Each surviving prompt is redacted inline, with the value replaced but the line preserved: emails, credentials, private keys, token-shaped strings, and home paths each become a marker.",
+              "start": 21.72,
+              "end": 34.64
+            },
+            {
+              "index": 3,
+              "text": "It writes one numbered file of verbatim prompts per session, tagged and linked to that session's recap, then runs the leak-scanner gitleaks over what it wrote.",
+              "start": 34.64,
+              "end": 45.6
+            },
+            {
+              "index": 4,
+              "text": "A companion test script, test-export-prompts.sh, asserts thirteen checks against a fixture, including that tool results never become prompts and that home paths are redacted.",
+              "start": 45.6,
+              "end": 57.2
+            },
+            {
+              "index": 5,
+              "text": "A plausibility rule, earned after task-notification blocks once inflated the counts, says an implausibly low count means the transcript format drifted, so stop and investigate.",
+              "start": 57.2,
+              "end": 67.52
+            },
+            {
+              "index": 6,
+              "text": "The README's Sessions and prompts table links every recap to its export, one hundred ten prompts across four sessions, and config-history.md serves as the reviewer's decoder ring with a glossary rule for slash commands.",
+              "start": 67.52,
+              "end": 80.04
+            },
+            {
+              "index": 7,
+              "text": "Wrapping it all is public-repo hygiene: a scan-before-commit across credentials, identity, and machine internals, plus a private token-map scan for identifiers regex cannot see, added after quoted agent output leaked past gitleaks. A July twentieth request to publish the prompts drove every piece.",
+              "start": 80.04,
+              "end": 98.52
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "title": "Memory And Mirror",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "This final chapter is about the parts of the repository that let you check its own claims: the configuration the sessions ran under, and the memory that carried context between them, both made readable to someone who was never at the keyboard. Start with the mirror.",
+              "start": 0.0,
+              "end": 15.08
+            },
+            {
+              "index": 1,
+              "text": "Throughout this project the agent ran under machine-level configuration that lives outside the repo, on the owner's laptop: global conduct rules, session hooks, a handful of skills. Vault notes and prompt exports refer to those files constantly, and a reviewer reading a clone can't see them.",
+              "start": 15.08,
+              "end": 30.72
+            },
+            {
+              "index": 2,
+              "text": "The fix is a directory named dot-claude at the repo root that holds actual copies of that configuration. The whole feature traces to one prompt from the config-mirror session on July twentieth.",
+              "start": 30.72,
+              "end": 41.96
+            },
+            {
+              "index": 3,
+              "text": "The owner noticed that paths and skill references in the repo pointed at the local filesystem and, in his words, this hides things from the reviewer.",
+              "start": 41.96,
+              "end": 50.4
+            },
+            {
+              "index": 4,
+              "text": "He asked for a local dot-claude folder where those things are kept, files that mirror and duplicate the system files but are done so explicitly, so that a reviewer can cross-reference paths they see in vault notes and other committed documents.",
+              "start": 50.4,
+              "end": 62.48
+            },
+            {
+              "index": 5,
+              "text": "He closed with: do a complete repo scan and update docs as needed, then commit. Every property of the feature follows from that wording, and the decision is recorded as architecture decision record seven.",
+              "start": 62.48,
+              "end": 74.48
+            },
+            {
+              "index": 6,
+              "text": "Because the prompt asked for an explicit copy a reviewer can trust, the mirror is generated, never hand-typed. The script that generates it is scripts slash sync-claude-mirror. It treats the global configuration as the single source of truth and derives the mirror from it.",
+              "start": 74.48,
+              "end": 90.96
+            },
+            {
+              "index": 7,
+              "text": "It pulls the orientation hook claude-orient and the live push-guard deny-git-push dot s h from the machine's bin directory; the global conduct file and settings; and four skills in full, conduct, vault, vet, and wargame.",
+              "start": 90.96,
+              "end": 105.0
+            },
+            {
+              "index": 8,
+              "text": "The browser skill, gstack, is roughly one and a half gigabytes upstream, so only its entry points are copied through an allowlist.",
+              "start": 105.0,
+              "end": 112.4
+            },
+            {
+              "index": 9,
+              "text": "The copy itself is rsync with archive mode to preserve executable bits, copy-links to resolve the skill symlinks that point off into a dotfiles repo, and delete to prune anything stale.",
+              "start": 112.4,
+              "end": 123.76
+            },
+            {
+              "index": 10,
+              "text": "The script's roots, where the global config is, where bin is, where the mirror goes, are all read from environment variables with computed defaults, so nothing is a hardcoded absolute path; this is the repo's durable-over-accurate rule applied to its own tooling.",
+              "start": 123.76,
+              "end": 140.8
+            },
+            {
+              "index": 11,
+              "text": "If any expected source is missing, the script exits with an error rather than writing a thin mirror, because a silently incomplete copy would misrepresent the setup.",
+              "start": 140.8,
+              "end": 149.44
+            },
+            {
+              "index": 12,
+              "text": "And a check mode does a dry run and reports drift without writing, which is the gate the project runs before committing anything that touches configuration.",
+              "start": 149.44,
+              "end": 157.44
+            },
+            {
+              "index": 13,
+              "text": "The durability details aren't spelled out in the prompt; they're the standing rule for how trustworthy gets implemented, an inference rather than a quoted instruction. Not everything in that folder is live. A companion README draws the line.",
+              "start": 157.44,
+              "end": 170.64
+            },
+            {
+              "index": 14,
+              "text": "The in-tree settings and the in-tree skills actually load here, and the push guard genuinely runs from the copy inside dot-claude, so the rule that the agent never pushes is enforced by readable code that travels with the clone.",
+              "start": 170.64,
+              "end": 183.72
+            },
+            {
+              "index": 15,
+              "text": "The files suffixed dot-global are documentation only, deliberately not registered, because the machine's global hooks already fire; loading the copies too would double-fire them, orientation twice per session, the brevity rule twice per prompt.",
+              "start": 183.72,
+              "end": 199.64
+            },
+            {
+              "index": 16,
+              "text": "The mirror script has tests, and no separate prompt asked for them. They exist because of the standing rule on this project: tests first, code second.",
+              "start": 199.64,
+              "end": 208.76
+            },
+            {
+              "index": 17,
+              "text": "The suite, test-sync-claude-mirror dot s h, builds a fake global, bin, and skills tree in a temporary directory through those same environment overrides, so it never touches the real machine config or the repo's own mirror. It runs six phases.",
+              "start": 208.76,
+              "end": 224.76
+            },
+            {
+              "index": 18,
+              "text": "Two of its teeth: one phase edits a mirrored file and confirms check mode flags the drift, then that a resync clears it; another removes a source file and confirms the sync fails loudly instead of producing a thin copy.",
+              "start": 224.76,
+              "end": 238.88
+            },
+            {
+              "index": 19,
+              "text": "It also verifies exec bits survive, symlinks resolve, stale files get pruned, and the hand-written README and settings are left untouched. Next, memory.",
+              "start": 238.88,
+              "end": 250.36
+            },
+            {
+              "index": 20,
+              "text": "At the start of every session a hook, session-start dot s h, prints exactly three pointer lines into the agent's context: the latest recap, the count of open todos, the count of open probes. Pointers, never bodies, enough to orient, then read deeper on demand.",
+              "start": 250.36,
+              "end": 267.88
+            },
+            {
+              "index": 21,
+              "text": "It anchors explicitly to this repo's vault and delegates every read to scripts slash vault-digest, a plain grep-and-awk reader with subcommands for summaries, notes by type or concern, the latest recap, todos, probes, backlinks, and full-text search.",
+              "start": 267.88,
+              "end": 285.32
+            },
+            {
+              "index": 22,
+              "text": "A design note dated June twenty-ninth, before this project began, records the reason it's built that way: dropping the Obsidian-app dependency lets memory work headless and across parallel sessions.",
+              "start": 285.32,
+              "end": 296.68
+            },
+            {
+              "index": 23,
+              "text": "This project inherits that machinery; the foundation session's conduct-init command stamped the repo-local copies in one stroke, and the mirror is what surfaces the scripts so a reviewer can read them. That memory lives in the vault directory, a real in-tree folder of Obsidian-flavored markdown.",
+              "start": 296.68,
+              "end": 314.32
+            },
+            {
+              "index": 24,
+              "text": "It holds the session records, four recap-and-prompts pairs, each session's recap beside the exported prompts that drove it, plus todos, project notes, a vet, and nine architecture decision records with an index.",
+              "start": 314.32,
+              "end": 326.96
+            },
+            {
+              "index": 25,
+              "text": "The instruction to keep them came from the foundation session on July twentieth: let's start collecting A-D-Rs. Some of those records are superseded, an S3 audio plan, a Lambda ingestion path, an early two-books plan, and they are kept on purpose.",
+              "start": 326.96,
+              "end": 344.56
+            },
+            {
+              "index": 26,
+              "text": "The owner audited exactly that choice in the vendored session on July twenty-first, noting that normally superseded records are kept and not removed, but asking for an audit of the repo for the sake of making it uncluttered, since the reviewer won't look at things that are hard to find or hidden behind lots of clutter.",
+              "start": 344.56,
+              "end": 361.96
+            },
+            {
+              "index": 27,
+              "text": "The resolution: keep the superseded records with clear supersession banners and an index marking active versus retired, because the audiobooks narrate how the decisions evolved.",
+              "start": 361.96,
+              "end": 371.68
+            },
+            {
+              "index": 28,
+              "text": "Much of this vault convention predates the project; it's the standing setup the conduct scaffold installs, not something authored line by line here. And that closes the book.",
+              "start": 371.68,
+              "end": 382.32
+            },
+            {
+              "index": 29,
+              "text": "The published site, the assembler that builds it, the prompt trail behind every feature, and this mirror of the configuration it all ran under: the whole build can be audited end to end, which was the point from the first prompt to the last.",
+              "start": 382.32,
+              "end": 397.12
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "The closing chapter covers the configuration and memory the sessions ran under, made readable to a reviewer who was never at the keyboard.",
+              "start": 0.0,
+              "end": 7.48
+            },
+            {
+              "index": 1,
+              "text": "The centerpiece is the in-tree dot-claude mirror: checked-in copies of the machine-level config the agent was actually running, so paths referenced in vault notes and prompt exports resolve to real files a reviewer can read.",
+              "start": 7.48,
+              "end": 20.68
+            },
+            {
+              "index": 2,
+              "text": "The script scripts slash sync-claude-mirror generates it from the global config, the single source of truth. It pulls the orientation hook, the live push-guard script, the global conduct file and settings, and four full skills, with the large gstack browser skill allowlisted to entry points only.",
+              "start": 20.68,
+              "end": 39.48
+            },
+            {
+              "index": 3,
+              "text": "Its roots are environment-derived rather than hardcoded, it fails loudly on a missing source, and a check mode acts as a drift gate before any config commit.",
+              "start": 39.48,
+              "end": 49.24
+            },
+            {
+              "index": 4,
+              "text": "Two things stay live here, the settings hook and the skills; the rest is documentation-only, deliberately unregistered so the global hooks don't double-fire. A tests-first companion suite exercises it against a fake global directory across six phases.",
+              "start": 49.24,
+              "end": 66.12
+            },
+            {
+              "index": 5,
+              "text": "For memory, a session-start hook prints three pointer lines, latest recap, open todos, open probes, and delegates reading to vault-digest, a headless grep-and-awk tool.",
+              "start": 66.12,
+              "end": 77.44
+            },
+            {
+              "index": 6,
+              "text": "The vault holds four session recap-and-prompt pairs, todos, projects, a vet, and nine architecture decision records, superseded ones kept on purpose after an audit for reviewer legibility.",
+              "start": 77.44,
+              "end": 89.16
+            },
+            {
+              "index": 7,
+              "text": "One verbatim prompt from the July twentieth config-mirror session drives the whole mirror; its durability properties are the project's standing rules applied. With that, the build is auditable end to end.",
+              "start": 89.16,
+              "end": 100.24
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

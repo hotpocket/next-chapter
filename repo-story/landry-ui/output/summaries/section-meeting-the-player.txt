@@ -1,0 +1,7 @@
+Meeting the player, in brief.
+
+The subject is landry-ui, a plain-JavaScript component library with no build step, whose audiobook player is playing this narration. This chapter is the player's core. The book runs four chapters: the core, the reading surface, offline, then integration and tests.
+
+The features, by name. The library view lists each book with a chapter-count and duration line and a progress dot — gray, blue, or green by how far you are — under a configurable heading. The resume system writes your position to the browser's local storage every five seconds and on exit, and auto-reopens your last book. The per-chapter audio model is the pivotal one: each book is a set of separate chapter files, only one loaded at a time with a chapter-local clock, and a book-wide clock plus binary search sits on top. The chapter panel collapses to short "Ch" labels when squeezed narrow. Transport gives thirty-second skips, previous and next chapter, play and pause, and a speed button cycling zero-point-seven-five up to two. The track bar uses pointer capture so a drag survives leaving the bar, follows live within the loaded chapter, and loads on release into another. Hash routing puts a shareable slug in the address bar.
+
+One honesty note drives the chapter: all of this predates the project's prompt exports, so every attribution is commit-message or session-note paraphrase, and the per-chapter model's reason is inference.

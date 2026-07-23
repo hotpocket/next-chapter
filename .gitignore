@@ -14,8 +14,16 @@ course/
 .war/
 
 # repo-story run folders + personal voice refs (AUTORUN convention; public repo)
+# output/ is ignored except the generated narration text + transcripts —
+# tracked so their progress across generations is diffable in git.
 repo-story/*/repo/
-repo-story/*/output/
+repo-story/*/output/*
+!repo-story/*/output/sections/
+!repo-story/*/output/summaries/
+!repo-story/*/output/chapters.txt
+!repo-story/*/output/site/
+repo-story/*/output/site/*
+!repo-story/*/output/site/transcripts.json
 repo-story/*/book/
 repo-story/voices/*.wav
 repo-story/.python-version

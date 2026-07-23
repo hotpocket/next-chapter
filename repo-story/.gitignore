@@ -1,4 +1,12 @@
-output/
+# output dirs ignored except generated narration text + transcripts (tracked
+# for diffable progress across generations)
+**/output/*
+!**/output/sections/
+!**/output/summaries/
+!**/output/chapters.txt
+!**/output/site/
+**/output/site/*
+!**/output/site/transcripts.json
 __pycache__/
 *.pyc
 *.wav

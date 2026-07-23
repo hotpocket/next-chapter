@@ -1,0 +1,929 @@
+{
+  "books": [
+    {
+      "slug": "landry-ui",
+      "chapters": [
+        {
+          "index": 1,
+          "title": "Meeting The Player",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "Meeting the player. The thing playing this narration to you right now is itself the subject of this book. It is landry-ui, a component library written in plain, build-free JavaScript, and its audiobook player is the component we are walking through.",
+              "start": 0.0,
+              "end": 15.12
+            },
+            {
+              "index": 1,
+              "text": "Four chapters: this one is the player's core \u2014 how it lists books, models sound, and moves through a recording. The second is the reading surface, the words on screen. The third is going offline. The fourth is how it plugs into the rest of the system, and the tests that hold it in place.",
+              "start": 15.12,
+              "end": 32.96
+            },
+            {
+              "index": 2,
+              "text": "One honesty note first, said once. Almost everything in this chapter was built early, between April and May, well before this project began exporting the prompts that drove it. So for these features no word-for-word prompt survives.",
+              "start": 32.96,
+              "end": 46.96
+            },
+            {
+              "index": 3,
+              "text": "What survives is the commit message and a session note from early April, both of which paraphrase the work rather than quote the instruction. Where even a commit is silent, it is called inference. I will not dress any of these up as the user's exact words.",
+              "start": 46.96,
+              "end": 63.52
+            },
+            {
+              "index": 4,
+              "text": "Start with what you see first: the library view, drawn by a routine named renderLibrary. It lists each book with a single meta line \u2014 the chapter count, a middle dot, the total duration \u2014 and a small colored progress dot beside it.",
+              "start": 63.52,
+              "end": 79.52
+            },
+            {
+              "index": 5,
+              "text": "That dot is gray when untouched, blue when a book is in progress, green once it is past ninety-eight percent complete. The heading is configurable: the calling page can pass a title, and if it passes none, the word \"audiobook\" stands in.",
+              "start": 79.52,
+              "end": 94.76
+            },
+            {
+              "index": 6,
+              "text": "That fallback, and a fix so that automatically resuming your last book no longer overrides the library screen, both landed together in a commit on the second of April; the commit message is the only record of the request. Underneath the library sits the resume system.",
+              "start": 94.76,
+              "end": 110.24
+            },
+            {
+              "index": 7,
+              "text": "As you listen, the player writes your position to your browser's local storage every five seconds, and again when you leave the page, and again each time a chapter ends.",
+              "start": 110.24,
+              "end": 119.12
+            },
+            {
+              "index": 8,
+              "text": "It writes two things: a per-book progress record, keyed by the book's index, holding your book-time and how far through you are; and a pointer to the last book you had open. Reopening the page with no other instruction auto-resumes that last book.",
+              "start": 119.12,
+              "end": 135.12
+            },
+            {
+              "index": 9,
+              "text": "There is a subtle rule here, recorded in the session note as a mistake to avoid: when you return to the library, the code must actively forget the last-book pointer, or the five-second save would quietly set it again and pull you back into the book. Now the heart of it \u2014 how the player models sound.",
+              "start": 135.12,
+              "end": 151.96
+            },
+            {
+              "index": 10,
+              "text": "A book is not one giant audio file. It is a set of per-chapter files, one small M4A per chapter, and only one is loaded into the single audio element at a time. This is the pivotal architecture decision of the whole component, made in a commit on the twenty-sixth of April.",
+              "start": 151.96,
+              "end": 169.36
+            },
+            {
+              "index": 11,
+              "text": "Why a single file was abandoned is not preserved in any prompt; a later session recap, looking back, remembers the old model as one file that had swelled to gigabytes \u2014 impractical to load and seek \u2014 so the player switched to per-chapter files.",
+              "start": 169.36,
+              "end": 184.36
+            },
+            {
+              "index": 12,
+              "text": "Because only one chapter is in memory, the audio element's own clock runs chapter-local, and the player computes a book-wide time on top of it: the chapter's start offset plus the local time. Finding which chapter a given book-time belongs to is a binary search across the chapter starts.",
+              "start": 184.36,
+              "end": 202.12
+            },
+            {
+              "index": 13,
+              "text": "That recap is a downstream witness describing the consequence; the instruction that caused the change is inference. That data model surfaces as the chapter panel down one side of the player.",
+              "start": 202.12,
+              "end": 213.08
+            },
+            {
+              "index": 14,
+              "text": "Each chapter is a row with its title, its duration, a progress fill that tracks only while that chapter is the active one, and a small scrubber handle.",
+              "start": 213.08,
+              "end": 222.24
+            },
+            {
+              "index": 15,
+              "text": "The panel is responsive in an unusual way: it declares itself a container, and when it is squeezed below a hundred and fifty pixels wide, the titles and durations vanish and each row collapses to a short label \u2014 \"Ch\" and the number.",
+              "start": 222.24,
+              "end": 236.52
+            },
+            {
+              "index": 16,
+              "text": "That narrow-label behavior is described in the April session note as a container-query feature, again as a summary of the work, not a quote. Next, the transport bar along the bottom. Minus thirty seconds, previous chapter, play and pause, next chapter, plus thirty seconds, and a speed button.",
+              "start": 236.52,
+              "end": 255.08
+            },
+            {
+              "index": 17,
+              "text": "Skipping preserves whether you were playing or paused. The speed button cycles a fixed list \u2014 zero-point-seven-five, one, one-and-a-quarter, one-and-a-half, one-and-three-quarters, and two \u2014 starting at normal speed and stepping through on each tap, wrapping around.",
+              "start": 255.08,
+              "end": 272.52
+            },
+            {
+              "index": 18,
+              "text": "Speed is deliberately not remembered between sessions. Above those buttons is the track bar, and it is more careful than it looks. Dragging it uses pointer capture, so once you grab the thin bar your drag keeps working even as your finger or cursor strays off it.",
+              "start": 272.52,
+              "end": 286.84
+            },
+            {
+              "index": 19,
+              "text": "While you drag, the fill and the time readout follow you live, and if your target lands inside the chapter already loaded, the audio seeks in real time; only when you release into a different chapter does it load that chapter's file \u2014 because loading on every move would thrash the audio.",
+              "start": 286.84,
+              "end": 304.04
+            },
+            {
+              "index": 20,
+              "text": "Small ticks along the bar mark where each chapter begins. One honest detail: the drag math and those chapter ticks are computed against the full book clock, while the passive progress fill uses the summary-aware clock we will meet in chapter two.",
+              "start": 304.04,
+              "end": 319.0
+            },
+            {
+              "index": 21,
+              "text": "In ordinary playback the two agree; in summary mode they do not perfectly coincide. That is simply what the code does at this revision, narrated by no test.",
+              "start": 319.0,
+              "end": 328.36
+            },
+            {
+              "index": 22,
+              "text": "The two commits behind the bar, both on the sixteenth of July, name the behavior plainly \u2014 \"drag-to-seek across chapters\" and a \"hover thumb riding the progress edge\" \u2014 but they fall just before prompt exporting began, so the wording is the commit's, not the user's.",
+              "start": 328.36,
+              "end": 345.12
+            },
+            {
+              "index": 23,
+              "text": "Last, the address bar itself is a control. Each book has a slug, and opening a book pushes a short hash route so the position is shareable; an empty hash means the library. Moving back and forward in the browser moves the player with it.",
+              "start": 345.12,
+              "end": 360.12
+            },
+            {
+              "index": 24,
+              "text": "That routing arrived whole in a single commit on the sixth of May, and only its subject line records the intent. Sound is half the player. The words on screen are the other half.",
+              "start": 360.12,
+              "end": 370.84
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "Meeting the player, in brief. The subject is landry-ui, a plain-JavaScript component library with no build step, whose audiobook player is playing this narration. This chapter is the player's core. The book runs four chapters: the core, the reading surface, offline, then integration and tests.",
+              "start": 0.0,
+              "end": 20.6
+            },
+            {
+              "index": 1,
+              "text": "The features, by name. The library view lists each book with a chapter-count and duration line and a progress dot \u2014 gray, blue, or green by how far you are \u2014 under a configurable heading.",
+              "start": 20.6,
+              "end": 32.32
+            },
+            {
+              "index": 2,
+              "text": "The resume system writes your position to the browser's local storage every five seconds and on exit, and auto-reopens your last book.",
+              "start": 32.32,
+              "end": 40.12
+            },
+            {
+              "index": 3,
+              "text": "The per-chapter audio model is the pivotal one: each book is a set of separate chapter files, only one loaded at a time with a chapter-local clock, and a book-wide clock plus binary search sits on top. The chapter panel collapses to short \"Ch\" labels when squeezed narrow.",
+              "start": 40.12,
+              "end": 56.44
+            },
+            {
+              "index": 4,
+              "text": "Transport gives thirty-second skips, previous and next chapter, play and pause, and a speed button cycling zero-point-seven-five up to two. The track bar uses pointer capture so a drag survives leaving the bar, follows live within the loaded chapter, and loads on release into another.",
+              "start": 56.44,
+              "end": 73.44
+            },
+            {
+              "index": 5,
+              "text": "Hash routing puts a shareable slug in the address bar. One honesty note drives the chapter: all of this predates the project's prompt exports, so every attribution is commit-message or session-note paraphrase, and the per-chapter model's reason is inference.",
+              "start": 73.44,
+              "end": 89.56
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "title": "Transcript And Summary",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "Chapter two: the reading surface. The first feature is the time-synced transcript. The player renders each chapter as a column of chunks, one span of text per chunk, each carrying a start and an end time.",
+              "start": 0.0,
+              "end": 13.4
+            },
+            {
+              "index": 1,
+              "text": "A loop that runs every animation frame binary-searches those chunks by the current playback time and toggles an active class onto the one chunk whose window contains the moment being spoken, so the highlight walks down the page in step with the voice.",
+              "start": 13.4,
+              "end": 28.08
+            },
+            {
+              "index": 2,
+              "text": "Click any chunk and the player seeks the audio to that chunk's start time and plays; if the chunk belongs to a chapter that isn't loaded yet, it loads that chapter first and starts there.",
+              "start": 28.08,
+              "end": 39.16
+            },
+            {
+              "index": 3,
+              "text": "The transcript data arrives as JSON over the network, often after chapter one has already rendered, so the loader re-renders the current chapter's chunks the moment the data shows up.",
+              "start": 39.16,
+              "end": 49.48
+            },
+            {
+              "index": 4,
+              "text": "No verbatim prompt survives for this machinery \u2014 it grew from the original build and a June twenty-eighth fix whose commit reads \"fix transcript not loading on initial page load.\" That's provenance from the commit, not a quoted instruction.",
+              "start": 49.48,
+              "end": 64.0
+            },
+            {
+              "index": 5,
+              "text": "The rule underneath it, logged as a lesson in the session note, is that a transcript's chapter index has to be the sequential position in the audio, not the printed chapter number, or the sync drifts from the first gap onward.",
+              "start": 64.0,
+              "end": 77.36
+            },
+            {
+              "index": 6,
+              "text": "Paired with the highlight is follow mode, the button labeled \"follow,\" and it's on by default. When it's on, the panel auto-scrolls to keep the active chunk parked about a third of the way down the pane as playback advances.",
+              "start": 77.36,
+              "end": 90.04
+            },
+            {
+              "index": 7,
+              "text": "The interesting behavior is how it yields: any manual scroll gesture on the transcript turns follow off \u2014 a mouse wheel, a drag near the right edge, a touch move \u2014 so a reader reaching ahead isn't fought by the auto-scroll.",
+              "start": 90.04,
+              "end": 103.28
+            },
+            {
+              "index": 8,
+              "text": "It re-arms only on explicit navigation: clicking a chunk, clicking a chapter, scrubbing, or stepping to the previous or next chapter.",
+              "start": 103.28,
+              "end": 111.88
+            },
+            {
+              "index": 9,
+              "text": "This came together in a July sixteenth commit titled \"transcript follow \u2014 visible toggle, re-arm on navigation, fix scroll math.\" The commit subject names the three shaping decisions, but this predates the prompt exports, so the user's actual words weren't captured. Commit paraphrase only.",
+              "start": 111.88,
+              "end": 130.6
+            },
+            {
+              "index": 10,
+              "text": "The reading mode button, labeled \"read,\" strips the player down to just the transcript.",
+              "start": 130.6,
+              "end": 135.56
+            },
+            {
+              "index": 11,
+              "text": "It hides the back button, the now-playing header, the chapter list, and the whole bottom control bar, and lets the transcript go full-bleed, edge to edge, with a larger base font and a small play-pause button tucked into the header.",
+              "start": 135.56,
+              "end": 150.32
+            },
+            {
+              "index": 12,
+              "text": "Reading mode has no surviving prompt either, but its commit trail reads like the iteration the prompts would have driven.",
+              "start": 150.32,
+              "end": 156.52
+            },
+            {
+              "index": 13,
+              "text": "First, on July sixteenth, \"reading mode \u2014 transcript-only view.\" Then, the same day, \"reading mode drops the control bar.\" Then, July seventeenth, \"reading mode full-bleed \u2014 max-width none, one-rem gutter.\" Transcript-only, then also drop the controls, then go edge-to-edge.",
+              "start": 156.52,
+              "end": 177.24
+            },
+            {
+              "index": 14,
+              "text": "Three commits showing the steering even without the words. Next, the text-size stepper: two buttons, \"A-minus\" and \"A-plus,\" that scale the transcript type.",
+              "start": 177.24,
+              "end": 187.28
+            },
+            {
+              "index": 15,
+              "text": "The scale is geometric \u2014 each click multiplies by one-point-two-five, and the exponent runs from minus-two to plus-three, so the smallest is about sixty-four percent of the base and the largest about one-point-nine-five times it. The buttons disable at each end.",
+              "start": 187.28,
+              "end": 204.28
+            },
+            {
+              "index": 16,
+              "text": "And what persists across reloads is the exponent itself, stored as an integer, not the computed scale.",
+              "start": 204.28,
+              "end": 210.52
+            },
+            {
+              "index": 17,
+              "text": "Two commits shaped this: July sixteenth added the stepper, and July seventeenth pinned the exact math with a commit titled, almost literally, \"text size equals one-point-two-five to the n, n in minus-two to plus-three.\" No quoted prompt, but that's the clearest case in the chapter of a commit subject echoing the instruction it implements.",
+              "start": 210.52,
+              "end": 232.68
+            },
+            {
+              "index": 18,
+              "text": "Then, scene-break auto-pause. The source marks scene changes with a divider \u2014 asterisks the narration doesn't speak. When playback crosses one of those markers during normal forward play, the audio pauses for two seconds, then resumes on its own, a small breath between scenes.",
+              "start": 232.68,
+              "end": 250.04
+            },
+            {
+              "index": 19,
+              "text": "Seeks and chapter changes re-arm the detector without firing it, so jumping around never triggers a spurious pause.",
+              "start": 250.04,
+              "end": 256.08
+            },
+            {
+              "index": 20,
+              "text": "The hold was originally three seconds; a July sixth change shortened it to two, and that change has its own session recap, which is more useful than the commit because it records why the edit mattered operationally.",
+              "start": 256.08,
+              "end": 268.16
+            },
+            {
+              "index": 21,
+              "text": "Shortening the constant from three thousand to two thousand milliseconds is the same number of characters, invisible to the consuming deploy's size-based change detection, which had to be fixed downstream by content-hashing the player. That durability lesson is the recap's real content.",
+              "start": 268.16,
+              "end": 284.72
+            },
+            {
+              "index": 22,
+              "text": "One verified subtlety in the code: the scene-break scan always reads the full-transcript chunks, even in summary mode, so this is effectively a full-mode feature. Which brings us to the centerpiece of this chapter, and the best-documented feature in the whole player: the Full-Summary toggle.",
+              "start": 284.72,
+              "end": 301.44
+            },
+            {
+              "index": 23,
+              "text": "Two buttons, \"Full\" and \"Summary,\" sitting right after the Transcript label, and they appear only for books that actually carry a summary track.",
+              "start": 301.44,
+              "end": 309.04
+            },
+            {
+              "index": 24,
+              "text": "Switch to Summary and three things change at once \u2014 the audio source swaps to the condensed summary recording, the transcript swaps to the summary chunks, and the entire time model swaps to a second clock.",
+              "start": 309.04,
+              "end": 320.52
+            },
+            {
+              "index": 25,
+              "text": "This feature was built July twenty-first, a session that was prompt-exported, so we have the user's own words. The initial request, verbatim: \"I like how this tells a story, and it is enjoyable to listen to, but I fear the reviewer won't spend the time on it due to the workload they have.",
+              "start": 320.52,
+              "end": 337.56
+            },
+            {
+              "index": 26,
+              "text": "I propose a new feature... add two buttons to the right of the Transcript pane label: Full and Summary.\" The why is right there in the prompt \u2014 the reviewer's time budget. The steering chain is what makes this feature worth dwelling on.",
+              "start": 337.56,
+              "end": 351.68
+            },
+            {
+              "index": 27,
+              "text": "After approving the generated summary, the user asked to wire it in and to \"add the summary text as the final step of generating a chapter\" \u2014 an instruction that reached past the player into the generation pipeline.",
+              "start": 351.68,
+              "end": 363.32
+            },
+            {
+              "index": 28,
+              "text": "Then a placement correction, verbatim: \"move the full/summary buttons to appear after the word Transcript instead of to the left of the text size controls.\" The buttons had first shipped in the control cluster; that prompt moved them to sit right after the Transcript label, and a test now guards the placement.",
+              "start": 363.32,
+              "end": 379.6
+            },
+            {
+              "index": 29,
+              "text": "Finally the time-model correction, verbatim: \"when summary is selected the time shown in the chapters pane is still the running length of the full length chapter.",
+              "start": 379.6,
+              "end": 388.52
+            },
+            {
+              "index": 30,
+              "text": "this should be updated when summary is selected.\" That single prompt is the direct cause of the summary clock: the player now computes cumulative summary-based start times and durations for the whole book, and because the two clocks don't map onto each other, switching modes restarts the current chapter from its beginning.",
+              "start": 388.52,
+              "end": 406.16
+            },
+            {
+              "index": 31,
+              "text": "Initial ask, placement fix, time-model fix \u2014 the correction arc, in the user's own words. A player this size earns its keep offline too.",
+              "start": 406.16,
+              "end": 415.56
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "Chapter two covers the player's reading surface: the transcript panel and everything that acts on the text while the audio runs.",
+              "start": 0.0,
+              "end": 6.56
+            },
+            {
+              "index": 1,
+              "text": "The time-synced transcript highlights the chunk matching the audio's current position, walking the highlight down the page in step with the voice; clicking any chunk seeks the audio to it.",
+              "start": 6.56,
+              "end": 17.6
+            },
+            {
+              "index": 2,
+              "text": "Follow mode, on by default, auto-scrolls to keep the active chunk parked about a third of the way down the pane \u2014 a manual scroll gesture turns it off, and explicit navigation turns it back on.",
+              "start": 17.6,
+              "end": 28.44
+            },
+            {
+              "index": 3,
+              "text": "Reading mode strips the player down to the transcript alone, full-bleed edge to edge, with a mini play button in the header.",
+              "start": 28.44,
+              "end": 35.32
+            },
+            {
+              "index": 4,
+              "text": "The text-size stepper scales the type geometrically, each step one-point-two-five times the last, from about sixty-four percent of the base to nearly double, persisting the exponent. Scene-break auto-pause holds two seconds at the unspoken asterisk dividers, then resumes on its own.",
+              "start": 35.32,
+              "end": 53.52
+            },
+            {
+              "index": 5,
+              "text": "The chapter's centerpiece is the Full-Summary toggle, the best-documented feature in the player.",
+              "start": 53.52,
+              "end": 58.56
+            },
+            {
+              "index": 6,
+              "text": "It appears only for books that carry a summary track, and switching to Summary swaps the audio source, the transcript chunks, and the entire time model at once \u2014 a second clock built on condensed durations. Prompts drove this chapter unevenly.",
+              "start": 58.56,
+              "end": 72.16
+            },
+            {
+              "index": 7,
+              "text": "Transcript, follow, reading mode, text-size, and scene-break rest on commit and recap paraphrase, since they predate the prompt exports.",
+              "start": 72.16,
+              "end": 80.32
+            },
+            {
+              "index": 8,
+              "text": "The Full-Summary toggle, built July twenty-first, has verbatim prompts showing a correction arc: the initial request, a placement fix, and the time-model fix creating the summary clock.",
+              "start": 80.32,
+              "end": 91.92
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "title": "Offline And Pwa",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "Chapter three: taking the book offline. One honesty note up front, and it holds for the whole chapter. Everything here was built in a concentrated burst in early April of twenty twenty-six, months before this project began exporting its prompts.",
+              "start": 0.0,
+              "end": 15.4
+            },
+            {
+              "index": 1,
+              "text": "No verbatim prompt survives for any feature in this chapter. What survives instead is unusually rich for a non-prompt source: a detailed session note from the third of April that records the lessons, plus a dense, self-narrating trail of commits.",
+              "start": 15.4,
+              "end": 31.88
+            },
+            {
+              "index": 2,
+              "text": "So every attribution you hear is a paraphrase drawn from those commits and that note, never a quote of the developer's words. Where the note records a lesson, I will say the note records it. Start with what the listener sees: the download button.",
+              "start": 31.88,
+              "end": 46.6
+            },
+            {
+              "index": 3,
+              "text": "In the library view, each book carries a control that pulls the whole thing down for offline listening. Press it and the button immediately switches to a preparing state, its text changing to \"Preparing,\" its tooltip warning you to keep the page open.",
+              "start": 46.6,
+              "end": 60.24
+            },
+            {
+              "index": 4,
+              "text": "Behind that, a function called downloadForOffline goes to work.",
+              "start": 60.24,
+              "end": 64.44
+            },
+            {
+              "index": 5,
+              "text": "It requests a screen wake lock, if the browser supports one, so the device won't sleep mid-download, and it installs a guard against accidental navigation, so a stray tap on the back button prompts a confirmation instead of silently killing the transfer.",
+              "start": 64.44,
+              "end": 79.2
+            },
+            {
+              "index": 6,
+              "text": "Then it fetches the app shell \u2014 the page, the styles, the player script, the manifest, the icons \u2014 and after that the chapters, one at a time, in order. As each real fetch lands, the button counts your progress: \"Chapter one of twelve,\" \"chapter two of twelve,\" and on.",
+              "start": 79.2,
+              "end": 95.44
+            },
+            {
+              "index": 7,
+              "text": "For every chapter it stores both the full track and, where one exists, the summary track, because offline listening has to work in either mode. When it finishes, the button settles into a downloaded state with a check mark; if a fetch fails, it flips to a retry state instead.",
+              "start": 95.44,
+              "end": 110.76
+            },
+            {
+              "index": 8,
+              "text": "The important structural detail is that everything downloaded goes into a single audio cache, keyed per file. Each chapter is its own cache entry, stored by its own absolute URL.",
+              "start": 110.76,
+              "end": 122.2
+            },
+            {
+              "index": 9,
+              "text": "Adding a new chapter to a book later never invalidates the ones already saved \u2014 the download simply skips anything already cached, silently, with no flash in the UI, and fetches only what's missing.",
+              "start": 122.2,
+              "end": 134.88
+            },
+            {
+              "index": 10,
+              "text": "There's also a lightweight status check that runs when the library renders: it probes the first and last chapter of each book, and if both are present it shows the book as already downloaded.",
+              "start": 134.88,
+              "end": 145.2
+            },
+            {
+              "index": 11,
+              "text": "The code's own comment is honest that this is a heuristic, a fast approximation, not a rigorous check that every byte of every chapter is on disk. Next, the service worker \u2014 the file sw.js, the piece that makes offline actually work at fetch time. It keeps two caches, and the split is deliberate.",
+              "start": 145.2,
+              "end": 164.4
+            },
+            {
+              "index": 12,
+              "text": "One is named audiobook-shell, holding the application's own files; the other is named audiobook-audio, holding the chapters.",
+              "start": 164.4,
+              "end": 173.44
+            },
+            {
+              "index": 13,
+              "text": "The reason for two is recorded in the session note as an architecture decision: code updates rebuild the shell cache, but they must never wipe the audio you've already downloaded.",
+              "start": 173.44,
+              "end": 182.56
+            },
+            {
+              "index": 14,
+              "text": "So the shell is precached on install and served network-first \u2014 fresh when you're online, cached when you're not \u2014 while the audio cache is persistent and served cache-first. Once a chapter is saved, it plays from disk and never touches the network again.",
+              "start": 182.56,
+              "end": 199.04
+            },
+            {
+              "index": 15,
+              "text": "That cache-first audio path is where the central lesson of the chapter lives, and it is about seeking. A cached chapter is stored as a single complete file, a normal two hundred response.",
+              "start": 199.04,
+              "end": 209.68
+            },
+            {
+              "index": 16,
+              "text": "But audio players don't ask for whole files; they ask for byte ranges, so dragging the scrubber jumps straight to a spot. The service worker has to answer those range requests out of a file it holds whole.",
+              "start": 209.68,
+              "end": 221.44
+            },
+            {
+              "index": 17,
+              "text": "A helper called serveRange does it: it reads the cached response as a Blob, parses the requested start and end bytes, slices out exactly those bytes, and returns them as a two-oh-six partial response with the correct content-range headers.",
+              "start": 221.44,
+              "end": 236.68
+            },
+            {
+              "index": 18,
+              "text": "The lesson \u2014 enshrined in the commit, in the session note, and in the player's own CLAUDE file under \"performance lessons\" \u2014 is how it slices. It uses Blob dot slice, never arrayBuffer.",
+              "start": 236.68,
+              "end": 248.48
+            },
+            {
+              "index": 19,
+              "text": "Reading the file as an array buffer would pull the entire chapter, seven hundred megabytes and up, into memory on every single seek. Blob dot slice returns a lightweight reference to just the requested bytes. The note frames it bluntly as the difference between twenty-second seeks and instant seeks.",
+              "start": 248.48,
+              "end": 264.92
+            },
+            {
+              "index": 20,
+              "text": "A companion lesson from the same session: cache keys must be absolute URLs. An earlier version keyed entries by relative path and the offline lookups missed; the fix, in a commit dated the fourth of April, was to store and look up every chapter by its full absolute URL.",
+              "start": 264.92,
+              "end": 281.24
+            },
+            {
+              "index": 21,
+              "text": "The shape of the download code is also a record of two dead ends, and the note preserves both. The first was a background-fetch API.",
+              "start": 281.24,
+              "end": 288.96
+            },
+            {
+              "index": 22,
+              "text": "A commit adopted it for offline downloads and a later commit reverted it entirely; the note explains that it proved unreliable \u2014 partial downloads, no resume, stale state \u2014 so the shipped version is a plain sequential fetch straight into the cache. The second was memory.",
+              "start": 288.96,
+              "end": 306.72
+            },
+            {
+              "index": 23,
+              "text": "On tablets, the early download accumulated the incoming bytes and ran out of memory around four and a half gigabytes. Cloning the response stream didn't help, because the browser buffers both copies.",
+              "start": 306.72,
+              "end": 318.88
+            },
+            {
+              "index": 24,
+              "text": "The note records the fix as a byte-counting stream wrapper that hands bytes to the cache without holding the whole file, and the download button was rewritten several times chasing that crash before it settled. One more piece of the audio cache is a recall mechanism.",
+              "start": 318.88,
+              "end": 333.44
+            },
+            {
+              "index": 25,
+              "text": "On activate, the worker deletes any cache that isn't one of its two current ones, and it also evicts two specifically named legacy keys. One is a leftover from the old single-file architecture.",
+              "start": 333.44,
+              "end": 345.64
+            },
+            {
+              "index": 26,
+              "text": "The other is a chapter that shipped with a bad generation \u2014 a leaked voice sample \u2014 and had to be purged from listeners' already-downloaded caches. That eviction, in a July commit, is the one moment in this chapter later than April, and its purpose is written plainly in the commit subject.",
+              "start": 345.64,
+              "end": 362.72
+            },
+            {
+              "index": 27,
+              "text": "Finally, install. A web manifest, manifest.webmanifest, is what lets the player install as a standalone app. Its name is \"Audiobook Player,\" its short name \"Audiobook,\" its display mode standalone, so it opens without browser chrome. Its background and theme colors are both a near-black.",
+              "start": 362.72,
+              "end": 383.92
+            },
+            {
+              "index": 28,
+              "text": "It declares two icons, at one hundred ninety-two and five hundred twelve pixels, and both files exist on disk. Installability rests on the served page linking that manifest and registering the service worker, which player.js does on load. That's the listener's side.",
+              "start": 383.92,
+              "end": 399.48
+            },
+            {
+              "index": 29,
+              "text": "Now the developer's: how this player ships into other projects, and how it's tested.",
+              "start": 399.48,
+              "end": 404.16
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "Chapter three is about taking a book offline and installing the player as an app.",
+              "start": 0.0,
+              "end": 4.04
+            },
+            {
+              "index": 1,
+              "text": "One honesty note governs it: everything here was built in an early-April twenty twenty-six burst, before this project exported its prompts, so no verbatim prompt survives \u2014 every attribution is a paraphrase of the commit trail and a detailed session note dated the third of April. Four features.",
+              "start": 4.04,
+              "end": 24.04
+            },
+            {
+              "index": 2,
+              "text": "First, the per-book download button, downloadForOffline: one press caches every chapter, guarded by a screen wake lock and a refresh-confirmation prompt, counting \"chapter i of total\" as it goes, storing both the full and summary tracks, with each chapter kept as its own cache entry keyed by absolute URL, so adding chapters never invalidates saved ones.",
+              "start": 24.04,
+              "end": 47.8
+            },
+            {
+              "index": 3,
+              "text": "Second, the service worker, sw.js, which keeps two named caches \u2014 audiobook-shell for the app, served network-first, and audiobook-audio for chapters, served cache-first \u2014 split deliberately so a code update never wipes downloaded audio.",
+              "start": 47.8,
+              "end": 63.68
+            },
+            {
+              "index": 4,
+              "text": "Third, offline seeking: a serveRange helper slices a cached whole file into byte-range partial responses using Blob dot slice rather than arrayBuffer, which the note calls the difference between twenty-second and instant seeks; a companion lesson is that cache keys must be absolute URLs.",
+              "start": 63.68,
+              "end": 79.48
+            },
+            {
+              "index": 5,
+              "text": "The chapter also carries two dead ends preserved in the note \u2014 an abandoned background-fetch API and tablet out-of-memory crashes \u2014 plus a legacy-cache eviction that recalls a bad chapter. Fourth, the manifest that installs the player as a standalone app with its own icons.",
+              "start": 79.48,
+              "end": 97.0
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "title": "Integration And Tests",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "Chapter four. Adopting the player, and the tests that keep it honest. The player you have been hearing about is a component, and a component has to be fetched into whatever project wants to use it. That job belongs to a shell script named luinst.",
+              "start": 0.0,
+              "end": 15.04
+            },
+            {
+              "index": 1,
+              "text": "You run it with two arguments: the path of the component you want, and the destination directory to drop it into.",
+              "start": 15.04,
+              "end": 20.8
+            },
+            {
+              "index": 2,
+              "text": "Under the hood it makes a temporary directory, does a shallow one-commit clone of the landry-ui repository into it, and confirms the requested component path actually exists in the clone.",
+              "start": 20.8,
+              "end": 31.8
+            },
+            {
+              "index": 3,
+              "text": "Then it does the blunt thing its callers depend on: it removes the destination directory entirely, recreates it, and copies the component's contents in. A fetch is a replacement, not a merge, so the fetched copy is always exactly what the repository holds, with nothing stale left behind.",
+              "start": 31.8,
+              "end": 49.72
+            },
+            {
+              "index": 4,
+              "text": "The typical call pulls the vanilla player into a project's player directory, and the consuming project gitignores whatever luinst drops there, because the fetch is the source of truth. Which repository, and cloned how?",
+              "start": 49.72,
+              "end": 63.32
+            },
+            {
+              "index": 5,
+              "text": "By default luinst clones over HTTPS from the public landry-ui repository, and that default is recent. It exists because of the July twentieth session, where the whole repository was flipped from private to public. The prompt that opened that work read: \"this repo will serve the site.",
+              "start": 63.32,
+              "end": 80.88
+            },
+            {
+              "index": 6,
+              "text": "do an audit on landry-ui to see if it is safe to flip public.",
+              "start": 80.88,
+              "end": 84.68
+            },
+            {
+              "index": 7,
+              "text": "wargame that audit to have as much confidence in the analysis as possible.\" Once the audit passed, the next instruction was two words: \"run the gh flip command yourself.\" A public repository means consumers no longer need SSH authentication to clone it, so the default clone URL became HTTPS.",
+              "start": 84.68,
+              "end": 105.0
+            },
+            {
+              "index": 8,
+              "text": "A follow-up prompt from the same session handled the paperwork: \"use my voice, that is fine. fix luinst https path in docs.",
+              "start": 105.0,
+              "end": 113.52
+            },
+            {
+              "index": 9,
+              "text": "then drop them from the todo in the session recap.\" The SSH form is still there for anyone who wants it, reachable by setting the LANDRY underscore UI underscore REPO environment variable. Next, the embed contract.",
+              "start": 113.52,
+              "end": 125.72
+            },
+            {
+              "index": 10,
+              "text": "Once luinst has dropped the vanilla player into a project, the host page wires it up with three tags and one call: a stylesheet link to player dot css, a script tag for feedback dot js loaded before player dot js, and then a call to RepoStoryPlayer dot init with an options object.",
+              "start": 125.72,
+              "end": 142.76
+            },
+            {
+              "index": 11,
+              "text": "That object is the contract. It takes a container element, which is required; a books array; an audioBaseUrl that defaults to the string \"audio slash\"; a transcriptUrl; an optional feedbackUrl; and a title for the library heading. Point those at real data and the player runs.",
+              "start": 142.76,
+              "end": 164.12
+            },
+            {
+              "index": 12,
+              "text": "There is a second variant of the player, written in TypeScript with Tailwind and marked use-client, exported as an AudiobookPlayer component. It is deliberately behind the vanilla one, and that is a recorded decision rather than a captured prompt.",
+              "start": 164.12,
+              "end": 179.6
+            },
+            {
+              "index": 13,
+              "text": "The session note from early April lists the reasoning in the user's own shorthand: vanilla JavaScript over React for the canonical player, more portable, no build step, with React described as feature-complete but not yet optimized like vanilla.",
+              "start": 179.6,
+              "end": 193.6
+            },
+            {
+              "index": 14,
+              "text": "Concretely, the React variant runs on the old single-file audio model, one audio element seeking by chapter start-second offsets, where vanilla loads a separate file per chapter. It has no Full-versus-Summary toggle, no reading mode, no text-size stepper, no offline download.",
+              "start": 193.6,
+              "end": 213.0
+            },
+            {
+              "index": 15,
+              "text": "It carries a couple of things vanilla lacks, like arrow-key seeking of ten seconds, but it is the older, un-migrated cousin, kept working and left behind on purpose. One feature crosses that line in an interesting way: the flag button, the control a listener would tap to report a bad transcription.",
+              "start": 213.0,
+              "end": 232.52
+            },
+            {
+              "index": 16,
+              "text": "In the React variant it is fully rendered, a warning glyph that turns red when flagged and posts a small payload to the feedback endpoint. In the shipped vanilla player it is not.",
+              "start": 232.52,
+              "end": 242.16
+            },
+            {
+              "index": 17,
+              "text": "The wiring is all present: feedback dot js fully defines flag, unflag, and is-flagged, the init call starts the feedback module, and the chunk-flag styling sits in the stylesheet in red.",
+              "start": 242.16,
+              "end": 254.88
+            },
+            {
+              "index": 18,
+              "text": "The payload it would send names the project as repo-story, the type as transcription-error, and carries the book slug, chapter and chunk index, the chunk text, and a timestamp. But player dot js never renders the button and never calls those functions.",
+              "start": 254.88,
+              "end": 270.04
+            },
+            {
+              "index": 19,
+              "text": "Flagging is wired and styled and unreachable, and that too is deliberate. The April session note keeps it as a TODO: feedback flagging UI removed, re-add when the backend is deployed. Two small tools round out the toolkit.",
+              "start": 270.04,
+              "end": 284.92
+            },
+            {
+              "index": 20,
+              "text": "There is serve dot py, a threaded development server whose whole reason to exist is that Python's stock file server does not honor Range requests, and audio seeking needs them.",
+              "start": 284.92,
+              "end": 295.0
+            },
+            {
+              "index": 21,
+              "text": "It parses a byte range, replies with a 206 partial-content status and the correct Content-Range header, and streams the file back in sixty-four-kilobyte chunks. And there is check-m4b, a Python validator with no file extension, a fossil of an older architecture.",
+              "start": 295.0,
+              "end": 313.6
+            },
+            {
+              "index": 22,
+              "text": "It confirms that an M4B's moov atom sits at the front for fast starting, printing the exact ffmpeg fix command if it does not, then checks that the codec is AAC, that chapters are present, and that the duration is positive.",
+              "start": 313.6,
+              "end": 327.0
+            },
+            {
+              "index": 23,
+              "text": "The shipped player consumes per-chapter M4A files, not one big M4B, so check-m4b validates a build path the player no longer takes. It is kept, but it is legacy. Finally, the part that earns trust: the tests.",
+              "start": 327.0,
+              "end": 343.0
+            },
+            {
+              "index": 24,
+              "text": "There are two suites, both Node ES-module scripts driving Playwright, the headless browser-automation library, resolved from a local pinned copy.",
+              "start": 343.0,
+              "end": 352.12
+            },
+            {
+              "index": 25,
+              "text": "One is follow dot test dot m-j-s, contracts A through M, written across the un-exported July sixteenth push alongside the follow-scroll and reading-mode work, so its provenance is the commits, not a captured prompt.",
+              "start": 352.12,
+              "end": 369.0
+            },
+            {
+              "index": 26,
+              "text": "The other is summary dot test dot m-j-s, contracts A through G, and it has a verbatim anchor. The July twenty-first session that built the Full-versus-Summary toggle opened with the user invoking the house rule.",
+              "start": 369.0,
+              "end": 382.16
+            },
+            {
+              "index": 27,
+              "text": "The prompt read: \"you see your directives to test first write code second right?\" That is why the summary contracts exist as a suite rather than an afterthought.",
+              "start": 382.16,
+              "end": 391.52
+            },
+            {
+              "index": 28,
+              "text": "Those contracts check real behavior: that toggling to Summary loads the summary M-four-A and shows chunks starting with the words \"Summary one\"; that total time reads twelve seconds; that clicking the third summary chunk moves the clock to about three seconds; that summary mode survives a page reload; and that a book with no summaries hides the toggle entirely.",
+              "start": 391.52,
+              "end": 414.68
+            },
+            {
+              "index": 29,
+              "text": "Both suites run against a synthetic fixture built by gen dot s-h, which uses ffmpeg to generate two silent audio chapters and a fake transcript, including one book with summaries and one without, precisely to exercise that last branch. And that closes the book.",
+              "start": 414.68,
+              "end": 431.0
+            },
+            {
+              "index": 30,
+              "text": "This player, the vanilla one, fetched by luinst into the trilogy site, is the one speaking this sentence to you right now.",
+              "start": 431.0,
+              "end": 438.16
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "Chapter four covers how the player is adopted by other projects, and how the tests prove it before it ships.",
+              "start": 0.0,
+              "end": 5.6
+            },
+            {
+              "index": 1,
+              "text": "The fetch mechanism is a shell script named luinst: given a component path and a destination, it shallow-clones the repository, then removes and recreates the destination and copies the component in. A fetch is a replacement, not a merge.",
+              "start": 5.6,
+              "end": 20.48
+            },
+            {
+              "index": 2,
+              "text": "It defaults to an HTTPS clone, with an environment variable to override to SSH.",
+              "start": 20.48,
+              "end": 25.64
+            },
+            {
+              "index": 3,
+              "text": "That default has verbatim provenance: the July twentieth session flipped the repository public, opening with \"do an audit on landry-ui to see if it is safe to flip public,\" after which consumers no longer needed SSH keys.",
+              "start": 25.64,
+              "end": 40.04
+            },
+            {
+              "index": 4,
+              "text": "The vanilla embed contract is a single RepoStoryPlayer init call taking a container, a books array, an audio base URL, a transcript URL, and a title.",
+              "start": 40.04,
+              "end": 50.36
+            },
+            {
+              "index": 5,
+              "text": "A React variant, the AudiobookPlayer component, is deliberately behind: still on the single-file audio model, missing the Full-versus-Summary toggle, reading mode, and offline.",
+              "start": 50.36,
+              "end": 61.84
+            },
+            {
+              "index": 6,
+              "text": "The transcription-error flag button is wired and styled but unreachable in vanilla, pending the feedback backend; only the React variant renders it.",
+              "start": 61.84,
+              "end": 70.68
+            },
+            {
+              "index": 7,
+              "text": "Two small tools ship alongside: serve dot py, a Range-capable dev server for audio seeking, and check-m4b, a legacy validator for a format the player no longer consumes.",
+              "start": 70.68,
+              "end": 82.76
+            },
+            {
+              "index": 8,
+              "text": "Two Playwright suites, follow dot test and summary dot test, carry contracts A through M and A through G against an ffmpeg-built fixture. The summary suite exists because of a verbatim July twenty-first directive to test first and write code second.",
+              "start": 82.76,
+              "end": 99.88
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

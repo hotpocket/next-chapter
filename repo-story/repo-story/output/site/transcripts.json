@@ -1,0 +1,929 @@
+{
+  "books": [
+    {
+      "slug": "repo-story",
+      "chapters": [
+        {
+          "index": 1,
+          "title": "The Skill Pipeline",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "This is repo-story: the Claude Code skill and the Python scripts that turned each of these repositories into the audiobook you are hearing. This chapter walks the skill itself. The next two walk the build scripts that make the audio, and the last walks its tests and the provenance behind it all.",
+              "start": 0.0,
+              "end": 16.8
+            },
+            {
+              "index": 1,
+              "text": "The skill is a pipeline of five phases, and the pipeline is the invariant. Survey, then Explore, then Inventory, then Research, then Narrate.",
+              "start": 16.8,
+              "end": 26.8
+            },
+            {
+              "index": 2,
+              "text": "Survey reads the repository's README and its manifest files and its git remote, then presents a short catalog: project name, author, purpose, tech stack, and how much prompt provenance it can find.",
+              "start": 26.8,
+              "end": 39.24
+            },
+            {
+              "index": 3,
+              "text": "Explore launches one explorer agent per repository to catalog every user-visible feature \u2014 exact commands, exact paths, exact defaults \u2014 and writes a dossier, one markdown file per repo, into a folder named dossiers.",
+              "start": 39.24,
+              "end": 54.92
+            },
+            {
+              "index": 4,
+              "text": "Inventory reads all those dossiers and groups the features into chapters, orientation first, core workflow next, and writes the plan to a file named inventory dot m d.",
+              "start": 54.92,
+              "end": 66.12
+            },
+            {
+              "index": 5,
+              "text": "Research launches, per chapter, a code-researcher agent that re-verifies current behavior and a prompt-researcher agent that traces each feature to the prompt that shaped it, and writes packets into a folder named research.",
+              "start": 66.12,
+              "end": 78.4
+            },
+            {
+              "index": 6,
+              "text": "Narrate writes beats, then sections, then summaries, and finally a file named chapters dot t x t that lists one section filename per line. That file drives the order of the audio you are hearing. The skill exists because of a single prompt.",
+              "start": 78.4,
+              "end": 94.6
+            },
+            {
+              "index": 7,
+              "text": "In the July twenty-first vendoring session, the user re-pasted his own pre-project plan and called it the kernel of the journey. Verbatim, it read: \"Create a system for turning a github repo into a podcast. It will explore the content in the repo for: history and core concepts.",
+              "start": 94.6,
+              "end": 112.16
+            },
+            {
+              "index": 8,
+              "text": "The prose generated will generated for a tts engine and will follow a historical arc and also talk about how this repo adds to the historical arc.\" The same prompt named the smallest version: \"A process you can hand to an AI with a github url that will produce a reasonably small number of chapters that I can read online.",
+              "start": 112.16,
+              "end": 130.48
+            },
+            {
+              "index": 9,
+              "text": "A prompt and an audio output.\" A repo URL in, chaptered audio out \u2014 that is the seed. Note the words \"historical arc.\" The skill you are hearing has deliberately reversed that framing, and I will return to how. The skill runs on a deliberate split between two models.",
+              "start": 130.48,
+              "end": 148.0
+            },
+            {
+              "index": 10,
+              "text": "The main session is pinned to Fable, a Claude model used here as the planner, and it does the planning phases: the survey, the inventory, the beats, and the chapter ordering. The execution phases run only through four named agents, each pinned to Opus, another Claude model used here as the executor.",
+              "start": 148.0,
+              "end": 166.08
+            },
+            {
+              "index": 11,
+              "text": "The four are the explorer, the code-researcher, the prompt-researcher, and the narrator. This split is not prose that asks nicely \u2014 it is structural. The settings file pins the session with a two-key object: model, fable; effort level, x-high.",
+              "start": 166.08,
+              "end": 182.32
+            },
+            {
+              "index": 12,
+              "text": "That is a paraphrase of the pin, drawn from the decision record and the recaps. Each agent file pins its own model to opus in its frontmatter.",
+              "start": 182.32,
+              "end": 190.44
+            },
+            {
+              "index": 13,
+              "text": "The decision is recorded in the first architecture decision record, numbered zero-zero-zero-one, titled \"Fable plans, Opus executes.\" Its reasoning, quoted from the record: \"Fable is the strongest synthesizer but the wrong price for the token-heavy execution phases; Opus is the strongest generally-priced executor.\" The record also keeps what it rejected \u2014 inline \"use model X\" instructions scattered across roughly six places in the prose, rejected because prose drifts and relies on the orchestrator obeying it every run.",
+              "start": 190.44,
+              "end": 222.28
+            },
+            {
+              "index": 14,
+              "text": "Structural pins were chosen over prose. And the failure mode is loud by design: if Fable is unavailable, sessions in this repo fail at the model pin rather than silently falling back. Each of the four agents is narrowed to its job.",
+              "start": 222.28,
+              "end": 237.72
+            },
+            {
+              "index": 15,
+              "text": "The explorer is told, in its own file, \"do not chase lineage or philosophy.\" The code-researcher re-reads the source and corrects earlier exploration errors silently.",
+              "start": 237.72,
+              "end": 248.16
+            },
+            {
+              "index": 16,
+              "text": "The prompt-researcher traces each feature to its prompts and is told \"never blur the labels.\" And the narrator's tools are deliberately cut to reading and writing \u2014 no shell, no search \u2014 because its only job is prose. These four were not always these four.",
+              "start": 248.16,
+              "end": 264.16
+            },
+            {
+              "index": 17,
+              "text": "A July tenth recap names the set as explorer, code-researcher, history-researcher, and narrator; the history-researcher, which once ran web searches for historical context, was deleted and replaced by the prompt-researcher. Between planning and narration sits one handoff artifact: the beats.",
+              "start": 264.16,
+              "end": 282.92
+            },
+            {
+              "index": 18,
+              "text": "The project's glossary defines beats as exactly that \u2014 the handoff from planning to narration. For each chapter, the main session on Fable writes a beats file: feature order, the must-hit details pointing at the research packets, the prompt citations, and one-clause transitions.",
+              "start": 282.92,
+              "end": 298.68
+            },
+            {
+              "index": 19,
+              "text": "Then a narrator agent on Opus expands those beats into a section. This structure replaced an older rule where Fable narrated small books inline.",
+              "start": 298.68,
+              "end": 306.88
+            },
+            {
+              "index": 20,
+              "text": "The decision record lists that \"two-to-four themes, write inline\" approach among its rejected options, replaced so the planning context reaches the narration without paying Fable's price for the volume of prose.",
+              "start": 306.88,
+              "end": 320.0
+            },
+            {
+              "index": 21,
+              "text": "The whole pipeline can also run unattended, and that contract lives in a file named AUTORUN dot m d. As the file itself puts it, the plan is the thinking and AUTORUN is the doing.",
+              "start": 320.0,
+              "end": 331.68
+            },
+            {
+              "index": 22,
+              "text": "It takes a GitHub repository URL, finds prompt provenance in known locations, and works inside one folder per run named after the repo \u2014 so that when the build scripts default to their output paths, changing into that folder makes every default just work with no override flags.",
+              "start": 331.68,
+              "end": 349.0
+            },
+            {
+              "index": 23,
+              "text": "Its constraints are firm: no SSH commands; do not publish without an explicit ask, because publishing is the user's own git push; do not clobber prior runs; honor the model split with loud failure; and do not pause mid-pipeline \u2014 AUTORUN overrides that to present-and-continue.",
+              "start": 349.0,
+              "end": 369.08
+            },
+            {
+              "index": 24,
+              "text": "Now, that reversal of the founding \"historical arc.\" It came in two moves. On July tenth, the user tried to fix perceived fluff with a sentence-level de-fluff pass in an \"understated reportage\" register across finished sections.",
+              "start": 369.08,
+              "end": 382.88
+            },
+            {
+              "index": 25,
+              "text": "The recap records that it was reviewed and rejected \u2014 it made the content drier without fixing the fluff \u2014 and fully rolled back, with a note that any future tone work should happen at the beats level, not by pruning words.",
+              "start": 382.88,
+              "end": 395.48
+            },
+            {
+              "index": 26,
+              "text": "The real fix came on July twenty-second, and it changed the methodology rather than the wording. Verbatim, the prompt read: \"the story seems long winded, and a bit too fantastical.",
+              "start": 395.48,
+              "end": 405.84
+            },
+            {
+              "index": 27,
+              "text": "I don't so much as want to provide a historical account as I want to provide a walkthrough of the features and the prompts that influenced the features as they currently exist.\" That single prompt is the largest shaper of the chapter you are hearing.",
+              "start": 405.84,
+              "end": 420.36
+            },
+            {
+              "index": 28,
+              "text": "The skill's description became \"produce audio walkthroughs of their features and the prompts that shaped them.\" The history-researcher agent was deleted and the prompt-researcher put in its place.",
+              "start": 420.36,
+              "end": 430.52
+            },
+            {
+              "index": 29,
+              "text": "The narrate brief grew a paragraph test that bans scenic openings, extended analogies, and historical lineage. That rewrite of the prompts folder is what produced this very section. Those phases all end with text files. Turning text into a voice is the next chapter.",
+              "start": 430.52,
+              "end": 447.88
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "This chapter walks repo-story itself: the Claude Code skill that reads a repository and writes the walkthrough you are hearing. A repo URL goes in, chaptered audio comes out \u2014 a shape set by a founding prompt that called it turning a github repo into a podcast.",
+              "start": 0.0,
+              "end": 15.8
+            },
+            {
+              "index": 1,
+              "text": "The skill runs five phases whose order never changes: Survey, Explore, Inventory, Research, Narrate. Survey catalogs the project. Explore writes a dossier of features per repo. Inventory groups features into chapters. Research verifies the code and traces each feature to its prompt.",
+              "start": 15.8,
+              "end": 33.88
+            },
+            {
+              "index": 2,
+              "text": "Narrate writes the sections and summaries, then a chapters file that sets the audio order.",
+              "start": 33.88,
+              "end": 38.28
+            },
+            {
+              "index": 3,
+              "text": "Underneath is a model split, recorded in architecture decision record zero-zero-zero-one: the main session is pinned to Fable for planning, and four named agents \u2014 explorer, code-researcher, prompt-researcher, narrator \u2014 are pinned to Opus for execution.",
+              "start": 38.28,
+              "end": 53.52
+            },
+            {
+              "index": 4,
+              "text": "The pins are structural so the rule can't drift, and the session fails loudly if Fable is unavailable. Between planning and narration sits the beats file, the handoff artifact. A separate file, AUTORUN.md, is the unattended contract for full runs.",
+              "start": 53.52,
+              "end": 71.72
+            },
+            {
+              "index": 5,
+              "text": "Prompts drove all of it, most visibly a July twenty-second redirect: the user asked for a walkthrough of the features and the prompts that shaped them rather than a historical account.",
+              "start": 71.72,
+              "end": 82.8
+            },
+            {
+              "index": 6,
+              "text": "That prompt deleted the old history-researcher, added the prompt-researcher, and produced the very methodology this chapter follows.",
+              "start": 82.8,
+              "end": 90.32
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "title": "From Text To Audio",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "The sections are written. Now build_audio.py gives them a voice. Start with the command. You run build_audio.py, and it finds every section file, orders them, and turns each one into spoken audio. Voice comes from a single reference recording.",
+              "start": 0.0,
+              "end": 16.88
+            },
+            {
+              "index": 1,
+              "text": "Pass the voice flag and it uses that file; leave it off and the script looks in the voices folder, and when exactly one wav sits there, uses it automatically. Two or more, and it stops, prints the names, and tells you to specify one. Zero, and it stops too.",
+              "start": 16.88,
+              "end": 32.56
+            },
+            {
+              "index": 2,
+              "text": "The voice itself is cloned by Chatterbox, the text-to-speech engine this pipeline runs on. It loads onto a CUDA graphics card, which the script requires, reads the reference recording once to prepare the voice, then reuses that for every line it speaks.",
+              "start": 32.56,
+              "end": 47.92
+            },
+            {
+              "index": 3,
+              "text": "Synthesis runs slower than real time, so a full book is a patient job. The final artifact is book dot m4b, tagged with a title and artist you supply, though the album tag is always the same two words: Repo Story. Almost all of this machinery predates prompt exporting in this project.",
+              "start": 47.92,
+              "end": 67.96
+            },
+            {
+              "index": 4,
+              "text": "The chunking, the voice cloning, the encoding arrive in the earliest commits with no prompt to quote. So for this stretch the provenance is commit messages and one recap, and I'll say plainly when a claim rests on those rather than a recorded instruction.",
+              "start": 67.96,
+              "end": 82.48
+            },
+            {
+              "index": 5,
+              "text": "Where I describe what a commit records, that is paraphrase or inference, not a quote. Consider the chunking.",
+              "start": 82.48,
+              "end": 88.88
+            },
+            {
+              "index": 6,
+              "text": "Text-to-speech does not want a whole chapter at once, so the script breaks each section at sentence boundaries \u2014 after a period, question mark, or exclamation point \u2014 and greedily packs sentences together up to three hundred characters.",
+              "start": 88.88,
+              "end": 103.0
+            },
+            {
+              "index": 7,
+              "text": "That three-hundred limit has no recorded prompt; it has simply been there since the beginning. Then comes a filter with a real reason behind it. After splitting, the code drops any chunk that contains no word characters at all.",
+              "start": 103.0,
+              "end": 115.6
+            },
+            {
+              "index": 8,
+              "text": "Picture a chunk that is nothing but a quotation mark, three dots, another quotation mark. It carries almost no sound. Fed that, Chatterbox can hallucinate \u2014 instead of reading the near-empty text, it reads back the transcript of the voice sample it was cloned from. A voice-sample leak.",
+              "start": 115.6,
+              "end": 134.6
+            },
+            {
+              "index": 9,
+              "text": "The fix, from the July third session, is recorded in the commit message and an in-code comment, not a verbatim prompt: drop the word-character-free chunks before synthesis. The comment also flags a consequence you have to respect.",
+              "start": 134.6,
+              "end": 148.28
+            },
+            {
+              "index": 10,
+              "text": "Dropping a chunk shifts the numbering of every chunk after it in that section, so if you change the filter you must clear that section's cached audio before regenerating, or the cache and the text fall out of step. That cache is the next feature.",
+              "start": 148.28,
+              "end": 162.8
+            },
+            {
+              "index": 11,
+              "text": "Synthesis is expensive, so every chunk is saved to disk under a name built from its chapter number and its position \u2014 chapter zero one, chunk zero zero zero zero three, and so on. Re-run the script and, for every chunk whose file already exists, it prints cached, skipping, and moves on.",
+              "start": 162.8,
+              "end": 180.68
+            },
+            {
+              "index": 12,
+              "text": "A long run that dies halfway resumes almost where it stopped. And each chunk is written safely: the audio goes to a temporary file first, then gets renamed into place, so a process killed mid-write can never leave a corrupt chunk behind.",
+              "start": 180.68,
+              "end": 195.52
+            },
+            {
+              "index": 13,
+              "text": "Once a chapter's chunks exist, ffmpeg \u2014 the media tool this pipeline shells out to \u2014 concatenates them into one chapter wav.",
+              "start": 195.52,
+              "end": 203.96
+            },
+            {
+              "index": 14,
+              "text": "Then the assembly step stitches the chapter wavs into the single book dot m4b, writing a chapter marker for each with its start and end time so a player can jump between chapters.",
+              "start": 203.96,
+              "end": 214.32
+            },
+            {
+              "index": 15,
+              "text": "The final encode is A-A-C at one hundred twenty-eight kilobits, with fast start so playback can begin before the whole file downloads. One detail is deliberately fixed: whatever title you pass, the album tag is always Repo Story, hardcoded.",
+              "start": 214.32,
+              "end": 230.32
+            },
+            {
+              "index": 16,
+              "text": "The July second work that set this metadata survives only as an entry in the project's done list, not as a saved prompt. Next, build_m4a.py \u2014 and here the format changes for a reason. This is the production format.",
+              "start": 230.32,
+              "end": 244.96
+            },
+            {
+              "index": 17,
+              "text": "The web player consumes one m4a file per chapter, listed in a manifest, not a single book file; that book dot m4b became the standalone, legacy artifact.",
+              "start": 244.96,
+              "end": 255.76
+            },
+            {
+              "index": 18,
+              "text": "The switch traces to the May twenty-second recap, which records the cause as a diagnosis, not a prompt: the deployed player had moved to a per-chapter model, and a restart-chapter bug surfaced because this pipeline was still producing one monolithic file.",
+              "start": 255.76,
+              "end": 271.84
+            },
+            {
+              "index": 19,
+              "text": "So build_m4a.py re-encodes each chapter wav to its own m4a \u2014 this time at sixty-four kilobits, twenty-four thousand hertz, mono, lighter than the book file \u2014 named chapter, four digits, dot m4a.",
+              "start": 271.84,
+              "end": 286.8
+            },
+            {
+              "index": 20,
+              "text": "Alongside them it writes chapters manifest dot j-son, listing every chapter with its title, duration, and size. The manifest's version is not a fixed label; it is a content hash, the first eight characters of a hash over each chapter's filename, size, and duration.",
+              "start": 286.8,
+              "end": 304.6
+            },
+            {
+              "index": 21,
+              "text": "Change the audio and the version changes, and the player knows to reload. A chapter whose m4a is missing gets a printed warning and is skipped rather than failing the run. There was no prompt for this switch. It was diagnosed in a browser.",
+              "start": 304.6,
+              "end": 317.64
+            },
+            {
+              "index": 22,
+              "text": "Which brings us to the one feature in this chapter with rich, verbatim provenance: the Full and Summary track split. It comes from the July twenty-first session, and it begins with a worry about the reviewer's time.",
+              "start": 317.64,
+              "end": 330.84
+            },
+            {
+              "index": 23,
+              "text": "The prompt reads: I like how this tells a story, and it is enjoyable to listen to, but I fear the reviewer won't spend the time on it due to the workload they have.",
+              "start": 330.84,
+              "end": 339.4
+            },
+            {
+              "index": 24,
+              "text": "It asks for two buttons beside the transcript label \u2014 Full and Summary \u2014 so a listener can hear a condensed version and, in the user's words, not have to spend the huge time investment for the arc if they only want the pertinent details. The user gated the work.",
+              "start": 339.4,
+              "end": 353.92
+            },
+            {
+              "index": 25,
+              "text": "A second prompt that same day: don't do anything yet except generate the summary and show it to me. Only after approving a sample did the third prompt land the feature, and its wording set the shape of the whole pipeline. The summary is good.",
+              "start": 353.92,
+              "end": 367.76
+            },
+            {
+              "index": 26,
+              "text": "Incorporate the UI needed to flip between the summary and full text \u2014 add the summary text as the final step of generating a chapter. The final step of generating a chapter. That phrase is why the summary pass sits right after the full-audio pass in the chapter loop, not off in a separate stage.",
+              "start": 367.76,
+              "end": 384.32
+            },
+            {
+              "index": 27,
+              "text": "In build_audio.py, a summaries folder triggers a second synthesis run per chapter, cached under its own summary prefix and concatenated to a wav whose summary name deliberately keeps it out of the M4B and out of build_m4a's chapter glob \u2014 summaries never enter the book file.",
+              "start": 384.32,
+              "end": 406.16
+            },
+            {
+              "index": 28,
+              "text": "In build_m4a.py those summary wavs become their own summary m4a files, and each chapter in the manifest gains a summary block. The version hash even folds the summaries in, so a summary-only change still busts the cache. Audio alone isn't the product.",
+              "start": 406.16,
+              "end": 424.64
+            },
+            {
+              "index": 29,
+              "text": "For the site to play any of this, it needs transcripts and a manifest that ties the words to the sound.",
+              "start": 424.64,
+              "end": 430.24
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "This part of the artifact is the audio engine: two scripts that turn written sections into spoken chapters. The first, build_audio.py, clones a voice from a single reference recording using Chatterbox, the text-to-speech engine, on a graphics card.",
+              "start": 0.0,
+              "end": 16.32
+            },
+            {
+              "index": 1,
+              "text": "It breaks each section into chunks of up to three hundred characters on sentence boundaries, then drops any chunk with no word characters through a speakability filter that stops the model from reading back its own voice sample's transcript.",
+              "start": 16.32,
+              "end": 28.48
+            },
+            {
+              "index": 2,
+              "text": "Every chunk of audio is cached under a chapter-and-index name and written atomically, so an interrupted run resumes instead of restarting. The chapter audio is assembled into a single chaptered book file, with the album tag always fixed to Repo Story.",
+              "start": 28.48,
+              "end": 42.52
+            },
+            {
+              "index": 3,
+              "text": "A second script, build_m4a.py, produces the format the player actually consumes: one smaller audio file per chapter plus a manifest whose version is a content hash, so any change to the audio busts the player's cache.",
+              "start": 42.52,
+              "end": 56.96
+            },
+            {
+              "index": 4,
+              "text": "Most of this engine predates the point where the project began exporting its prompts, so its provenance is commit messages and one recap, not quotes \u2014 paraphrase and inference, honestly labeled.",
+              "start": 56.96,
+              "end": 68.36
+            },
+            {
+              "index": 5,
+              "text": "The exception is the Full and Summary track split from the July twenty-first session: a verbatim worry that the reviewer won't spend the time, gated on a sample summary, then a verbatim instruction to add the summary as the final step of generating a chapter \u2014 which is exactly where the summary pass sits in the code.",
+              "start": 68.36,
+              "end": 85.4
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "title": "Transcripts Sites Servers",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "Last chapter turned sections of prose into audio. This chapter turns that audio into a site you can open and play. Start with build_transcripts.py. This script produces the read-along you may be watching right now: it lines the words up with the sound.",
+              "start": 0.0,
+              "end": 14.92
+            },
+            {
+              "index": 1,
+              "text": "It imports the exact same chunking logic the audio builder uses, so a transcript chunk and its audio are always the same slice of text.",
+              "start": 14.92,
+              "end": 23.52
+            },
+            {
+              "index": 2,
+              "text": "For each chapter it re-runs the split into chunks, then walks chunk by chunk, probing the matching WAV file for its duration and recording a start time and an end time rounded to three decimals. The timestamps are chapter-relative: every chapter's first chunk starts at zero.",
+              "start": 23.52,
+              "end": 39.88
+            },
+            {
+              "index": 3,
+              "text": "If a chunk's WAV is missing, it prints a warning and stops that chapter early rather than guessing. The output is a single transcripts.json holding books, chapters, and chunks.",
+              "start": 39.88,
+              "end": 51.0
+            },
+            {
+              "index": 4,
+              "text": "And when a summary text file exists for a chapter, it emits a second, parallel timeline for that chapter, called summary_chunks, with its own timestamps. That summary timeline is here because a prompt asked for it.",
+              "start": 51.0,
+              "end": 64.44
+            },
+            {
+              "index": 5,
+              "text": "The base alignment feature has no verbatim prompt; it comes from an April commit and a later recap. But the summary_chunks addition traces to the same Summary-track request quoted in the last chapter, from the July twenty-first session. And there is a follow-up fix with a verbatim prompt.",
+              "start": 64.44,
+              "end": 82.12
+            },
+            {
+              "index": 6,
+              "text": "From that same session, prompt twenty-three reads: \"when summary is selected the time shown in the chapters pane is still the running length of the full length chapter.",
+              "start": 82.12,
+              "end": 91.96
+            },
+            {
+              "index": 7,
+              "text": "this should be updated when summary is selected.\" So the summary track now carries its own durations all the way through, and the player shows the roughly four-minute summary length, not the full chapter length, once you toggle to Summary. Next, build_site.py.",
+              "start": 91.96,
+              "end": 108.8
+            },
+            {
+              "index": 8,
+              "text": "This is the assembler: it takes the per-chapter audio and a manifest, adds the player, and writes out a standalone static site. Its current mode is driven by a chapters manifest, one entry per chapter.",
+              "start": 108.8,
+              "end": 121.24
+            },
+            {
+              "index": 9,
+              "text": "A detail worth stating plainly: each chapter's id is zero-based, one less than the manifest's chapter number, because that id indexes the player's arrays directly.",
+              "start": 121.24,
+              "end": 131.68
+            },
+            {
+              "index": 10,
+              "text": "The script copies each chapter's audio into the site, skips files that are already identical by size, and removes stale audio that no longer belongs.",
+              "start": 131.68,
+              "end": 140.64
+            },
+            {
+              "index": 11,
+              "text": "Cache-busting uses an eight-character content hash of the content itself, rather than a fixed version string, so the version label changes only when the bytes change. Build_site.py carries two prompt-shaped details worth naming.",
+              "start": 140.64,
+              "end": 156.2
+            },
+            {
+              "index": 12,
+              "text": "The first is a flag called dash dash feedback dash url, which wires in an optional events endpoint and is off by default.",
+              "start": 156.2,
+              "end": 164.44
+            },
+            {
+              "index": 13,
+              "text": "That flag has a scar: a July twenty-first commit had to restore its argument line, because an earlier scrub of private data had dropped the line and every site build then crashed. The July twenty-first research pass caught that, and there is now a test pinning it, which is next chapter's subject.",
+              "start": 164.44,
+              "end": 181.24
+            },
+            {
+              "index": 14,
+              "text": "The second detail is the favicon, and this one is verbatim and iterative. From the July twenty-first session, prompt thirty-one reports \"one small bug, no favicon\" and a 404 on the icon request. The first fix reused an old icon.",
+              "start": 181.24,
+              "end": 196.52
+            },
+            {
+              "index": 15,
+              "text": "Prompt thirty-two corrected it: \"no use the favicon from their site, not my old wbt icon,\" followed by the Next Chapter project's web address. So the site now links a proper icon, pinned by a test. Next, luinst. The player itself is not written here; it is fetched.",
+              "start": 196.52,
+              "end": 213.72
+            },
+            {
+              "index": 16,
+              "text": "Luinst is a small bash script that shallow-clones landry-ui, a component repository, and copies one component into place.",
+              "start": 213.72,
+              "end": 222.08
+            },
+            {
+              "index": 17,
+              "text": "You call it with a component path and a destination; it clones into a temporary directory, verifies the component exists, then wipes the destination and copies the component in fresh.",
+              "start": 222.08,
+              "end": 233.64
+            },
+            {
+              "index": 18,
+              "text": "It defaults to an HTTPS clone address, a durable consequence of this machine having no SSH git access, recorded in a May recap rather than a standalone prompt. The fetched player directory is gitignored. Next, the one-command builder: build_book.sh.",
+              "start": 233.64,
+              "end": 252.36
+            },
+            {
+              "index": 19,
+              "text": "This wraps the whole Python pipeline so a folder of chapter text files becomes a standalone, emailable player site with no server required. It can scaffold a new book skeleton or build an existing folder.",
+              "start": 252.36,
+              "end": 264.04
+            },
+            {
+              "index": 20,
+              "text": "It strips leading numeric ordering prefixes from filenames, and if that stripping would collide two chapters, it falls back to original names for all of them.",
+              "start": 264.04,
+              "end": 273.04
+            },
+            {
+              "index": 21,
+              "text": "Its cache handling is tiered: any change to the chapter list clears the whole chunk cache, because the indices shift; a change to one chapter's text clears only that chapter's chunks; a changed summary clears only that chapter's summary chunks.",
+              "start": 273.04,
+              "end": 289.56
+            },
+            {
+              "index": 22,
+              "text": "Before doing expensive work it preflights the text-to-speech dependency and auto-fetches the player through luinst if it is missing. It ends by printing, but never running, the command to zip up the site. The purpose of that script is confirmed verbatim.",
+              "start": 289.56,
+              "end": 304.88
+            },
+            {
+              "index": 23,
+              "text": "From the July twenty-first session, prompt five asks whether the build book script can produce something \"so i can see this in the player locally for testing.\" Prompt six is the user insisting on exactly its defining property: \"no, no server, a local only build.",
+              "start": 304.88,
+              "end": 322.16
+            },
+            {
+              "index": 24,
+              "text": "a index file i can point my browser at. no running server.\" And prompt eighteen ties that same standalone build to the publishing workflow. Then two small servers for local preview: serve.py and serve_chunks.py.",
+              "start": 322.16,
+              "end": 338.04
+            },
+            {
+              "index": 25,
+              "text": "Serve.py is a threaded HTTP server that adds byte-range support, answering range requests with a 206 and streaming sixty-four-kilobyte reads. It exists because opening the site from a file path can't seek audio; a browser needs a real HTTP context to scrub and to cache.",
+              "start": 338.04,
+              "end": 355.24
+            },
+            {
+              "index": 26,
+              "text": "Serve_chunks.py is a companion that publishes a live HLS playlist of chunk WAVs over the local network, marked as an event stream with no end tag so a player keeps re-polling as chunks appear, and it guards against half-written files and path traversal.",
+              "start": 355.24,
+              "end": 372.08
+            },
+            {
+              "index": 27,
+              "text": "These are engineering, from April and July commits; no verbatim prompts survive. Finally, where all this publishes. There is exactly one target: the parent next-chapter repository's GitHub Pages site. No cloud hosting, no deploy scripts, and the owner does the push.",
+              "start": 372.08,
+              "end": 389.28
+            },
+            {
+              "index": 28,
+              "text": "The retarget is verbatim, from the July twenty-first vendoring session, prompt sixteen: \"let's replay the commits excluding all personal info and unnecessary info you found (we're not using aws for instance).",
+              "start": 389.28,
+              "end": 402.32
+            },
+            {
+              "index": 29,
+              "text": "modify scripts and files as necessary to have it custom tailored to our purposes.\" So publishing became: copy the per-chapter audio, the manifest, and the transcripts into the parent site's docs folder, and let the owner push. Every one of these scripts has a test suite and a paper trail.",
+              "start": 402.32,
+              "end": 419.88
+            },
+            {
+              "index": 30,
+              "text": "That is the last chapter.",
+              "start": 419.88,
+              "end": 421.64
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "This part of the artifact turns generated audio into a playable, publishable site.",
+              "start": 0.0,
+              "end": 4.84
+            },
+            {
+              "index": 1,
+              "text": "build_transcripts.py produces the read-along: it re-runs the same chunking the audio used, walks the chunk WAV files for their durations, and writes transcripts.json with chapter-relative timestamps, plus a separate summary_chunks timeline for each chapter's short version.",
+              "start": 4.84,
+              "end": 24.0
+            },
+            {
+              "index": 2,
+              "text": "build_site.py assembles the standalone site: it copies per-chapter audio, versions everything by an eight-character content hash for durable cache-busting, prunes stale audio, carries an optional feedback-url flag, and links a favicon.",
+              "start": 24.0,
+              "end": 40.64
+            },
+            {
+              "index": 3,
+              "text": "luinst fetches the player from landry-ui, a separate component repository, over HTTPS by default, into a gitignored player directory. build_book.sh is the one-command builder: a folder of chapter text in, a standalone site out, with transcripts inlined so no server is needed.",
+              "start": 40.64,
+              "end": 58.6
+            },
+            {
+              "index": 4,
+              "text": "Two small servers, serve.py and serve_chunks.py, provide range-capable local preview and a live network playlist of raw chunks. Publishing has one target: the parent next-chapter repository's GitHub Pages folder. No cloud hosting, no deploy scripts; the owner pushes. Prompts drove the sharp edges.",
+              "start": 58.6,
+              "end": 79.64
+            },
+            {
+              "index": 5,
+              "text": "The July twenty-first sessions fixed the summary time display, corrected the favicon in two steps, insisted on a no-server local build, and retargeted publishing away from cloud hosting, all verbatim in the record.",
+              "start": 79.64,
+              "end": 92.76
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "title": "Tests And Provenance",
+          "chunks": [
+            {
+              "index": 0,
+              "text": "You have heard how repo-story builds an audiobook and how it plays one back. This last chapter is about the proof that the build works and the paper trail that says where this copy came from. Start with a standing rule. Testing here is not optional and it is not an afterthought.",
+              "start": 0.0,
+              "end": 17.08
+            },
+            {
+              "index": 1,
+              "text": "From the July twenty-first session, the prompt is blunt: \"you see your directives to test first write code second right?\" A later prompt in the same session ties the practice to the written rules: \"write it with the prompts and checks we have codified in our rules here.\" So the tests come first, red before green, and every feature added in the summary-track work of that session shipped with its test in the same commit.",
+              "start": 17.08,
+              "end": 40.72
+            },
+            {
+              "index": 2,
+              "text": "There is no continuous-integration server and no pytest configuration anywhere in the repo. The suites are three self-contained scripts, run by hand.",
+              "start": 40.72,
+              "end": 49.64
+            },
+            {
+              "index": 3,
+              "text": "The first is test build book, spelled build underscore book dot s-h, a bash suite of eighteen numbered checks that exercises the staging and preflight logic of build book. It runs without a GPU and without touching the text-to-speech model, by staging only or by putting a stub Python on the path.",
+              "start": 49.64,
+              "end": 68.8
+            },
+            {
+              "index": 4,
+              "text": "The checks have teeth. No arguments produces a nonzero exit and a usage message; a nonexistent chapters directory is rejected, and so is an empty one.",
+              "start": 68.8,
+              "end": 77.36
+            },
+            {
+              "index": 5,
+              "text": "The happy path asserts real output: chapters sorted, the leading number-dash prefix stripped from each filename, a markdown extension rewritten to text, and the content copied through verbatim.",
+              "start": 77.36,
+              "end": 88.52
+            },
+            {
+              "index": 6,
+              "text": "One check changes a single chapter's text and asserts that only that chapter's chunk cache is cleared while its neighbors survive; another adds a chapter to the list and asserts the whole chunk cache clears so the new ordering takes hold.",
+              "start": 88.52,
+              "end": 102.08
+            },
+            {
+              "index": 7,
+              "text": "A later check confirms that when the broken Python environment fails to import the chatterbook engine, the build stops early with the remedy printed, before any fetch or synthesis.",
+              "start": 102.08,
+              "end": 111.92
+            },
+            {
+              "index": 8,
+              "text": "The final checks cover the summary track end to end: summaries staged beside chapters, a changed summary clearing only its own summary chunks, and build transcripts emitting summary chunks whose first line reads back as \"Summary sentence.\" with a real end timestamp.",
+              "start": 111.92,
+              "end": 127.04
+            },
+            {
+              "index": 9,
+              "text": "The second suite is test build m4a, a Python regression that guards one specific behavior. It generates a silent audio file with ffmpeg, the audio toolkit, then runs build m4a in a temporary directory.",
+              "start": 127.04,
+              "end": 141.56
+            },
+            {
+              "index": 10,
+              "text": "It asserts that the summary WAV becomes a file named chapter zero zero zero one dot summary dot m4a, and that the manifest gains a summary block with a plausible duration. Then it does the thing that matters.",
+              "start": 141.56,
+              "end": 154.44
+            },
+            {
+              "index": 11,
+              "text": "It changes only the summary track, forces a re-encode, and asserts that the manifest's version hash changes. The docstring states the fear in plain words: cache-busting must key on all content, not just the full tracks.",
+              "start": 154.44,
+              "end": 168.08
+            },
+            {
+              "index": 12,
+              "text": "This is the test-first companion to the summary feature from chapter two, pinned so it cannot silently rot. The third suite is test build site, which guards the manifest-mode site build, and it protects two things that both broke in real life.",
+              "start": 168.08,
+              "end": 182.52
+            },
+            {
+              "index": 13,
+              "text": "With no feedback flag given, it asserts the feedback URL does not appear in the page, that the favicon rel-equals-icon link is present, and that the chapter audio is copied. Then it passes a feedback URL and asserts the exact address shows up wired into the page.",
+              "start": 182.52,
+              "end": 198.52
+            },
+            {
+              "index": 14,
+              "text": "The docstring names the sharper regression: a prior vendor scrub once dropped the feedback URL's argument definition while the page generator still read it, and every site build crashed.",
+              "start": 198.52,
+              "end": 208.68
+            },
+            {
+              "index": 15,
+              "text": "The favicon half is the test-first companion to the favicon fix from chapter three, committed red-green in both suites. That vendor scrub is the second half of this chapter, and it is where the paper trail lives. This very copy of repo-story is not the original.",
+              "start": 208.68,
+              "end": 225.2
+            },
+            {
+              "index": 16,
+              "text": "It is a scrubbed, commit-by-commit replay of a private repository, produced by the script vendor-repo-story and vendored into the parent project on July twenty-first. The reason it is a replay and not a single squashed import comes straight from that session.",
+              "start": 225.2,
+              "end": 239.8
+            },
+            {
+              "index": 17,
+              "text": "The prompt reads: \"I want to keep as much of the history and files as possible to preserve the cross reference integrity.\" So each original commit is replayed as its own scrubbed snapshot.",
+              "start": 239.8,
+              "end": 251.84
+            },
+            {
+              "index": 18,
+              "text": "The next instruction set the terms: \"let's replay the commits excluding all personal info and unnecessary info you found (we're not using aws for instance).",
+              "start": 251.84,
+              "end": 261.64
+            },
+            {
+              "index": 19,
+              "text": "modify scripts and files as necessary to have it custom tailored to our purposes.\"\n\nEvery replayed commit carries a trailer in a fixed format: Replayed-From, colon, repo-story, at-sign, the original short hash, then in parentheses, \"scrubbed vendor replay.\" The original author date is preserved; the committer date is the vendoring day, so authorship survives while the re-commit stays honest about when it happened.",
+              "start": 261.64,
+              "end": 287.24
+            },
+            {
+              "index": 20,
+              "text": "Excluded from the replay: an Amazon Web Services deploy path the project no longer uses, an undeployed infrastructure blueprint, and personal and machine details, which appear as bracketed placeholders where a value was removed.",
+              "start": 287.24,
+              "end": 301.68
+            },
+            {
+              "index": 21,
+              "text": "The script's verify mode re-scans each replayed commit against a banned-token list, because a scrub that misses a single commit is a leak. The prompts drove one more discipline, the sharpest lesson in the book. Midway through, the author realizes the prompt exports themselves are a leak vector.",
+              "start": 301.68,
+              "end": 318.52
+            },
+            {
+              "index": 22,
+              "text": "The prompt: \"this does expose that we need to scan our prompts also as a source of private data leakage. I suggest removing them.\" The correction was immediate and deliberate: \"yes, redact, don't delete.",
+              "start": 318.52,
+              "end": 330.04
+            },
+            {
+              "index": 23,
+              "text": "go ahead.\" That single exchange is the origin of the whole project's rule that prompt exports are outward-facing content, scrubbed inline rather than dropped.",
+              "start": 330.04,
+              "end": 339.88
+            },
+            {
+              "index": 24,
+              "text": "The prompts you have heard quoted throughout these chapters were themselves cleaned under that policy \u2014 family names and infrastructure identifiers redacted inline, the prompts kept whole.",
+              "start": 339.88,
+              "end": 349.92
+            },
+            {
+              "index": 25,
+              "text": "Before the leak concerns were closed, they were checked one at a time, enumerated f-one through f-eight, against the vendored source.",
+              "start": 349.92,
+              "end": 357.92
+            },
+            {
+              "index": 26,
+              "text": "A separate prompt then called for the README banner that declares this copy the live one and the AWS path retired, and another, weighing a reviewer's limited time over convention, is why the vendored copy keeps only its one live architecture decision record rather than a stack of superseded ones.",
+              "start": 357.92,
+              "end": 375.4
+            },
+            {
+              "index": 27,
+              "text": "The replay is not a claim on paper. The live git log carries twenty-three Replayed-From trailers, one per vendored commit, each naming the private-repo hash it descends from. Commits from the vendoring day forward carry no trailer; they are native to this project.",
+              "start": 375.4,
+              "end": 390.32
+            },
+            {
+              "index": 28,
+              "text": "And the chain closes with a person, not a script. The final prompt: \"do a final check for personal info on all files in the repo that you will push.",
+              "start": 390.32,
+              "end": 398.44
+            },
+            {
+              "index": 29,
+              "text": "if it all checks out, give me the command to flip it public, and i'll push it after that.\" The scrub, the replay, the inline redaction, the final sweep \u2014 and then a human runs the push. Which closes on a plain fact. This vendored, scrubbed, tested copy is not a museum piece beside the real thing.",
+              "start": 398.44,
+              "end": 418.2
+            },
+            {
+              "index": 30,
+              "text": "It is the live pipeline. It is the code that read a repository, wrote the sections, rendered the audio, and built the player for the walkthrough you have just heard.",
+              "start": 418.2,
+              "end": 427.0
+            }
+          ],
+          "summary_chunks": [
+            {
+              "index": 0,
+              "text": "This last part is the proof and the paper trail: how repo-story tests itself, and how this copy came to live scrubbed inside its parent project. The tests come first by written rule. From the July twenty-first session: test first, write code second.",
+              "start": 0.0,
+              "end": 15.96
+            },
+            {
+              "index": 1,
+              "text": "Every feature ships with a guard, and the suites are three self-contained scripts run by hand, with no continuous-integration server.",
+              "start": 15.96,
+              "end": 23.64
+            },
+            {
+              "index": 2,
+              "text": "Test build book is a bash suite of eighteen checks over staging and preflight \u2014 sorted order, the numeric prefix strip, the markdown-to-text rewrite, per-chapter cache invalidation, and a broken Python environment stopping the build early.",
+              "start": 23.64,
+              "end": 37.68
+            },
+            {
+              "index": 3,
+              "text": "Test build m4a is the summary-track regression: change only the summary and the manifest version hash must change. Test build site guards the favicon link and the feedback-URL argument, the latter because a vendor scrub once dropped the wiring and crashed every build.",
+              "start": 37.68,
+              "end": 53.84
+            },
+            {
+              "index": 4,
+              "text": "The provenance is the heart of it. A script replays the private repo's history commit by commit, each carrying a Replayed-From trailer and its original author date; an Amazon Web Services deploy path and personal details are excluded, redactions left as bracketed placeholders.",
+              "start": 53.84,
+              "end": 69.84
+            },
+            {
+              "index": 5,
+              "text": "Verbatim prompts drive all of it \u2014 the scrub-before-public decision, the replay-with-exclusions order, and the rule that prompts get redacted, not deleted. Twenty-three trailers verify in the live git log.",
+              "start": 69.84,
+              "end": 83.12
+            },
+            {
+              "index": 6,
+              "text": "And this scrubbed, tested copy is not a description of the pipeline; it is the pipeline that produced the audio you have been hearing.",
+              "start": 83.12,
+              "end": 90.56
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
