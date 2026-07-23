@@ -1,88 +1,83 @@
 ---
 name: repo-story
-description: Analyze repositories and produce documentary audio narratives about the techniques, ideas, and history within them.
+description: Analyze repositories and produce audio walkthroughs of their features and the prompts that shaped them.
 ---
 
 # /repo-story
 
-You are executing the repo-story process. This skill surveys code repositories, explores them deeply, synthesizes cross-project themes, researches origins and landscape, and writes documentary narratives suitable for text-to-speech audio production.
+You are executing the repo-story process. This skill surveys code repositories, inventories their features, verifies current behavior, traces each feature to the prompts that shaped it, and writes walkthrough narratives suitable for text-to-speech audio production.
 
 Read `PLAN.md` in this skill's directory for the full process definition. The phases below are your execution guide.
 
-**Model split — Fable plans, Opus executes.** The main session is pinned to Fable via `.claude/settings.json` (loud failure if unavailable) and does the planning: Phase 1 survey, Phase 3 synthesis, Phase 5a beats, chapter ordering. Phases 2, 4, and 5b run only via the named agent types in `.claude/agents/` (`explorer`, `code-researcher`, `history-researcher`, `narrator`), each pinned to Opus. Never spawn generic subagents for those phases and never write sections inline. See `docs/adr/0001-fable-plans-opus-executes.md`.
+**Model split — Fable plans, Opus executes.** The main session is pinned to Fable via `.claude/settings.json` (loud failure if unavailable) and does the planning: Phase 1 survey, Phase 3 inventory, Phase 5a beats, chapter ordering. Phases 2, 4, and 5b run only via the named agent types in `.claude/agents/` (`explorer`, `code-researcher`, `prompt-researcher`, `narrator`), each pinned to Opus. Never spawn generic subagents for those phases and never write sections inline. See `docs/adr/0001-fable-plans-opus-executes.md`.
 
 ## Invocation
 
-The user will provide one or more repository paths. They may also provide an attribution level (full, light, minimal — default to light if not specified). The lens emerges from the material — do not ask for one up front.
+The user will provide one or more repository paths, and for each, where its prompt provenance lives (session prompt exports, recaps, curated prompt histories). If provenance locations are not given, look for a `vault/sessions/` directory and repo-level `prompt-history.md` / `config-history.md` before asking.
 
 ## Phase 1: Survey
 
-For each repo provided, read the README, manifest/config files (package.json, pyproject.toml, Cargo.toml, go.mod, etc.), and check the git remote to identify the author.
+For each repo provided, read the README, manifest/config files (package.json, pyproject.toml, Cargo.toml, go.mod, etc.), and check the git remote to identify the author. Note which provenance sources exist and whether they contain verbatim prompts or only recaps.
 
-Note any relationships between repos (forks, shared ancestry, dependencies, competing implementations).
+Present the user with a brief catalog: project name, author, purpose, tech stack, provenance coverage. Do not wait for approval — proceed to Phase 2.
 
-Present the user with a brief catalog: project name, author, purpose, tech stack. Do not wait for approval — proceed to Phase 2.
-
-## Phase 2: Deep Exploration
+## Phase 2: Feature Inventory Exploration
 
 Read the detailed guidance in `prompts/explore.md`.
 
-Launch one `explorer` agent per repo, in parallel. Each agent reads as many files as needed to understand the project deeply, recording exact quotes, exact numbers, exact variable names.
-
-**Watch for surprises above all else.** When something genuinely unexpected appears — something the README did not predict — go deeper immediately while context is held.
+Launch one `explorer` agent per repo, in parallel. Each agent catalogs every user-visible feature — exact commands, exact paths, exact defaults, inputs and outputs — organized by what a user meets, not by code structure.
 
 Write dossiers to `output/dossiers/` — one markdown file per repo.
 
 When all explorations complete, proceed to Phase 3.
 
-## Phase 3: Thematic Synthesis
+## Phase 3: Feature Inventory Organization
 
-Read all dossiers. Do connection-finding first: notice resonances, contradictions, and surprises across projects without organizing them yet.
+Read all dossiers. Group the features into chapters — feature clusters a reviewer would tour in order: orientation first (what the thing is, how it's invoked), core workflow next, supporting features after. Aim for 3–5 chapters per element; do not pad.
 
-Then organize into themes. Present them to the user directly in the conversation — theme name, general principle, which repos embody it, rough origin — so the user can see what you found. Then write themes to `output/themes.md` and proceed to Phase 4 immediately.
+Present the chapter plan to the user directly in the conversation — chapter name, features covered — then write it to `output/inventory.md` and proceed to Phase 4 immediately.
 
-Do not ask for permission to continue. The user does not have deep knowledge of the repos — that is why they are running this skill. Present your findings and move forward. If the user wants to redirect, they will say so.
+Do not ask for permission to continue. Present the plan and move forward. If the user wants to redirect, they will say so.
 
 ## Phase 4: Research
 
-Read the detailed guidance in `prompts/research_code.md` and `prompts/research_history.md`.
+Read the detailed guidance in `prompts/research_code.md` and `prompts/research_prompts.md`.
 
-For each theme, launch parallel research:
-- **`code-researcher` agent**: Re-reads source files, extracts exact details, corrects Phase 2 errors
-- **`history-researcher` agent**: Traces origins (who, when, what paper, what problem), maps current landscape (what alternatives exist, how this compares, where it sits in the field)
+For each chapter, launch parallel research:
+- **`code-researcher` agent**: Re-reads source files, verifies the features' current behavior exactly, corrects Phase 2 errors
+- **`prompt-researcher` agent**: Traces each feature to the prompts that shaped it — verbatim from prompt exports where they exist, recap/commit paraphrase where they don't, labeled honestly
 
-Write research packets to `output/research/` — one markdown file per theme.
+Write research packets to `output/research/` — one markdown file per chapter per researcher.
 
-If research contradicts the Phase 3 themes, revise the themes and inform the user of the change.
+If research contradicts the Phase 3 inventory, revise it and inform the user of the change.
 
-## Phase 5: Narrative Composition
+## Phase 5: Walkthrough Composition
 
 Read the detailed guidance in `prompts/narrate.md`.
 
-**5a — Beats (main session).** For each theme, write `output/beats/<theme>.md`: the narrative arc, the must-hit facts (pointing at the research packets), and the transitions into and out of neighboring themes.
+**5a — Beats (main session).** For each chapter, write `output/beats/<chapter>.md`: the feature order, the must-hit details (pointing at the research packets), the prompt citations to use, and one-clause transitions.
 
-**5b — Sections (`narrator` agents).** One `narrator` agent per theme — parallel when independent, sequential when they build on each other. Never write sections inline. Each expands its beats + research into a documentary audio narrative. Full detail. Real people, real history, real technical substance. The material determines the structure — do not force every theme into the same template.
+**5b — Sections (`narrator` agents).** One `narrator` agent per chapter — parallel when independent. Never write sections inline. Each expands its beats + research into a walkthrough: present tense, feature → behavior → prompt, 700–1,200 words, no scenic openings, no lineage.
 
-**5c — Summaries (final step of each chapter).** After a section is written, a `narrator` agent condenses it into `output/summaries/<same filename>`: every load-bearing fact and lesson, none of the scenic build-up — roughly 12–18% of the section's length (~450–600 words for a typical chapter). Same audio-prose rules as sections (`prompts/narrate.md`). The build pipeline turns these into the player's Summary track (condensed audio + transcript per chapter) for time-pressed listeners.
+**5c — Summaries (final step of each chapter).** After a section is written, a `narrator` agent condenses it into `output/summaries/<same filename>`: a 150–250 word orientation — what this part is, its features by name, one sentence on the prompts. Same audio-prose rules (`prompts/narrate.md`). The build pipeline turns these into the player's Summary track.
 
 Key principles:
-- This is documentary work — factual, grounded, committed to reality
-- Details are not reduced, they are contextualized within narrative flow
-- The output is audio — signpost transitions, restate at transitions, no visual formatting
-- Do not fabricate certainty — when origins are murky, say so honestly
+- The only subject is this repository — its code, its features, their implementation story; external tools get name + role in one clause, never background
+- Every paragraph names a feature, shows behavior, or gives the prompt behind it — otherwise cut
+- Prompt attribution is labeled: verbatim, paraphrase, or inference — never blurred
+- The output is audio — hearable once, no visual formatting, spell out filenames and dates
+- As short as coverage allows
 
-Write sections to `output/sections/` — one text file per theme, named by content (e.g., `section-fail-fast.txt`).
+Write sections to `output/sections/` — one text file per chapter, named by content (e.g., `section-build-pipeline.txt`).
 
 ## Chapter Ordering
 
-After all sections are written, determine the chapter order. The sections should flow as a narrative arc — not alphabetically, not by repo, but by the logic of how the ideas build on each other. Consider: opening with the broadest philosophical frame, moving through process and methodology, deepening into technical substance, and closing with a unifying principle.
-
-Write the ordered chapter list to `output/chapters.txt` — one filename per line, in the order they should appear in the audiobook. Example:
+After all sections are written, confirm the chapter order — the reviewer's tour order from Phase 3: orientation, core workflow, supporting features. Write it to `output/chapters.txt` — one filename per line. Example:
 
 ```
-section-boil-the-lake.txt
-section-three-layer-knowledge-search.txt
-section-fail-fast.txt
+section-what-this-is.txt
+section-build-pipeline.txt
+section-publishing.txt
 ```
 
 ## Completion

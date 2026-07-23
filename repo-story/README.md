@@ -1,6 +1,6 @@
 # repo-story
 
-Analyze code repositories and produce documentary audio narratives about the techniques, ideas, and history within them.
+Analyze code repositories and produce audio walkthroughs of their features and the prompts that shaped them.
 
 > **Vendored into next-chapter (2026-07-21).** This folder is a scrubbed
 > commit-replay of the private `hotpocket/repo-story` repo — the generation
@@ -34,11 +34,11 @@ In Claude Code, invoke:
 ```
 
 Claude will:
-- Survey the repos
-- Explore each one deeply (parallel)
-- Propose themes and ask for your review
-- Research each theme (parallel — implementation verification + history/landscape)
-- Write documentary narratives for each theme
+- Survey the repos and locate their prompt-provenance sources
+- Inventory each one's features (parallel)
+- Group features into a chapter plan (the reviewer's tour order)
+- Research each chapter (parallel — implementation verification + prompt provenance)
+- Write walkthrough narratives for each chapter
 
 Text sections are written to `output/sections/`.
 

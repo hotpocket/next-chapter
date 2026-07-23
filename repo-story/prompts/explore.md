@@ -1,41 +1,36 @@
-# Phase 2: Deep Exploration — Agent Guidance
+# Phase 2: Feature Inventory Exploration — Agent Guidance
 
-You are exploring a single repository to produce a detailed research dossier. Your goal is to understand this project on its own terms — what it does, how it does it, why it makes the choices it makes, and where those choices came from.
+You are exploring a single repository to produce a feature inventory dossier. Your goal is to catalog what a user of this project can actually do with it, as it exists right now — every entry point, every command, every user-visible behavior — with enough exact detail that a walkthrough can be narrated from your dossier alone.
 
 ## How to explore
 
-Read as many files as you need to answer these questions confidently. Start with the obvious entry points (README, main config, entry point files) and follow the threads they reveal. There is no target file count — some projects need five files read, some need fifty.
+Read as many files as you need. Start with the obvious entry points (README, main config, scripts, entry point files) and follow the threads they reveal. There is no target file count.
 
-Useful starting questions — adapt or discard based on what this project actually is:
+Questions to answer for each feature you find:
 
-- What does this project do and why does it exist?
-- What techniques, patterns, or methodologies does it use?
-- What are the key design decisions and what motivated them?
-- Where do the ideas come from? (Check citations, references, comments, dependency choices, acknowledgments, blog links, paper links)
-- What philosophy or worldview does it embody? (Look for ETHOS.md, ARCHITECTURE.md, CONTRIBUTING.md, design docs)
+- What is it called and where does it live? (exact file paths, command names)
+- How is it invoked or encountered? (command line, UI element, automatic hook)
+- What goes in and what comes out? (inputs, outputs, formats, side effects)
+- What are its current settings and behaviors? (exact constants, defaults, flags)
+- What state is it in — working, partial, superseded?
 
-These questions fit application-style projects. For a dataset, a script collection, a research artifact, or a fork, ask what that kind of project demands instead.
+Organize by what a user would meet, not by code structure: entry points and workflows first, supporting machinery second, internal plumbing only where it explains visible behavior.
 
 ## What to record
 
 Specificity is everything. Later phases depend on exact details, not summaries.
 
-- Exact quotes from documentation and comments
-- Exact variable names, constant values, configuration parameters
-- Exact file paths where important code lives
-- Exact algorithm descriptions with real numbers (not "it uses an optimizer" but "it uses the Muon optimizer with 5 iterations of Polar Express orthogonalization, momentum ramping from 0.85 to 0.95 over 300 steps")
-- Design decisions with their stated rationale
+- Exact command lines and what they produce
+- Exact file paths, variable names, constant values, defaults
+- Exact quotes from documentation where they state what a feature does
+- Concrete behavior: "running X writes Y to Z," not "handles output generation"
 
-Vague summaries are useless downstream. If you find yourself writing "the project uses advanced techniques for X," stop and go read the code until you can say exactly what those techniques are.
+If you find yourself writing "the project provides tooling for X," stop and go read the code until you can say exactly what the tool is, how it is run, and what it emits.
 
-## Surprises
+## What NOT to chase
 
-Above all else, watch for surprises — things you did not expect to find, decisions that contradict convention, techniques you have never encountered.
-
-When a genuine surprise appears — something that could not have been predicted from the README or stated purpose — go deeper immediately. Read the related files. Understand the context. Capture enough detail that the surprise can stand on its own when it reaches synthesis.
-
-The constraint: if the project's documentation told you to expect it, it is not a surprise. It is the job. Pursue only what is genuinely unpredicted.
+This dossier feeds a feature walkthrough whose only subject is this repository. Do not research where ideas came from, what the wider field does, or the project's philosophy. External dependencies get their name and role only — never their background. Note an unexpected or unconventional choice in one or two sentences where it explains a feature's behavior — then move on.
 
 ## Output
 
-Write a single markdown file to `output/dossiers/`. Name it after the project (e.g., `autoresearch.md`, `gstack.md`). Include everything you found, organized however makes sense for this project. This is a working document — raw detail matters more than polish.
+Write a single markdown file to `output/dossiers/`, named after the project. Structure it as the feature inventory: a numbered list of features, grouped by workflow, each with its exact details. This is a working document — raw detail matters more than polish.

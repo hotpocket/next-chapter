@@ -1,10 +1,10 @@
 # repo-story
 
-Claude Code skill that analyzes repositories and produces documentary audio narratives.
+Claude Code skill that analyzes repositories and produces audio walkthroughs of their features and the prompts that shaped them.
 
 ## Build pipeline
 
-1. Skill phases (in Claude Code): Survey → Explore → Synthesize → Research → Narrate → `output/sections/` + condensed `output/summaries/` (Phase 5c — final step of each chapter; feeds the player's Full/Summary toggle)
+1. Skill phases (in Claude Code): Survey → Explore → Inventory → Research → Narrate → `output/sections/` + condensed `output/summaries/` (Phase 5c — final step of each chapter; feeds the player's Full/Summary toggle)
 2. `build_audio.py` — sections → chunk WAVs → chapter WAVs → chaptered M4B (pass `--title`/`--artist`; album is always `Repo Story`); summaries → `summary-NN-*.wav` (never in the M4B)
 3. `build_m4a.py` — chapter WAVs → per-chapter M4As + `chapters_manifest.json` (**production format** for the landry-ui player); summary WAVs → `chapter_NNNN.summary.m4a` + manifest `summary` entries
 4. `build_transcripts.py` — chunk WAVs + section/summary text → `transcripts.json` (per-chapter timestamps; `summary_chunks` per chapter)

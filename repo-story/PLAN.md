@@ -1,36 +1,36 @@
-# Repo Story: A Process for Extracting Wisdom from Code Repositories
+# Repo Story: A Process for Walking Reviewers Through a Repository
 
-A repeatable methodology for surveying a collection of repositories, distilling the techniques and ideas within them, tracing those ideas to their origins, and producing documentary audio narratives that teach what was found.
+A repeatable methodology for surveying a collection of repositories, inventorying the features within them, tracing each feature to the prompts that shaped it, and producing audio walkthroughs that show a reviewer what exists and how it was steered into existence.
 
 ---
 
 ## Pipeline Shape
 
 ```
-Survey → Explore → Synthesize → Research → Narrate
+Survey → Explore → Inventory → Research → Narrate
 ```
 
 This shape is the invariant. Everything else — how many files to read, how many agents to launch, how long to write — is determined by the material, decided fresh each time.
 
 Each phase has a different mode of thinking and a different unit of work:
 
-- **Survey**: Breadth-first, shallow. Get the lay of the land. The unit is the collection.
-- **Explore**: Depth-first, per-project, parallel. Understand each project on its own terms. The unit is the repo.
-- **Synthesize**: Cross-project pattern recognition. Find the ideas that transcend individual projects. The unit transitions from repo to theme.
-- **Research**: Depth-first, per-theme, parallel. Verify implementations and trace origins. The unit is the theme.
-- **Narrate**: Documentary composition. Walk through the substance as audio narrative. The unit is the theme.
+- **Survey**: Breadth-first, shallow. Get the lay of the land, including where each repo's prompt provenance lives. The unit is the collection.
+- **Explore**: Depth-first, per-project, parallel. Catalog each project's user-visible features exactly as they exist. The unit is the repo.
+- **Inventory**: Organize features into a tour. Group them into chapters a reviewer would walk in order. The unit transitions from repo to chapter.
+- **Research**: Depth-first, per-chapter, parallel. Verify current behavior and trace prompt provenance. The unit is the chapter.
+- **Narrate**: Walkthrough composition. Feature, behavior, and the prompt behind it, as audio prose. The unit is the chapter.
 
-The repo is where you find things. The theme is how you present them. Both are units of research, at different phases. Exploration is organized by repo because you have to understand a project on its own terms before you can extract anything from it. Everything from synthesis onward is organized by theme because the final output is about ideas, not about projects.
+The repo is where you find things. The chapter is how you present them. Exploration is organized by repo because features live in repos. Everything from inventory onward is organized by chapter because the final output is a tour, and tours have stops.
 
-The pipeline is not strictly one-pass. Later phases will reveal errors, gaps, and reframings in earlier phases. When that happens, go back and revise. Every phase produces drafts, not finished artifacts. Understanding deepens as you move through the process, and earlier work should reflect that deepening as it occurs.
+The pipeline is not strictly one-pass. Later phases will reveal errors and gaps in earlier phases. When that happens, go back and revise. Every phase produces drafts, not finished artifacts.
 
 ---
 
 ## Before You Start
 
-**Attribution level.** How much sourcing does the output need? Full academic citations, light sourcing with names and dates, or just the ideas with minimal attribution? This depends on the audience and purpose.
+**Provenance sources.** The walkthrough quotes the prompts that shaped each feature. Establish up front, per repo, where those live: session prompt exports (verbatim), session recaps (paraphrase), curated prompt histories, git log. Coverage varies — some repos have every prompt on record, some only recaps and commit messages. Know which you have before promising quotes.
 
-The lens — what you're looking for — emerges from the material. You may have a sense of it before you start, or you may discover it during synthesis. Both are valid. Do not gate the process on declaring a lens up front.
+**Audience.** The listener is a reviewer with limited time. Every phase optimizes for their question: what does this do, and what prompt made it so?
 
 ---
 
@@ -38,73 +38,35 @@ The lens — what you're looking for — emerges from the material. You may have
 
 **Goal:** Understand the landscape before diving into any single project.
 
-Identify every project in the target set. For each one, read enough to produce a short summary of what it is, who made it, and what it's built with. The right sources vary by project — a README, a manifest file, a git remote, an about page — but the goal is always the same: know what you're looking at before you commit to studying it.
+Identify every project in the target set. For each one, read enough to produce a short summary of what it is, who made it, and what it's built with — and locate its provenance sources. Note relationships between repos (dependencies, one generating another) — these determine a sensible tour order later.
 
-Note any obvious relationships between repos — forks, shared ancestry, dependencies, competing implementations of the same idea. These relationships, when they exist, are themselves a source of insight during synthesis.
-
-Not every project deserves equal exploration. The catalog should give you enough information to decide how deeply to explore each project in Phase 2. Make this decision explicitly rather than defaulting to uniform treatment.
-
-**Output:** A catalog of projects with enough context to guide exploration decisions.
+**Output:** A catalog of projects with enough context to guide exploration, including provenance coverage per repo.
 
 ---
 
-## Phase 2: Deep Exploration
+## Phase 2: Feature Inventory Exploration
 
-**Goal:** Understand each project on its own terms.
+**Goal:** Catalog each project's features as they currently exist.
 
-For each project worth exploring, dispatch independent research. The research should continue until the explorer can confidently describe what the project does, how it does it, why it makes the choices it makes, and where those choices came from.
+For each project, dispatch independent exploration. The explorer reads until it can state, for every user-visible feature: what it's called, where it lives, how it's invoked, what goes in, what comes out, and its exact current settings.
 
-Useful questions to start with — adapt or discard based on what the project actually is:
+**What to record:** Exact command lines, exact paths, exact constants and defaults, concrete input→output behavior. Vague summaries are useless downstream.
 
-- What does this project do and why does it exist?
-- What techniques, patterns, or methodologies does it use?
-- What are the key design decisions and what motivated them?
-- Where do the ideas come from?
-- What philosophy or worldview does it embody?
+**What not to chase:** Idea lineage, the wider field, project philosophy. An unconventional choice gets one or two sentences where it explains visible behavior, then move on.
 
-These questions work well for application-style projects with documentation and design rationale. They may be the wrong questions for a dataset, a collection of scripts, a research artifact, or a fork. Let the project's nature determine the questions.
-
-**What to record:** Exact quotes, exact numbers, exact variable names, exact file paths. Specificity matters because later phases depend on it. Vague summaries are useless downstream. Precise details are the raw material that makes everything else possible.
-
-**What to watch for, above all else: surprises.** The things you didn't expect to find. The decisions that contradict convention. The techniques you've never encountered. These are often the most valuable discoveries in the entire process.
-
-When a genuine surprise appears — something that could not have been predicted from the project's README or stated purpose — go deeper immediately. Read the related files. Understand the context. Capture enough detail that the surprise can stand on its own when it reaches synthesis. Do this while the explorer is still holding the context of the project, because rebuilding that context later is expensive.
-
-The constraint on surprise-pursuit: if the project's documentation told you to expect it, it's not a surprise — it's the explorer doing its job. A novel optimizer in a project whose README says "we use a novel optimizer" is expected. A three-tier LLM-as-judge testing framework in a project that says nothing about testing is a surprise worth pursuing on the spot.
-
-**Output:** Per-project research dossiers — raw, detailed, internal working documents. These are drafts. Phase 4 will correct and deepen them.
+**Output:** Per-project feature-inventory dossiers — raw, detailed, internal working documents. Drafts; Phase 4 corrects them.
 
 **Parallelism:** Independent projects can be explored simultaneously.
 
 ---
 
-## Phase 3: Thematic Synthesis
+## Phase 3: Inventory Organization
 
-This phase has two distinct steps that use different modes of thinking. Do them in order.
+**Goal:** Turn per-repo feature lists into a tour.
 
-### Step 1: Connection-Finding
+Read all the dossiers. Group features into chapters — clusters a reviewer would visit together: orientation (what this is, how you invoke it), core workflow, supporting features. 3–5 chapters per element is typical. A single rich feature can carry a chapter; do not pad thin material.
 
-**Goal:** See what's there before you organize it.
-
-Read all the dossiers from Phase 2. Before you start categorizing or labeling, spend time noticing. Look for resonances — the same principle appearing in different projects applied to different problems. Look for contradictions — places where two projects make opposite choices for what seem like similar reasons. Look for surprises that survived from Phase 2 — the unexpected findings that don't fit neatly into any obvious category.
-
-Do not organize yet. The goal of this step is to see connections, not to file them.
-
-### Step 2: Theme Organization
-
-**Goal:** Give structure to what you found.
-
-Group the connections, resonances, and standout findings into named themes. For each theme, capture:
-
-- The general principle, independent of any specific project
-- The specific implementations — how each relevant project embodies the idea
-- A rough sense of where the ideas originate
-
-Not every theme needs to span multiple repos. A technique so rich or novel that it deserves its own treatment is a valid theme even if only one project uses it.
-
-You may discover during this step that your lens needs adjusting — that the data is revealing something more interesting than what you originally set out to find. If so, follow it. The most valuable findings are often the ones nobody asked for. Capture themes that don't fit your stated lens separately rather than discarding them.
-
-**Output:** A structured set of themes — presented to the user in conversation for review and direction before proceeding.
+**Output:** A chapter plan (`inventory.md`) — chapter names, features per chapter, intended order — presented to the user in conversation, then carried forward without waiting for approval.
 
 **Parallelism:** This phase requires cross-project judgment. It resists parallelization.
 
@@ -112,63 +74,38 @@ You may discover during this step that your lens needs adjusting — that the da
 
 ## Phase 4: Research
 
-**Goal:** For each theme, verify the implementation details, trace the intellectual lineage, and map the current landscape.
+**Goal:** For each chapter, verify the features' current behavior and trace each feature to the prompts that shaped it.
 
-Each theme typically benefits from two kinds of research, which can run in parallel because they use different tools and produce complementary outputs:
+Two kinds of research per chapter, run in parallel:
 
-**Implementation verification:** Re-read the actual source files for the theme. Extract exact code patterns, exact constants, exact algorithms. Verify claims from the Phase 2 dossiers against what the code actually does. Phase 2 is fast and broad by design — it will have gotten things wrong. This is where you correct those errors.
+**Implementation verification:** Re-read the actual source files. Extract exact commands, constants, defaults, and behavior. Verify every dossier claim — the walkthrough narrates present-tense behavior, so a stale claim becomes a false demo.
 
-**History and landscape research:** This has two dimensions — depth through time and breadth across contemporaries. Both matter.
+**Prompt provenance:** For each feature, find the prompt(s) that caused or shaped it. Sources in order of authority: session prompt exports (verbatim), curated prompt histories, session recaps (paraphrase), git commit messages and dates, ADRs. Label every attribution as verbatim, paraphrase, or inference — never blurred. Iteration chains (initial prompt, later correction) are especially valuable: they show steering.
 
-The vertical dimension is origin tracing. Who created this technique? What problem were they solving? What did it replace? What did it inspire? Find the people, the dates, the papers, the core insights in plain language. Trace the chain of influence from origin to the implementation in front of you.
+When research contradicts the inventory, revise the inventory. The pipeline is not a conveyor belt.
 
-The horizontal dimension is landscape mapping. How does this technique fit into the broader world right now? What else exists that solves the same problem? What are the alternatives, and how does this implementation compare to them? Is this approach best in class, a contender, a niche choice, or an outlier? Why might someone choose this over the alternatives, and why might someone choose the alternatives over this?
+**Output:** Per-chapter research packets — verified behavior plus labeled provenance.
 
-The listener needs both dimensions to understand where something stands. The lineage tells them how an idea got here. The landscape tells them what it means that it's here — whether it represents the consensus, the frontier, or a deliberate departure from both.
-
-Not every theme needs both kinds of research. A theme about a project's philosophy may have no code to verify. A theme about a bespoke implementation detail may have no meaningful intellectual history. A theme about a well-established technique may need more landscape than lineage. Match the research effort to what the theme actually requires.
-
-When research contradicts earlier findings — and it will — update your understanding. If the contradiction changes a theme's framing, scope, or connections, go back and revise Phase 3. The pipeline is not a conveyor belt where each phase's output is frozen.
-
-**Output:** Per-theme research packets combining verified implementation details with traced lineage and mapped landscape.
-
-**Parallelism:** Research across themes is independent and can run simultaneously. The two kinds of research within a theme can also run in parallel.
+**Parallelism:** Chapters are independent; both researchers within a chapter run concurrently.
 
 ---
 
-## Phase 5: Narrative Composition
+## Phase 5: Walkthrough Composition
 
-**Goal:** Walk through the full substance of each theme — every technique, every design choice, every architectural detail — delivered as documentary audio narrative so the listener absorbs the details through the momentum of the telling.
+**Goal:** Walk the listener through each chapter's features — what each is, what it does, and the prompt behind it — in prose economical enough to respect a reviewer's time.
 
-This is documentary work. It tells what exists, who made it, how it came to be, and where it sits in the world. The commitment is to reality — real people, real history, real technical substance, real context. The medium is audio. The listener should come away understanding the specific constants, the exact algorithms, the precise design tradeoffs — not because they were listed, but because each one arrived at the right moment in a narrative that made it meaningful.
+This is a guided tour, not a documentary. Present tense; the subject is the artifact as it works today, and the only story told is this repository's own — its features and their implementation as recorded in its prompts, commits, sessions, and decisions. The past appears only as that provenance; nothing that happened outside the repo is part of the narrative, and external dependencies get name and role in one clause, no background. The paragraph test governs everything: every paragraph names a feature, shows its behavior, or gives the prompt that shaped it — anything else is cut. No scenic openings, no extended analogies, no idea lineage, no manufactured drama.
 
-This is not a tutorial. A tutorial says "here's how to do this." This is not a summary. A summary strips away detail to save time. This is narration of the actual substance, in full detail, woven into a causal thread — a sequence of people facing problems, making choices, and producing ideas that shaped the next generation's starting point. The details are not reduced. They are contextualized. They are carried by the narrative rather than standing apart from it.
-
-### What makes a good narrative
-
-Let the material determine the structure. Some themes want to be told chronologically. Some want to start with the code and zoom out. Some want to be built around an extended analogy. Some want to compare two approaches side by side. The structure should serve the material, not the other way around. Patterns that have worked in practice — grounding abstractions in analogy, telling history as a causal chain rather than a list, building from large concepts to smaller components, returning to the specific implementation after establishing general context — are available as tools, not obligations.
-
-The output is audio. The listener cannot scan back, cannot glance at a table, cannot re-read a confusing paragraph. This means:
-
-- Signpost transitions explicitly so the listener knows where they are in the arc
-- When moving from one idea to the next, briefly restate the previous idea's conclusion so a listener who drifted can re-anchor
-- Avoid formatting that only works visually — tables, code blocks, bullet lists, diagrams
-- Every paragraph should make sense when heard aloud, in sequence, once
+The output is audio, heard once, in sequence: light one-clause signposts at transitions, no visual-only formatting, filenames and dates spelled out to be heard correctly.
 
 ### On certainty
 
-Do not fabricate certainty. This matters enough to state fully.
+Do not fabricate certainty. Quote a prompt verbatim only when a prompt export contains it. When only a recap or commit message survives, say so: "the session recap records the instruction as..." When provenance is inferred from timing, present it as inference. A walkthrough that dresses paraphrase up as quotation poisons every real quote in it.
 
-During research, some origins will be clean and well-documented. Robbins and Monro published stochastic approximation in 1951. Kingma and Ba published Adam in 2014. These are facts. State them with confidence.
+### Length
 
-Other origins will be murky. An idea may have appeared first in a blog post, then in a conference talk, then in a paper — with different people credited at each stage. An idiom may have no confirmed origin. A technique may have been independently invented by multiple groups at roughly the same time. A paper may cite an earlier paper as inspiration, but the connection may be tenuous.
+700–1,200 words per chapter, shorter when coverage allows. Never cut a feature to fit; never pad to fill. The lever is prose economy.
 
-When the lineage is clear, present it cleanly. When it is unclear, say so. "The exact origin is debated, but the earliest published treatment appears to be..." is more trustworthy than a false clean lineage. "The idea emerged from a community of practitioners before it was formalized in a paper" is more accurate than attributing it solely to the paper's authors.
+**Output:** One file per chapter, named by content, written to output/sections/, each followed by a 150–250 word orientation summary in output/summaries/.
 
-The listener trusts the narrator more, not less, when the narrator admits what they don't know. False certainty is a form of fabrication. It degrades every claim around it, because the listener cannot distinguish the well-sourced facts from the confident guesses. Honest uncertainty preserves the credibility of everything else.
-
-This applies to causal claims as well as attribution. "A influenced B" is a strong claim. Sometimes the evidence supports it — B's paper cites A, or B's author has stated the influence publicly. Sometimes it's inference — A was published two years before B and addresses a similar problem. Present the former as fact and the latter as plausible connection, and the narrative will be stronger for the honesty.
-
-**Output:** One file per theme, named by content, written to output/sections/.
-
-**Parallelism:** Themes that are independent can be written simultaneously. Themes that build on each other should be written in sequence.
+**Parallelism:** Independent chapters can be written simultaneously.
