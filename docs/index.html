@@ -17,75 +17,6 @@ RepoStoryPlayer.init({
     container: document.getElementById('app'),
     books: [
   {
-    "slug": "landry-ui",
-    "title": "landry-ui",
-    "artist": "Brandon Landry",
-    "duration": 1628.72,
-    "chapters": [
-      {
-        "id": 0,
-        "n": 1,
-        "title": "Chapter 1: Meeting The Player",
-        "filename": "landry-ui/chapter_0001.m4a",
-        "start": 0.0,
-        "end": 370.84,
-        "duration": 370.84,
-        "size": 3218769,
-        "summary": {
-          "filename": "landry-ui/chapter_0001.summary.m4a",
-          "duration": 89.56,
-          "size": 788741
-        }
-      },
-      {
-        "id": 1,
-        "n": 2,
-        "title": "Chapter 2: Transcript And Summary",
-        "filename": "landry-ui/chapter_0002.m4a",
-        "start": 370.84,
-        "end": 786.4,
-        "duration": 415.56,
-        "size": 3640283,
-        "summary": {
-          "filename": "landry-ui/chapter_0002.summary.m4a",
-          "duration": 91.92,
-          "size": 815918
-        }
-      },
-      {
-        "id": 2,
-        "n": 3,
-        "title": "Chapter 3: Offline And Pwa",
-        "filename": "landry-ui/chapter_0003.m4a",
-        "start": 786.4,
-        "end": 1190.56,
-        "duration": 404.16,
-        "size": 3519235,
-        "summary": {
-          "filename": "landry-ui/chapter_0003.summary.m4a",
-          "duration": 97.0,
-          "size": 844065
-        }
-      },
-      {
-        "id": 3,
-        "n": 4,
-        "title": "Chapter 4: Integration And Tests",
-        "filename": "landry-ui/chapter_0004.m4a",
-        "start": 1190.56,
-        "end": 1628.72,
-        "duration": 438.16,
-        "size": 3820402,
-        "summary": {
-          "filename": "landry-ui/chapter_0004.summary.m4a",
-          "duration": 99.88,
-          "size": 875137
-        }
-      }
-    ],
-    "description": "The player: a walkthrough of the vanilla-JS audiobook player you are using right now \u2014 transcripts, the Full/Summary toggle, offline \u2014 each feature traced to the prompt that shaped it."
-  },
-  {
     "slug": "repo-story",
     "title": "repo-story",
     "artist": "Brandon Landry",
@@ -152,7 +83,76 @@ RepoStoryPlayer.init({
         }
       }
     ],
-    "description": "The generator: the skill and build scripts that turned each of these repositories into its audiobook, feature by feature, with the prompts that steered them."
+    "description": "The generator: the pipeline that researches a repo, writes these books, and voices them."
+  },
+  {
+    "slug": "landry-ui",
+    "title": "landry-ui",
+    "artist": "Brandon Landry",
+    "duration": 1628.72,
+    "chapters": [
+      {
+        "id": 0,
+        "n": 1,
+        "title": "Chapter 1: Meeting The Player",
+        "filename": "landry-ui/chapter_0001.m4a",
+        "start": 0.0,
+        "end": 370.84,
+        "duration": 370.84,
+        "size": 3218769,
+        "summary": {
+          "filename": "landry-ui/chapter_0001.summary.m4a",
+          "duration": 89.56,
+          "size": 788741
+        }
+      },
+      {
+        "id": 1,
+        "n": 2,
+        "title": "Chapter 2: Transcript And Summary",
+        "filename": "landry-ui/chapter_0002.m4a",
+        "start": 370.84,
+        "end": 786.4,
+        "duration": 415.56,
+        "size": 3640283,
+        "summary": {
+          "filename": "landry-ui/chapter_0002.summary.m4a",
+          "duration": 91.92,
+          "size": 815918
+        }
+      },
+      {
+        "id": 2,
+        "n": 3,
+        "title": "Chapter 3: Offline And Pwa",
+        "filename": "landry-ui/chapter_0003.m4a",
+        "start": 786.4,
+        "end": 1190.56,
+        "duration": 404.16,
+        "size": 3519235,
+        "summary": {
+          "filename": "landry-ui/chapter_0003.summary.m4a",
+          "duration": 97.0,
+          "size": 844065
+        }
+      },
+      {
+        "id": 3,
+        "n": 4,
+        "title": "Chapter 4: Integration And Tests",
+        "filename": "landry-ui/chapter_0004.m4a",
+        "start": 1190.56,
+        "end": 1628.72,
+        "duration": 438.16,
+        "size": 3820402,
+        "summary": {
+          "filename": "landry-ui/chapter_0004.summary.m4a",
+          "duration": 99.88,
+          "size": 875137
+        }
+      }
+    ],
+    "description": "The player: the vanilla-JS audiobook component you are using right now."
   },
   {
     "slug": "next-chapter",
@@ -221,11 +221,11 @@ RepoStoryPlayer.init({
         }
       }
     ],
-    "description": "The assembly: the public site, the verbatim prompt trail, and the config mirror \u2014 the features of building in public, and the prompts behind them."
+    "description": "The assembly: the public site, the verbatim prompt trail, and the config mirror."
   }
 ],
     audioBaseUrl: 'audio/',
-    transcriptUrl: "transcripts.json?v=c75f06b9",
+    transcriptUrl: "transcripts.json?v=7359b927",
     title: "Next Chapter \u2014 a trilogy about its own making"
 });
 </script>

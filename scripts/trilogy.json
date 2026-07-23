@@ -2,22 +2,22 @@
   "title": "Next Chapter \u2014 a trilogy about its own making",
   "books": [
     {
-      "slug": "landry-ui",
-      "manifest": "repo-story/landry-ui/output/m4a/chapters_manifest.json",
-      "transcripts": "repo-story/landry-ui/output/site/transcripts.json",
-      "description": "The player: a walkthrough of the vanilla-JS audiobook player you are using right now \u2014 transcripts, the Full/Summary toggle, offline \u2014 each feature traced to the prompt that shaped it."
-    },
-    {
       "slug": "repo-story",
       "manifest": "repo-story/repo-story/output/m4a/chapters_manifest.json",
       "transcripts": "repo-story/repo-story/output/site/transcripts.json",
-      "description": "The generator: the skill and build scripts that turned each of these repositories into its audiobook, feature by feature, with the prompts that steered them."
+      "description": "The generator: the pipeline that researches a repo, writes these books, and voices them."
+    },
+    {
+      "slug": "landry-ui",
+      "manifest": "repo-story/landry-ui/output/m4a/chapters_manifest.json",
+      "transcripts": "repo-story/landry-ui/output/site/transcripts.json",
+      "description": "The player: the vanilla-JS audiobook component you are using right now."
     },
     {
       "slug": "next-chapter",
       "manifest": "repo-story/next-chapter/output/m4a/chapters_manifest.json",
       "transcripts": "repo-story/next-chapter/output/site/transcripts.json",
-      "description": "The assembly: the public site, the verbatim prompt trail, and the config mirror \u2014 the features of building in public, and the prompts behind them."
+      "description": "The assembly: the public site, the verbatim prompt trail, and the config mirror."
     }
   ],
   "favicon": "assets/favicon.png"

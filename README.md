@@ -5,9 +5,9 @@ trace each one to the verbatim prompts that shaped it, write an audio
 walkthrough, and play it in the browser with read-along transcripts. This repo
 is my Next Chapter admissions project — and its own subject: the site serves a
 trilogy of audiobooks about the three components that built it —
-[landry-ui](https://github.com/hotpocket/landry-ui) (the player),
-[repo-story](repo-story/) (the generator, vendored here), and next-chapter
-itself (their assembly). Complete: the walkthrough edition — 12 chapters,
+[repo-story](repo-story/) (the generator, vendored here),
+[landry-ui](https://github.com/hotpocket/landry-ui) (the player), and
+next-chapter itself (their assembly). Complete: the walkthrough edition — 12 chapters,
 ~1.4 hours in full, or ~19 minutes total on the Summary tracks.
 
 ## Live demo & running the project
