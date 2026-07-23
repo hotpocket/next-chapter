@@ -3,7 +3,7 @@ tags: [session]
 type: session
 concerns: [ops, infra, data]
 audience: []
-summary: "Rewrote the repo-story methodology from documentary to feature-walkthrough + prompt-provenance (repo-only story, verbatim/paraphrase/inference labels) and regenerated all three books' text under it (v3, ~1.4h vs v1's 4.6h). Built scripts/regen-trilogy-audio (registry-driven, content-hash freshness, 19-test suite). Narration text + transcripts now tracked in git; v1/v2 generations archived under gitignored output/. v3 selected for the public site; trilogy.json descriptions updated; vendor-scrub.rules truncation fixed; todos cleared for finalization."
+summary: "Rewrote the repo-story methodology from documentary to feature-walkthrough + prompt-provenance (repo-only story, verbatim/paraphrase/inference labels) and regenerated all three books under it (v3: 12 chapters, 1.4h full / ~19min summaries, live in docs/). Built scripts/regen-trilogy-audio (content-hash freshness, 19-test suite). Narration text + transcripts tracked in git. Finalized: v1/v2 leftovers deleted (~5.4GB), history squashed thematic, README rebuilt reviewer-first with ADR-cited features-next, library reordered foundational-first, plan-vs-reality interview prep saved, todos cleared, all suites green."
 created: 2026-07-23
 status: completed
 projects: [next-chapter]
@@ -38,6 +38,16 @@ Companion prompts: [[2026-07-23-walkthrough-rewrite-prompts]]
 - Generations live side-by-side under gitignored output/ archives; only current text is tracked in git; v2 stays a local preview, never committed.
 - v3 is the public generation (owner decision, 2026-07-23).
 
+## Addendum — finalization (same session, after the first recap)
+
+1. v3 audio rendered (owner), docs/ rebuilt to the v3 site — 12 chapters + 12 summaries, 1.4h full / ~19 min summaries; v3 transcripts committed.
+2. Cleanup: ~5.4 GB of v1/v2 leftovers deleted (generation archives, stray landry-ui/book build, path-mistake dirs, local v2 preview). v1 text survives in git history; v2 text intentionally not preserved.
+3. History squashed for review: the sprawl collapsed into thematic commits (methodology / regen script / tracked text / v3 site / finalize record), tree verified byte-identical; pushed history left untouched — the books narrate its commit hashes.
+4. README rebuilt reviewer-first (what is this → live demo → prompts → skills → regeneration → spec-named sections); Features-next cites the build-time improvement ADRs (0004 ingestion, 0008 hosted delivery) plus feedback-endpoint wiring, React parity, audio QA. Corrected: repo-story is a skill-formatted process run from SKILL.md, not an installed skill.
+5. Library order flipped foundational-first (repo-story, landry-ui, next-chapter) with one-clause descriptions; site rebuilt.
+6. Plan-vs-reality retrospective saved as interview prep: llm-docs/reports/2026-07-23_interview-prep-plan-vs-reality.md.
+7. vendor-scrub.rules truncation fixed; todos cleared; all test suites green (assembler, regen-audio, export-prompts, build-book, mirror --check).
+
 ## Next Steps
 
-None — project is in finalization. The owner's finalize flow (not TODOs): scripts/regen-trilogy-audio → python3 scripts/build-trilogy-site → review → push.
+None — finalized. Remaining owner actions are operational only: final push (and Pages redeploy check).

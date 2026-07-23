@@ -25,8 +25,7 @@ python3 repo-story/serve.py -d docs -p 8010   # open http://localhost:8010
 
 ## The prompts
 
-Every working session's user prompts are published verbatim — **128 prompts
-across 5 sessions** — each session a recap + prompts pair:
+Every working session's user prompts are published verbatim — **147 prompts across 5 sessions** — each session a recap + prompts pair:
 
 | Session | Recap | Prompts |
 |---------|-------|---------|
@@ -34,7 +33,7 @@ across 5 sessions** — each session a recap + prompts pair:
 | 2026-07-20 — Config mirror | [recap](vault/sessions/2026-07-20-config-mirror.md) | [4 prompts](vault/sessions/2026-07-20-config-mirror-prompts.md) |
 | 2026-07-21 — repo-story vendored + in-repo pivot | [recap](vault/sessions/2026-07-21-repo-story-vendored.md) | [27 prompts](vault/sessions/2026-07-21-repo-story-vendored-prompts.md) |
 | 2026-07-21 — Trilogy built | [recap](vault/sessions/2026-07-21-trilogy-built.md) | [33 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md) |
-| 2026-07-23 — Walkthrough rewrite (v3) | [recap](vault/sessions/2026-07-23-walkthrough-rewrite.md) | [18 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md) |
+| 2026-07-23 — Walkthrough rewrite (v3) | [recap](vault/sessions/2026-07-23-walkthrough-rewrite.md) | [37 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md) |
 
 [`prompt-history.md`](prompt-history.md) is the curated index (the prompts
 that best show the collaboration); [`config-history.md`](config-history.md)

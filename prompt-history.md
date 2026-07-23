@@ -7,7 +7,7 @@ show the workflow's teeth. The prompts read terse — fragments, corrections,
 no pleasantries — because a hook enforces brevity; the decoder ring is
 [`config-history.md`](config-history.md)'s command glossary.
 
-**Reading one session end-to-end beats sampling all four.** If you read only
+**Reading one session end-to-end beats sampling all five.** If you read only
 one, read [Trilogy built](#4--2026-07-21--trilogy-built-33-prompts) — the
 session where the product went from one probe chapter to the shipped site.
 
@@ -74,7 +74,7 @@ Probe → feature → all three books → assembled site.
 
 ---
 
-## 5 — 2026-07-23 · Walkthrough rewrite ([18 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md))
+## 5 — 2026-07-23 · Walkthrough rewrite ([37 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md))
 
 The session where the product's genre changed on a single prompt.
 
@@ -89,10 +89,14 @@ The session where the product's genre changed on a single prompt.
   gains content-hash freshness in response.
 - **#14** — "i want the transcripts... committed to version control so that I
   can track progress" — narration text becomes a tracked, diffable artifact.
+- **#26–33** — the finalize arc: README rebuilt reviewer-first, then checked
+  against the course's own Part-8 spec and the improvement notes recorded as
+  ADRs mid-build; history squashed thematic; a plan-vs-reality retrospective
+  saved as interview prep.
 
 ---
 
-**Totals:** 128 prompts across 5 sessions. The unabridged exports live in
+**Totals:** 147 prompts across 5 sessions. The unabridged exports live in
 [`vault/sessions/`](vault/sessions/); each links its session recap, and the
 [decisions index](vault/decisions/README.md) holds the ADRs those prompts
 produced.

@@ -1,7 +1,7 @@
 ---
 tags: [prompts]
 type: prompts
-summary: "Verbatim user prompts for session [[2026-07-23-walkthrough-rewrite]] (18 prompts)"
+summary: "Verbatim user prompts for session [[2026-07-23-walkthrough-rewrite]] (37 prompts)"
 created: 2026-07-23
 ---
 
@@ -137,3 +137,105 @@ landry-ui has v2 and the standard version side by side, the v2 preview was hapen
 ## Prompt 18
 
 let's fix next steps. v3 is fine, fix all the other errors. there should be no next steps, i'm about to finalize this project
+
+## Prompt 19
+
+readme is updated ? all other files that need to be updates have been done ?
+
+## Prompt 20
+
+i asked you to regenerate the audio before, but you said the scripts still need to be run. did you run them when I asked? do the timestamps on the file match the prompt I gave you?
+
+## Prompt 21
+
+all generated. so walk me through the process by which all this stuff gets build in short answer, following the general outline of 1)repos 2) generate book text 3) generate audio 4) composit into site.  give me a technical walkthrough a developer that want to manually run this process will need to know
+
+## Prompt 22
+
+there's still tons of v1 and v2 crap lying around, this needs to be cleaned up, and also the folder structure isn't as consistent as you say: 
+
+┌(chatterbox) [brandon@LinuxBeast2] [192.168.5.54] [Thu Jul 23  5:56] [main ↑·8|…3]: ~/git/next-chapter/repo-story 
+└>ll landry-ui/ repo-story/ next-chapter/
+landry-ui/:
+total 20K
+drwxrwxr-x  9 brandon brandon 4.0K Jul 21 02:09 repo
+drwxrwxr-x  5 brandon brandon 4.0K Jul 21 02:43 .
+drwxrwxr-x  5 brandon brandon 4.0K Jul 21 03:11 book
+drwxrwxr-x 13 brandon brandon 4.0K Jul 23 04:41 ..
+drwxrwxr-x 12 brandon brandon 4.0K Jul 23 05:28 output
+
+repo-story/:
+total 24K
+drwxrwxr-x  3 brandon brandon 4.0K Jul 21 03:33 repo-story
+drwxrwxr-x  3 brandon brandon 4.0K Jul 21 03:33 next-chapter
+drwxrwxr-x  3 brandon brandon 4.0K Jul 21 03:33 landry-ui
+drwxrwxr-x  6 brandon brandon 4.0K Jul 21 03:39 .
+drwxrwxr-x 13 brandon brandon 4.0K Jul 23 04:41 ..
+drwxrwxr-x 12 brandon brandon 4.0K Jul 23 05:34 output
+
+next-chapter/:
+total 12K
+drwxrwxr-x  3 brandon brandon 4.0K Jul 21 04:04 .
+drwxrwxr-x 13 brandon brandon 4.0K Jul 23 04:41 ..
+drwxrwxr-x 12 brandon brandon 4.0K Jul 23 05:40 output
+
+
+## Prompt 23
+
+does the build walkthrough appear in the readme ?
+
+## Prompt 24
+
+squash some things in our local commit history, 19 is a bit heavy, i suspect you can collapse some things. and if you want to remove old transcripts or trash from git history before I push now is the time
+
+## Prompt 25
+
+the readme is a bit of a mess.  a rough order of what a human wants to see: What is this, where's the site, Where are the prompts, what skills did I use (gstack/browse, vault recap, wargame, vet) and a very very brief note about what they are, what is the process by which I would regenerate everything (we talked about this above). And once that is done, any rambling text detail. The current readme is a bit of a wall of text and isn't very well organized. Does this make sense? Do you agree with it? Draft a structure of a readme you think I want below and allow me to critique it
+
+## Prompt 26
+
+review this plan against what they originally asked for, does it survive ? what would need to be changed ?
+
+## Prompt 27
+
+you're not correctly referencing "they" ... I am not "they" . when we very first started i had you crawl the site the original project requirements were posted at. do you still have that ?
+
+## Prompt 28
+
+i had made notes about what i'd do for improvements as we went along. do you have a history of this ? have you thought about how this would be incorporated into their question about this ?
+
+## Prompt 29
+
+yes, write the full readme with that structure
+
+## Prompt 30
+
+you mention 1.4 hours for the complete, but don't mention the summary length, do that too at the start of the readme
+
+## Prompt 31
+
+is repo-story an actual skill?  i don't see evidence for that
+
+## Prompt 32
+
+how well did the plan fair given our actualy development progression as it actually happened ?
+
+## Prompt 33
+
+did they request an update on how well the plan faired contact with reality ?
+
+## Prompt 34
+
+yes save it,
+
+## Prompt 35
+
+squash the readme changes before i push
+
+## Prompt 36
+
+the order in which the books appear should be in order from foundational to the container (next-chapter) that builds and bundles everything. so: repo-story (1), landry-ui (2), next-chapter (3).  and the detail sentence is a bit long winded on each (too much text). make that part more concise.
+
+## Prompt 37
+
+do any cleanup, generation, checks, etc... I already pushed but i'm not against a force push. i want the remaining prompts and polish just completed to be part of all the docs and logs
