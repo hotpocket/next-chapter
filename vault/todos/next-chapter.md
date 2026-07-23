@@ -2,15 +2,19 @@
 tags: [todos, next-chapter]
 type: todo
 audience: [dev, claude-code]
-summary: "Open items for the next-chapter admissions project: M2 go-live (owner), listen-QA (owner), M4 submission polish."
+summary: "No open items — project in finalization. Remaining work is the owner's finalize flow: v3 audio render, site rebuild, push."
 created: 2026-07-20
 status: active
 ---
 
 # next-chapter TODOs
 
-- [ ] **Narrative quality pass** — owner: chapters read "a bit stilted"; per the repo-story 2026-07-10 lesson, fix at the Phase 5a beats/arc level (NOT word-pruning), prototype on ONE chapter and owner-review before re-rendering anything (re-render cost: only changed chapters, RTF 0.15). Entry point: llm-docs/plan.md standing rules + repo-story/prompts/narrate.md
-- [ ] M4.3 Part-11 checklist pass + dual hygiene scans + commit tidy (owner squash/push decisions)
+No open items. The narrative-quality pass was superseded by the 2026-07-23
+walkthrough rewrite ([[2026-07-23-walkthrough-rewrite]]); the M4.3 checklist
+pass is the finalization the owner is performing now, not a tracked TODO.
+
+Owner's finalize flow (operational, not TODOs): `scripts/regen-trilogy-audio`
+→ `python3 scripts/build-trilogy-site` → review → push.
 
 Done log lives in session recaps ([[2026-07-21-trilogy-built]]); this file
 carries open items only.

@@ -1,16 +1,18 @@
 # next-chapter — repo → audiobook
 
-Turn a GitHub repository into a narrated audiobook: explore its history and
-core concepts, write a documentary arc, render it to audio, and play it in the
-browser. This repo is my Next Chapter admissions project: the GitHub Pages site
-here serves a trilogy of audiobooks about its own lineage —
-[landry-ui](https://github.com/hotpocket/landry-ui) (the player's origin),
-[repo-story](repo-story/) (the generator's origin, vendored here), and
+Turn a GitHub repository into a narrated audiobook: inventory its features,
+trace each one to the prompts that shaped it, write an audio walkthrough, render
+it to a cloned voice, and play it in the browser. This repo is my Next Chapter
+admissions project: the GitHub Pages site here serves a trilogy of audiobooks
+about its own components —
+[landry-ui](https://github.com/hotpocket/landry-ui) (the player),
+[repo-story](repo-story/) (the generator, vendored here), and
 next-chapter itself (their assembly into this site).
 
-**Status:** built — the trilogy (16 chapters + 16 summary tracks, 4.6 hours)
-is generated and assembled in [`docs/`](docs/); going live on Pages is the
-last flip.
+**Status:** finalizing — the walkthrough edition (12 chapters + 12 summary
+tracks, ~1.4 hours; narration text tracked in-tree per book under
+`repo-story/*/output/sections/`) replaces the first documentary edition;
+rendering its audio and rebuilding [`docs/`](docs/) is the last flip.
 
 **Live demo:** https://hotpocket.github.io/next-chapter/ — live on GitHub
 Pages (`main` + `/docs`).
@@ -21,23 +23,23 @@ Pages (`main` + `/docs`).
 2. [`config-history.md`](config-history.md) — the AI workflow, and the glossary for reading the prompts.
 3. [Decisions index](vault/decisions/README.md) — every architecture call, active vs superseded, one line each.
 4. One [session recap + its verbatim prompts](#sessions--prompts) — how a working session actually runs; [`prompt-history.md`](prompt-history.md) is the curated index.
-5. Press play on the [live site](https://hotpocket.github.io/next-chapter/) — and note the **Summary** toggle if you have four minutes per chapter, not twenty.
+5. Press play on the [live site](https://hotpocket.github.io/next-chapter/) — and note the **Summary** toggle if you have two minutes per chapter, not seven.
 
 ## The problem
 
 Understanding an unfamiliar codebase means hours in front of a screen reading
 files and history. That time exists in other places — commutes, drives,
 walks — where a screen doesn't. This project turns a repository into a
-narrated documentary audiobook: its ideas, decisions, and history, researched
-from the code and git log, written as an arc, and rendered to audio you can
-listen to away from the keyboard.
+narrated walkthrough audiobook: its features as they exist, each traced to the
+verbatim prompt that shaped it, researched from the code, session records, and
+git log, and rendered to audio you can listen to away from the keyboard.
 
 ## Why it's valuable to another person
 
 The listener this was built for is **you, the reviewer**: someone who cannot
 spend hours digging through three repositories, brought up to speed by ear on
 the code powering the very page they're using. Every chapter also ships a
-**Summary track** (~4 minutes instead of ~20) for exactly that time budget.
+**Summary track** (~2 minutes instead of ~7) for exactly that time budget.
 The same mechanism generalizes: point the pipeline at any repo
 ([`repo-story/`](repo-story/) is the how) and get a book back.
 
@@ -56,12 +58,14 @@ it were vetted first ([vets](vault/vets/)). Execution state lives in
   resume, playback speed, and offline download (PWA service worker).
 - **Read-along transcripts**, time-synced with follow mode, reading mode,
   and text-size controls — the skim path if you'd rather read than listen.
-- **Full/Summary toggle per chapter** — a condensed ~4-minute narration of
-  every chapter's load-bearing facts, generated as part of the pipeline
-  (Phase 5c), with its own audio and synced transcript.
-- **Provenance built in** — [`docs/SOURCES.md`](docs/SOURCES.md) pins what
-  each book narrates (book 3 is pinned to commit `8295cae`: a book cannot
-  contain its own generation, so it names exactly what it can see).
+- **Full/Summary toggle per chapter** — a condensed ~2-minute orientation
+  per chapter, generated as part of the pipeline (Phase 5c), with its own
+  audio and synced transcript.
+- **Prompt provenance in the narration** — every feature walked through is
+  traced to the prompt that shaped it, labeled verbatim, paraphrase, or
+  inference; [`docs/SOURCES.md`](docs/SOURCES.md) pins what each book
+  narrates (book 3 trails HEAD by construction: a book cannot contain its
+  own generation).
 
 ## Technologies used
 
@@ -100,10 +104,39 @@ python3 repo-story/serve.py -d docs -p 8010   # then open http://localhost:8010
 Regenerating books requires a CUDA GPU + Chatterbox (see
 [`repo-story/README.md`](repo-story/README.md)) — by design the site never
 regenerates anything (ADR 0003: generation is offline; the reviewer plays).
-Site assembly from generated books: `python3 scripts/build-trilogy-site`.
+Full audio rebuild for all three books: `scripts/regen-trilogy-audio`
+(content-hash-guarded — a text change forces a clean render). Site assembly
+from generated books: `python3 scripts/build-trilogy-site`.
 Tests: `bash repo-story/scripts/test_build_book.sh`,
-`python3 scripts/test_build_trilogy_site.py`, and in landry-ui
+`python3 scripts/test_build_trilogy_site.py`,
+`bash scripts/test-regen-trilogy-audio.sh`, and in landry-ui
 `node test/summary.test.mjs`.
+
+## How it's built (the four stages)
+
+1. **Repos.** Each book gets a run folder `repo-story/<slug>/` holding `repo/`
+   (a clone of the subject, gitignored — only landry-ui needs one; the other
+   two subjects are this tree) and `output/`. Provenance inputs per book:
+   `vault/sessions/*-prompts.md`, recaps, ADRs, git log.
+2. **Book text** (Claude Code, no GPU). The [`/repo-story`](repo-story/SKILL.md)
+   skill: an `explorer` agent writes a feature-inventory dossier → the main
+   session groups features into a chapter plan (`inventory.md`) → per chapter,
+   `code-researcher` + `prompt-researcher` agents verify behavior and trace
+   prompts → `narrator` agents write `output/sections/section-*.txt` +
+   `output/summaries/`, ordered by `chapters.txt`. Fable plans, Opus executes
+   (its ADR 0001). The text is tracked in git.
+3. **Audio** (CUDA GPU). [`scripts/regen-trilogy-audio`](scripts/regen-trilogy-audio)
+   runs, per book: `build_audio.py` (Chatterbox TTS, ≤300-char sentence chunks,
+   resume-safe chunk cache) → `build_m4a.py` (per-chapter M4As + manifest — the
+   player's format) → `build_transcripts.py` (time-aligned `transcripts.json`).
+   A content hash of the text (`output/.text-hash`) guards freshness: any text
+   change forces a clean render of that book.
+4. **Site.** [`scripts/build-trilogy-site`](scripts/build-trilogy-site) reads
+   [`scripts/trilogy.json`](scripts/trilogy.json), copies chapter + summary
+   M4As into `docs/audio/<slug>/`, merges transcripts into
+   `docs/transcripts.json` (content-hash cache key), copies the landry-ui
+   player, and writes `docs/index.html` + `docs/PROVENANCE.md`. Publishing is
+   a `git push` — no script deploys.
 
 ## How to read this repo (the trail)
 
@@ -139,6 +172,7 @@ command glossary that makes the prompts readable):
 | 2026-07-20 — Config mirror | [recap](vault/sessions/2026-07-20-config-mirror.md) | [4 prompts](vault/sessions/2026-07-20-config-mirror-prompts.md) |
 | 2026-07-21 — repo-story vendored + in-repo pivot | [recap](vault/sessions/2026-07-21-repo-story-vendored.md) | [27 prompts](vault/sessions/2026-07-21-repo-story-vendored-prompts.md) |
 | 2026-07-21 — Trilogy built | [recap](vault/sessions/2026-07-21-trilogy-built.md) | [33 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md) |
+| 2026-07-23 — Walkthrough rewrite (v3) | [recap](vault/sessions/2026-07-23-walkthrough-rewrite.md) | [18 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md) |
 
 ## Resources
 

@@ -74,7 +74,25 @@ Probe → feature → all three books → assembled site.
 
 ---
 
-**Totals:** 110 prompts across 4 sessions. The unabridged exports live in
+## 5 — 2026-07-23 · Walkthrough rewrite ([18 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md))
+
+The session where the product's genre changed on a single prompt.
+
+- **#1** — the redirect: the documentary books are "long winded, and a bit too
+  fantastical" for a reviewer's time — the ask becomes "a walkthrough of the
+  features and the prompts that influenced the features." The entire
+  generation methodology was rewritten from this prompt, and book 2 quotes it.
+- **#8** — "here I want ONLY the story of my code" — the second tightening:
+  no outside history at all; external tools get one clause.
+- **#10** — the stale-cache catch: the owner notices regenerated books sound
+  unchanged, pastes the "cached, skipping" evidence, and the audio pipeline
+  gains content-hash freshness in response.
+- **#14** — "i want the transcripts... committed to version control so that I
+  can track progress" — narration text becomes a tracked, diffable artifact.
+
+---
+
+**Totals:** 128 prompts across 5 sessions. The unabridged exports live in
 [`vault/sessions/`](vault/sessions/); each links its session recap, and the
 [decisions index](vault/decisions/README.md) holds the ADRs those prompts
 produced.
