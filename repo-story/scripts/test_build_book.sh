@@ -3,7 +3,7 @@
 # No GPU/TTS needed: everything runs through --stage-only except arg validation.
 set -u
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BB="$REPO_ROOT/scripts/build_book.sh"
 PASS=0 FAIL=0
 TMP="$(mktemp -d)"
@@ -186,8 +186,25 @@ TR="$TMP/tr-run"; mkdir -p "$TR/sections" "$TR/summaries" "$TR/chunks"
 printf 'One sentence.\n' > "$TR/sections/one.txt"
 printf 'one.txt\n' > "$TR/chapters.txt"
 printf 'Summary sentence.\n' > "$TR/summaries/one.txt"
-ffmpeg -y -f lavfi -i anullsrc=r=24000:cl=mono -t 0.3 "$TR/chunks/ch01_chunk_00000.wav" -loglevel error
-ffmpeg -y -f lavfi -i anullsrc=r=24000:cl=mono -t 0.3 "$TR/chunks/ch01_summary_00000.wav" -loglevel error
+# Chunk WAVs are content-addressed, so the fixture derives its filenames the
+# same way the renderer does, and ships the cache-params sidecar the renderer
+# writes — build_transcripts.py reads the voice/params back from it to
+# recompute the names.
+printf '{"voice": "t.wav", "params": {"sr": 24000, "exaggeration": null, "cfg_weight": null}}\n' \
+  > "$TR/chunks/cache-params.json"
+eval "$(python3 - "$TR" <<'PY'
+import sys
+sys.path.insert(0, __import__("os").environ["REPO_ROOT"])
+from build_audio import chunk_filename, chunk_key, split_into_chunks
+p = {"sr": 24000, "exaggeration": None, "cfg_weight": None}
+full = split_into_chunks(open(f"{sys.argv[1]}/sections/one.txt").read())[0]
+summ = split_into_chunks(open(f"{sys.argv[1]}/summaries/one.txt").read())[0]
+print(f"FULL_WAV={chunk_filename(1, 'chunk', chunk_key(full, 't.wav', p))}")
+print(f"SUMM_WAV={chunk_filename(1, 'summary', chunk_key(summ, 't.wav', p))}")
+PY
+)"
+ffmpeg -y -f lavfi -i anullsrc=r=24000:cl=mono -t 0.3 "$TR/chunks/$FULL_WAV" -loglevel error
+ffmpeg -y -f lavfi -i anullsrc=r=24000:cl=mono -t 0.3 "$TR/chunks/$SUMM_WAV" -loglevel error
 python3 "$REPO_ROOT/build_transcripts.py" --sections-dir "$TR/sections" --chunks-dir "$TR/chunks" \
   --summaries-dir "$TR/summaries" --output "$TR/transcripts.json" --slug t >/dev/null 2>&1
 if python3 -c '

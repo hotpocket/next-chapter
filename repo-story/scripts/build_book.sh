@@ -24,9 +24,13 @@ set -euo pipefail
 # --manifest with transcripts inlined as a data: URI, so site/ works from
 # file:// with no server. Prints (never runs) the zip command.
 #
-# Chunk WAVs are cached by (chapter index, chunk index), not content — a
-# changed chapter's cache is cleared here, and any chapter-list change clears
-# the whole cache (indices shift).
+# Chunk WAVs are content-addressed by build_audio.py (chNN_<variant>_<sha12>,
+# hashed over the chunk text + voice + TTS params), so edited text misses the
+# cache on its own. This script still clears a changed chapter's chunks, and
+# the whole cache on any chapter-list change — belt-and-braces left from the
+# index-keyed era, and now a needless re-render: it throws away chunks the
+# hash would have reused. Its suite pins the clearing, so dropping it is a
+# code+test change, not a comment fix.
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 

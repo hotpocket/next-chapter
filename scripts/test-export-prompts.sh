@@ -20,6 +20,9 @@ cat > "$TMP/fixture.jsonl" <<'EOF'
 {"type":"user","message":{"role":"user","content":"ran it from /home/testuser/git/proj and it worked"}}
 {"type":"user","message":{"role":"user","content":[{"type":"text","text":"<task-notification>\n<task-id>abc123</task-id>\n<result>agent result body</result>\n</task-notification>"}]}}
 {"type":"user","message":{"role":"user","content":"Base directory for this skill: /home/x/.claude/skills/foo\n\n# foo skill body"}}
+{"type":"user","isMeta":true,"sourceToolUseID":"toolu_1","message":{"role":"user","content":"# Bar Skill\n\nbar skill body injected by the Skill tool"}}
+{"type":"user","isMeta":true,"message":{"role":"user","content":"[Image: source: /home/x/.claude/image-cache/deadbeef/1.png]"}}
+{"type":"user","message":{"role":"user","content":"<command-message>vault</command-message>\n<command-name>/vault</command-name>\nrecap the session"}}
 EOF
 
 OUT_DIR="$TMP/vault/sessions"
@@ -38,6 +41,11 @@ grep -q "task-notification" "$OUT"; check "excludes task notifications" $((! $?)
 grep -q "/home/testuser" "$OUT"; check "redacts home paths" $((! $?))
 grep -q "~/git/proj" "$OUT"; check "home path becomes ~" $?
 grep -q "foo skill body" "$OUT"; check "excludes skill-file expansions" $((! $?))
+# isMeta marks harness-injected content: Skill-tool bodies (no "Base directory"
+# prefix) and image-attachment source lines. User-typed /commands are NOT meta.
+grep -q "bar skill body" "$OUT"; check "excludes isMeta skill bodies" $((! $?))
+grep -q "image-cache" "$OUT"; check "excludes isMeta image source lines" $((! $?))
+grep -q "command-name>/vault" "$OUT"; check "keeps user-typed slash commands" $?
 grep -q "user@example.com" "$OUT"; check "redacts email" $((! $?))
 grep -q "REDACTED" "$OUT"; check "redaction marker present" $?
 grep -q "^type: prompts" "$OUT"; check "frontmatter type: prompts" $?

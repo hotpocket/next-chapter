@@ -23,9 +23,19 @@ Run it locally (static site; a Range-capable server is needed for seeking):
 python3 repo-story/serve.py -d docs -p 8010   # open http://localhost:8010
 ```
 
+**Analytics.** The published site counts page hits with
+[GoatCounter](https://www.goatcounter.com/) — no cookies, no cross-site
+tracking, no personal data, nothing that needs a consent banner; it records
+path, referrer, and coarse browser/country. The dashboard is public, so you
+can watch your own visit land:
+**https://next-chapter.goatcounter.com**. The site code lives in
+[`scripts/trilogy.json`](scripts/trilogy.json) and the snippet is emitted by
+the site assembler, so a local build without that key ships no third-party
+script at all.
+
 ## The prompts
 
-Every working session's user prompts are published verbatim — **147 prompts across 5 sessions** — each session a recap + prompts pair:
+Every working session's user prompts are published verbatim — **168 prompts across 6 sessions** — each session a recap + prompts pair:
 
 | Session | Recap | Prompts |
 |---------|-------|---------|
@@ -34,6 +44,7 @@ Every working session's user prompts are published verbatim — **147 prompts ac
 | 2026-07-21 — repo-story vendored + in-repo pivot | [recap](vault/sessions/2026-07-21-repo-story-vendored.md) | [27 prompts](vault/sessions/2026-07-21-repo-story-vendored-prompts.md) |
 | 2026-07-21 — Trilogy built | [recap](vault/sessions/2026-07-21-trilogy-built.md) | [33 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md) |
 | 2026-07-23 — Walkthrough rewrite (v3) | [recap](vault/sessions/2026-07-23-walkthrough-rewrite.md) | [37 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md) |
+| 2026-07-30 — Site analytics | [recap](vault/sessions/2026-07-30-site-analytics.md) | [21 prompts](vault/sessions/2026-07-30-site-analytics-prompts.md) |
 
 [`prompt-history.md`](prompt-history.md) is the curated index (the prompts
 that best show the collaboration); [`config-history.md`](config-history.md)
@@ -71,10 +82,14 @@ descriptions of it.
    text is tracked in git.
 3. **Audio** (CUDA GPU + [Chatterbox TTS](https://github.com/resemble-ai/chatterbox)).
    [`scripts/regen-trilogy-audio`](scripts/regen-trilogy-audio) runs, per
-   book: `build_audio.py` (TTS, resume-safe chunk cache) → `build_m4a.py`
-   (per-chapter M4As + manifest) → `build_transcripts.py` (time-aligned
-   transcripts). A content hash of the text guards freshness — any text
-   change forces a clean render of that book.
+   book: `build_audio.py` (TTS) → `build_m4a.py` (per-chapter M4As +
+   manifest) → `build_transcripts.py` (time-aligned transcripts) →
+   `chunk_cache.py gc` (orphan sweep). Chunk WAVs are **content-addressed**
+   — `chNN_<variant>_<sha12>.wav`, hashed from the chunk's text plus the voice
+   and TTS params — so editing one sentence re-renders that sentence and
+   everything else is a cache hit. The last narration pass re-rendered 11
+   chunks out of 151; under the previous index-keyed cache it would have
+   re-rendered the whole book.
 4. **Site.** [`scripts/build-trilogy-site`](scripts/build-trilogy-site) reads
    [`scripts/trilogy.json`](scripts/trilogy.json), copies audio into
    `docs/audio/`, merges transcripts (content-hash cache key), copies the
@@ -83,8 +98,18 @@ descriptions of it.
 
 Tests: `bash repo-story/scripts/test_build_book.sh` ·
 `python3 scripts/test_build_trilogy_site.py` ·
-`bash scripts/test-regen-trilogy-audio.sh` · in landry-ui
+`python3 repo-story/test_build_audio.py` ·
+`python3 repo-story/test_chunk_cache.py` ·
+`bash scripts/test-regen-trilogy-audio.sh` ·
+`bash scripts/test-export-prompts.sh` ·
+`bash scripts/test-check-session-wrapup.sh` ·
+`bash scripts/test-sync-claude-mirror.sh` · in landry-ui
 `node test/summary.test.mjs`.
+
+The session record has its own gate: [`scripts/check-session-wrapup`](scripts/check-session-wrapup)
+re-derives every published prompt count from the export files and fails if the
+Session Log, this README's table and totals, `prompt-history.md`, or the command
+glossary disagree.
 
 ---
 
@@ -157,7 +182,10 @@ generation (ADR 0009).
 - **Audio pipeline**: Python + Chatterbox TTS (local CUDA GPU, cloned voice),
   ffmpeg — the vendored [`repo-story/`](repo-story/) pipeline.
 - **Hosting**: GitHub Pages serving [`docs/`](docs/) — audio in-tree, no
-  backend (ADR 0008).
+  backend (ADR 0008). Hit counting via cookieless
+  [GoatCounter](https://next-chapter.goatcounter.com) (public dashboard); the
+  service worker passes cross-origin requests through so per-hit beacon URLs
+  don't accumulate as quota-padded cache entries.
 - **Testing**: Playwright browser tests (player), shell + Python harnesses
   (pipeline, audio regen, site assembler), red→green throughout.
 

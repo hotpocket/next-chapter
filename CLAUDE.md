@@ -32,15 +32,24 @@ why), write it back to the vault. **At session end**, offer `/vault recap`.
 `vault/sessions/<name>.md`, run `scripts/export-prompts <name>` — it extracts
 this session's user prompts from the Claude Code transcript (tool output,
 system events, and skill expansions excluded; private data redacted inline) and
-writes `vault/sessions/<name>-prompts.md` linking `[[<name>]]`. Add a
-`[[<name>-prompts]]` link in the recap note, and add the recap/prompts pair
-to the "Sessions & prompts" table in README.md. If it errors or reports a prompt
-count implausibly low for the session, STOP and investigate (transcript-format
-drift) — never publish an empty/thin export. Before committing prompt files,
-check for glossary drift: every `/command` appearing in them must be in
-config-history.md's glossary. The pair is the raw material for
-the submission's curated `prompt-history.md`. Prompt exports are outward-facing
-— the Public-repo hygiene scan applies before committing them.
+writes `vault/sessions/<name>-prompts.md` linking `[[<name>]]`. If it errors or
+reports a prompt count implausibly low for the session, STOP and investigate
+(transcript-format drift) — never publish an empty/thin export. Also skim the
+export before publishing: a count can look right while the *content* is wrong
+(2026-07-30: a Skill-tool-injected skill body landed in it as a "prompt").
+
+A recap is not the deliverable on its own — the same session has to land in
+every downstream index:
+
+- `[[<name>-prompts]]` link in the recap note, and `[[<name>]]` back in the export
+- a row in `vault/sessions/Session Log.md` (append — row order is authoritative)
+- a row in README.md's "Sessions & prompts" table, plus its running totals line
+- a section in the curated `prompt-history.md`, plus its `**Totals:**` line
+- every `/command` in the export present in `config-history.md`'s glossary
+
+**Run `scripts/check-session-wrapup` before committing** — it re-derives every
+count from the prompt files and fails on any index that disagrees. Prompt
+exports are outward-facing — the Public-repo hygiene scan applies too.
 
 ## Docs layout
 

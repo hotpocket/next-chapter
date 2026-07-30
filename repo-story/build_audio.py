@@ -15,6 +15,7 @@ Prints progress continuously throughout generation.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -74,9 +75,80 @@ def split_into_chunks(text: str, max_chars: int = 300) -> list[str]:
     # Drop degenerate chunks (no word characters, e.g. '"..."'): Chatterbox
     # given near-zero phonetic content can hallucinate the conditioning
     # sample's transcript instead (voice-sample leak, wbt ch 1073).
-    # NOTE: this shifts chunk indices for any section containing a dropped
-    # chunk — delete that section's cached chunk WAVs before regenerating.
+    # Dropping shifts positions, which used to poison the index-keyed cache;
+    # chunks are content-addressed now (see chunk_key), so a shift is harmless.
     return [c for c in chunks if is_speakable(c)]
+
+
+def chunk_key(text: str, voice_path: str, params: dict) -> str:
+    """Content address for one chunk's audio: hash of what it says and how it
+    is voiced. Position is deliberately NOT in the key — that is what lets an
+    edited sentence re-render alone while every other chunk stays a cache hit,
+    even though the edit shifted their indices.
+
+    voice and params belong in the key too: same words in a different voice (or
+    at a different exaggeration) are different audio, and an index-keyed cache
+    silently served the old one."""
+    payload = json.dumps(
+        {"text": text, "voice": Path(voice_path).name if voice_path else "",
+         "params": params},
+        sort_keys=True, separators=(",", ":"),
+    )
+    return hashlib.sha256(payload.encode()).hexdigest()[:12]
+
+
+def chunk_filename(chapter_idx: int, variant: str, key: str) -> str:
+    """chNN_<variant>_<key>.wav — the one place this name is spelled. Imported
+    by build_transcripts.py so the writer and the reader cannot drift."""
+    return f"ch{chapter_idx:02d}_{variant}_{key}.wav"
+
+
+def tts_params(model) -> dict:
+    """Sampling params that affect the rendered audio, for the cache key."""
+    return {
+        "sr": getattr(model, "sr", None),
+        "exaggeration": getattr(model, "exaggeration", None),
+        "cfg_weight": getattr(model, "cfg_weight", None),
+    }
+
+
+CACHE_PARAMS_FILE = "cache-params.json"
+
+
+def save_cache_params(chunks_dir: Path, voice_path: str, params: dict):
+    """Record what the cached chunks were voiced with, so build_transcripts.py
+    can recompute the same keys without loading the TTS model."""
+    chunks_dir.mkdir(parents=True, exist_ok=True)
+    (chunks_dir / CACHE_PARAMS_FILE).write_text(
+        json.dumps({"voice": Path(voice_path).name if voice_path else "", "params": params},
+                   sort_keys=True, indent=2))
+
+
+def load_cache_params(chunks_dir: Path) -> tuple[str, dict]:
+    p = chunks_dir / CACHE_PARAMS_FILE
+    if not p.exists():
+        print(f"No {p} — run build_audio.py first (it records the voice/params "
+              "the chunk cache was keyed with).")
+        sys.exit(1)
+    data = json.loads(p.read_text())
+    return data.get("voice", ""), data.get("params", {})
+
+
+def referenced_chunk_names(sections_dir: Path, summaries_dir: Path | None,
+                           voice_path: str, params: dict) -> set[str]:
+    """Every chunk filename the current text should produce — the live set an
+    orphan sweep keeps and everything else can be dropped."""
+    names: set[str] = set()
+    for idx, section in enumerate(find_sections(sections_dir), start=1):
+        for text, variant in ((section.read_text(), "chunk"),):
+            for c in split_into_chunks(text):
+                names.add(chunk_filename(idx, variant, chunk_key(c, voice_path, params)))
+        if summaries_dir:
+            summary = summaries_dir / section.name
+            if summary.exists():
+                for c in split_into_chunks(summary.read_text()):
+                    names.add(chunk_filename(idx, "summary", chunk_key(c, voice_path, params)))
+    return names
 
 
 def generate_chapter_audio(
@@ -111,9 +183,11 @@ def generate_chapter_audio(
     label = chapter_title if variant == "chunk" else f"{chapter_title} (summary)"
     print(f"\n[Chapter {chapter_idx}/{total_chapters}] {label} — {total_chunks} chunks")
 
+    params = tts_params(model)
     chunk_wavs = []
     for i, chunk_text in enumerate(chunks):
-        chunk_path = chunks_dir / f"ch{chapter_idx:02d}_{variant}_{i:05d}.wav"
+        chunk_path = chunks_dir / chunk_filename(
+            chapter_idx, variant, chunk_key(chunk_text, voice_path, params))
         chunk_wavs.append(chunk_path)
 
         if chunk_path.exists():
@@ -282,8 +356,10 @@ def main():
     model.prepare_conditionals(voice_path)
     print("Model loaded.")
 
-    # Generate chapter audio
+    # Generate chapter audio. Record the cache key's inputs first:
+    # build_transcripts.py recomputes chunk names from them.
     chunks_dir.mkdir(parents=True, exist_ok=True)
+    save_cache_params(chunks_dir, voice_path, tts_params(model))
     chapter_paths = []
     chapter_titles = []
 

@@ -7,7 +7,7 @@ show the workflow's teeth. The prompts read terse — fragments, corrections,
 no pleasantries — because a hook enforces brevity; the decoder ring is
 [`config-history.md`](config-history.md)'s command glossary.
 
-**Reading one session end-to-end beats sampling all five.** If you read only
+**Reading one session end-to-end beats sampling all six.** If you read only
 one, read [Trilogy built](#4--2026-07-21--trilogy-built-33-prompts) — the
 session where the product went from one probe chapter to the shipped site.
 
@@ -96,7 +96,49 @@ The session where the product's genre changed on a single prompt.
 
 ---
 
-**Totals:** 147 prompts across 5 sessions. The unabridged exports live in
+## 6 — 2026-07-30 · Site analytics ([21 prompts](vault/sessions/2026-07-30-site-analytics-prompts.md))
+
+Hit counting added to the published site — then three corrections that each
+turned into a mechanism, ending with a rewrite of how the audio pipeline
+caches its work.
+
+- **#1** — the whole feature from one loose question: "is there a way to
+  install google analytics here or something like that so I know who hits
+  this page and when?" — answered with GoatCounter instead, because a
+  developer audience adblocks GA.
+- **#7** — "what is the latent bug on landry-ui?" — the question that forced
+  a re-read and overturned my own diagnosis: I had claimed the service worker
+  would 503 the analytics beacon; the `cache.put` is fire-and-forget, so it
+  can't. The real defect (unbounded quota-padded opaque cache entries) is
+  slower and still worth the fix.
+- **#10** — "you removed the check from my global config. put it back. i
+  never asked you to do that." — a scoped instruction ("add X to Y") read as
+  the broader change it seemed to imply. Restored, and the boundary written
+  down.
+- **#13** — "you missed the curated index prompt-history.md ... add them as
+  checks to the wrap up process so they don't get missed again." This section
+  exists because of it, and so does
+  [`scripts/check-session-wrapup`](scripts/check-session-wrapup): the fix for a
+  missed step is a gate, not a longer checklist.
+- **#16** — "we should have chunk audio and be able to update the
+  narration/text/transcripts easily so we only regenerate a small subset" —
+  the design question that overturned a "not worth fixing" verdict I had just
+  written into the recap. The pipeline already chunked; the chunks were keyed
+  by position, so one edited word forced a full re-render. Content-addressing
+  them cut the same fix down to the handful of chunks that actually changed.
+- **#18** — "there are not supposed to be any lose ends" — the standard that
+  drove #16. A recap that documents a known-stale artifact instead of fixing
+  it is a recap that ships debt.
+- **#20** — "did you run the prose through the fabel5 check for fluid story
+  telling?" — a process audit in one line. The narration fix had been
+  hand-patched into the section file, but ADR 0001 says sections are written
+  only by the `narrator` agent. It read as patched: a spoken five-item list,
+  no session-date attribution, an uncomposed transition. Re-narrated properly,
+  which the new chunk cache made cheap enough to be worth doing.
+
+---
+
+**Totals:** 168 prompts across 6 sessions. The unabridged exports live in
 [`vault/sessions/`](vault/sessions/); each links its session recap, and the
 [decisions index](vault/decisions/README.md) holds the ADRs those prompts
 produced.

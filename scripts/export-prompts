@@ -41,6 +41,10 @@ OUT="$OUT_DIR/$NAME-prompts.md"
 
 PROMPTS=$(jq -r '
   select(.type == "user")
+  # isMeta marks harness-injected user-role records: skill bodies loaded by the
+  # Skill tool, image-attachment source lines. What the human typed is never
+  # meta — including /commands, whose invocation blocks stay in the trail.
+  | select(.isMeta != true)
   | .message.content
   | if type == "string" then .
     elif type == "array" then

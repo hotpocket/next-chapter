@@ -11,6 +11,10 @@ Contract:
   - merges per-book transcripts.json into one docs/transcripts.json and
     references it with a ?v=<content-hash> query (landry-ui cache-bust rule)
   - copies the player component and records provenance
+  - emits the registry's analytics snippet (absent key => no snippet) and
+    patches the copied sw.js so cross-origin requests bypass the shell
+    handler (which would otherwise cache every per-hit beacon URL as a
+    quota-padded opaque entry)
 """
 import json
 import subprocess
@@ -65,7 +69,8 @@ def main():
         registry = tmp / "trilogy.json"
         fav = tmp / "fav.png"
         fav.write_bytes(b"\x89PNG-fake")
-        registry.write_text(json.dumps({"title": "Test Trilogy", "favicon": str(fav), "books": [
+        registry.write_text(json.dumps({"title": "Test Trilogy", "favicon": str(fav),
+                                        "analytics": {"goatcounter": "testsite"}, "books": [
             {"slug": "alpha", "manifest": str(b1 / "m4a" / "chapters_manifest.json"),
              "transcripts": str(b1 / "site" / "transcripts.json"),
              "description": "The player's origin."},
@@ -96,6 +101,40 @@ def main():
         # (the fetched player dir is not itself a landry-ui checkout here).
         prov = (docs / "PROVENANCE.md").read_text()
         assert " @ " not in prov, f"provenance claims a hash it can't stand behind: {prov}"
+
+        # Analytics snippet from the registry (one source of truth for the code).
+        assert 'data-goatcounter="https://testsite.goatcounter.com/count"' in html, \
+            "goatcounter endpoint not derived from registry code"
+        assert "gc.zgo.at/count.js" in html, "goatcounter script not linked"
+
+        # The copied sw.js must let cross-origin requests through untouched:
+        # its shell handler caches every response by URL, and the beacon URL is
+        # unique per hit -> unbounded opaque (quota-padded) cache entries.
+        sw = (docs / "sw.js").read_text()
+        assert "/* sw.js */" in sw, "upstream sw.js body must survive the patch"
+        assert "NEXT_CHAPTER_XORIGIN_PASSTHROUGH" in sw, "cross-origin guard not applied"
+        assert "stopImmediatePropagation" in sw, \
+            "guard must stop the shell handler, not just answer alongside it"
+
+        # Rebuild: patch applied to a fresh copy, never stacked.
+        subprocess.run([sys.executable, str(SCRIPT), "--registry", str(registry),
+                        "--docs-dir", str(docs), "--player-src", str(player)],
+                       check=True, capture_output=True, text=True)
+        sw2 = (docs / "sw.js").read_text()
+        assert sw2.count("NEXT_CHAPTER_XORIGIN_PASSTHROUGH") == 1, "guard stacked on rebuild"
+        assert sw2 == sw, "rebuild not idempotent"
+
+        # No analytics key => no third-party script on the page at all.
+        plain_reg = tmp / "trilogy-plain.json"
+        plain_reg.write_text(json.dumps({"title": "Plain", "books": [
+            {"slug": "alpha", "manifest": str(b1 / "m4a" / "chapters_manifest.json"),
+             "transcripts": str(b1 / "site" / "transcripts.json")}]}))
+        plain_docs = tmp / "docs-plain"
+        subprocess.run([sys.executable, str(SCRIPT), "--registry", str(plain_reg),
+                        "--docs-dir", str(plain_docs), "--player-src", str(player)],
+                       check=True, capture_output=True, text=True)
+        plain_html = (plain_docs / "index.html").read_text()
+        assert "goatcounter" not in plain_html, "analytics leaked into an opted-out build"
     print("ok")
 
 

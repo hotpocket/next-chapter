@@ -3,7 +3,11 @@
     "commit": "",
     "pr": ""
   },
-  "model": "claude-fable-5[1m]",
+  "permissions": {
+    "ask": [
+      "Skill(claude-api)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

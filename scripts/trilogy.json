@@ -20,5 +20,8 @@
       "description": "The assembly: the public site, the verbatim prompt trail, and the config mirror."
     }
   ],
-  "favicon": "assets/favicon.png"
+  "favicon": "assets/favicon.png",
+  "analytics": {
+    "goatcounter": "next-chapter"
+  }
 }

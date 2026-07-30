@@ -13,6 +13,10 @@ docs/audio/<slug>/, and merges the per-book transcripts into one
 docs/transcripts.json referenced as transcripts.json?v=<sha8 content hash>
 (cache-busting keys on content — landry-ui's own lesson).
 
+Optional registry key `analytics` ({"goatcounter": "<site-code>"}) puts a
+privacy-preserving hit counter in the page head; the copied sw.js is patched to
+let cross-origin requests bypass its caching handler (see SW_XORIGIN_GUARD).
+
 The player component is copied from --player-src (default repo-story/player,
 the luinst-fetched copy); provenance (source + commit if resolvable) is
 recorded in docs/PROVENANCE.md. Publishing is the owner's git push.
@@ -31,6 +35,49 @@ sys.path.insert(0, str(REPO_ROOT / "repo-story"))
 from build_site import book_from_manifest  # noqa: E402
 
 PLAYER_FILES = ["player.js", "player.css", "feedback.js", "sw.js", "manifest.webmanifest"]
+
+# Prepended to the copied sw.js. The player's shell handler caches every
+# response it fetches, keyed by URL, with no origin check. The analytics beacon
+# carries a per-hit cache-buster, so without this guard every pageview mints a
+# new cache entry — and cross-origin entries are opaque, which browsers pad to
+# a fixed multi-MB size against the origin's storage quota. Unbounded growth
+# crowding out the audio cache. (It does NOT break the beacon: that cache.put()
+# is fire-and-forget, so its rejection can't reach the offline .catch().)
+# Registered first and stopping propagation, so the shell handler never sees
+# third-party requests. Prepending (rather than editing upstream's handler)
+# survives player-component drift.
+SW_XORIGIN_GUARD = """// NEXT_CHAPTER_XORIGIN_PASSTHROUGH — added by scripts/build-trilogy-site.
+// Third-party requests (analytics beacon) bypass the shell handler below,
+// which would cache each one under its unique URL as a quota-padded opaque
+// entry — unbounded growth crowding out the cached audio.
+self.addEventListener('fetch', function (e) {
+  if (new URL(e.request.url).origin !== self.location.origin) {
+    e.stopImmediatePropagation();
+    e.respondWith(fetch(e.request));
+  }
+});
+
+"""
+
+
+def analytics_snippet(cfg: dict) -> str:
+    """Registry -> <head> snippet. {"goatcounter": "<code>"} where <code> is a
+    goatcounter.com subdomain, or a full endpoint URL for a custom domain."""
+    if not cfg:
+        return ""
+    code = cfg.get("goatcounter")
+    if not code:
+        return ""
+    endpoint = code if code.startswith("http") else f"https://{code}.goatcounter.com/count"
+    return ('\n<script data-goatcounter="' + endpoint + '"\n'
+            '        async src="https://gc.zgo.at/count.js"></script>')
+
+
+def patch_sw_cross_origin(sw_path: Path):
+    body = sw_path.read_text()
+    if "NEXT_CHAPTER_XORIGIN_PASSTHROUGH" in body:
+        return
+    sw_path.write_text(SW_XORIGIN_GUARD + body)
 
 
 def resolve(p: str) -> Path:
@@ -88,7 +135,7 @@ def player_provenance(player_src: Path) -> str:
 
 
 def generate_html(title: str, books: list, transcript_url: str,
-                  favicon: str = "icons/icon-192.png") -> str:
+                  favicon: str = "icons/icon-192.png", analytics: str = "") -> str:
     books_json = json.dumps(books, indent=2)
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -98,7 +145,7 @@ def generate_html(title: str, books: list, transcript_url: str,
 <title>{title}</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="{favicon}">
-<link rel="stylesheet" href="player.css">
+<link rel="stylesheet" href="player.css">{analytics}
 </head>
 <body>
 <div id="app"></div>
@@ -160,6 +207,8 @@ def main():
             shutil.copy2(src, docs / f)
         else:
             print(f"  warn: {src} missing")
+    if (docs / "sw.js").exists():
+        patch_sw_cross_origin(docs / "sw.js")
     icons = player_src / "icons"
     if icons.exists():
         shutil.copytree(icons, docs / "icons", dirs_exist_ok=True)
@@ -172,7 +221,9 @@ def main():
     if registry.get("favicon"):
         shutil.copy2(resolve(registry["favicon"]), docs / "favicon.png")
         favicon = "favicon.png"
-    (docs / "index.html").write_text(generate_html(registry.get("title", "Audiobooks"), books, tr_url, favicon))
+    (docs / "index.html").write_text(generate_html(
+        registry.get("title", "Audiobooks"), books, tr_url, favicon,
+        analytics=analytics_snippet(registry.get("analytics"))))
     total = sum(b["duration"] for b in books)
     print(f"\nSite assembled at {docs}/ — {len(books)} books, {total/3600:.1f}h total")
 

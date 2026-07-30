@@ -5,7 +5,8 @@ Claude Code skill that analyzes repositories and produces audio walkthroughs of 
 ## Build pipeline
 
 1. Skill phases (in Claude Code): Survey → Explore → Inventory → Research → Narrate → `output/sections/` + condensed `output/summaries/` (Phase 5c — final step of each chapter; feeds the player's Full/Summary toggle)
-2. `build_audio.py` — sections → chunk WAVs → chapter WAVs → chaptered M4B (pass `--title`/`--artist`; album is always `Repo Story`); summaries → `summary-NN-*.wav` (never in the M4B)
+2. `build_audio.py` — sections → chunk WAVs → chapter WAVs → chaptered M4B (pass `--title`/`--artist`; album is always `Repo Story`); summaries → `summary-NN-*.wav` (never in the M4B). Chunk WAVs are **content-addressed**: `chNN_<variant>_<sha12>.wav`, keyed on the chunk text + voice + TTS params (`chunk_key`), so an edited sentence re-renders alone while position shifts stay cache hits. `cache-params.json` records what the cache was voiced with, for `build_transcripts.py`.
+2b. `chunk_cache.py` — cache maintenance: `migrate` renames a legacy index-keyed cache into content addressing without re-rendering (only valid while the text is unchanged since that render); `gc` sweeps chunks the current text no longer references.
 3. `build_m4a.py` — chapter WAVs → per-chapter M4As + `chapters_manifest.json` (**production format** for the landry-ui player); summary WAVs → `chapter_NNNN.summary.m4a` + manifest `summary` entries
 4. `build_transcripts.py` — chunk WAVs + section/summary text → `transcripts.json` (per-chapter timestamps; `summary_chunks` per chapter)
 5. Publish, one target:

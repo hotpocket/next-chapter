@@ -1,3 +1,14 @@
+// NEXT_CHAPTER_XORIGIN_PASSTHROUGH — added by scripts/build-trilogy-site.
+// Third-party requests (analytics beacon) bypass the shell handler below,
+// which would cache each one under its unique URL as a quota-padded opaque
+// entry — unbounded growth crowding out the cached audio.
+self.addEventListener('fetch', function (e) {
+  if (new URL(e.request.url).origin !== self.location.origin) {
+    e.stopImmediatePropagation();
+    e.respondWith(fetch(e.request));
+  }
+});
+
 // Service worker for offline audiobook playback (per-chapter model).
 //
 // Each chapter is its own URL (audio/chapter_NNNN.m4a) and its own cache entry.

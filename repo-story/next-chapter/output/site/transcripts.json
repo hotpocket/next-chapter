@@ -457,183 +457,201 @@
           "chunks": [
             {
               "index": 0,
-              "text": "This repo publishes not just the code but the prompts that made it. Every user message from every session is exported verbatim and shipped alongside the code. At last count that is one hundred ten prompts across four sessions, and the curated index, prompt-history.md, states exactly that total.",
+              "text": "This repo publishes not just the code but the prompts that made it. Every user message from every session is exported verbatim and shipped alongside the code.",
               "start": 0.0,
-              "end": 21.36
+              "end": 9.6
             },
             {
               "index": 1,
-              "text": "The tool that produces those exports is a bash script named export-prompts. You give it a session name, and it finds the newest Claude Code transcript for this repository, reads it, and writes a companion file next to that session's recap. It keeps only the user's messages.",
-              "start": 21.36,
-              "end": 38.24
+              "text": "The curated index, prompt-history.md, carries the running total, and that total agrees with the export files by construction, not by coincidence. The tool that produces those exports is a bash script named export-prompts.",
+              "start": 9.6,
+              "end": 23.24
             },
             {
               "index": 2,
-              "text": "Everything else is dropped: the assistant's replies, tool results, system notifications, and the skill-expansion blocks that appear when a slash command loads its instructions.",
-              "start": 38.24,
-              "end": 48.36
+              "text": "You give it a session name, and it finds the newest Claude Code transcript for this repository, reads it, and writes a companion file next to that session's recap. It keeps only the user's messages.",
+              "start": 23.24,
+              "end": 35.0
             },
             {
               "index": 3,
-              "text": "Concretely, the extraction selects records of type user, and when a message's content is an array that contains a tool result, it drops the whole message rather than risk leaking tool output into the record.",
-              "start": 48.36,
-              "end": 59.28
+              "text": "Everything else is dropped: the assistant's replies, tool results, system notifications, and the skill-expansion blocks that appear when a slash command loads its instructions.",
+              "start": 35.0,
+              "end": 45.12
             },
             {
               "index": 4,
-              "text": "Then it filters by prefix: a prompt is thrown out if it begins with a system-notification marker, a task-notification tag, a system-reminder tag, a local-command tag, or the line that starts a skill body. Empty prompts go too. What survives is the human half of the conversation and nothing else.",
-              "start": 59.28,
-              "end": 78.0
+              "text": "Concretely, the extraction selects records of type user, and when a message's content is an array that contains a tool result, it drops the whole message rather than risk leaking tool output into the record.",
+              "start": 45.12,
+              "end": 56.04
             },
             {
               "index": 5,
-              "text": "Before any of that is written, each surviving prompt passes through inline redaction. The rule here is that the value is replaced but the line survives, so the prompt stays readable and its shape is preserved. An email address becomes the token redacted-email.",
-              "start": 78.0,
-              "end": 95.72
+              "text": "Then it filters by prefix: a prompt is thrown out if it begins with a system-notification marker, a task-notification tag, a system-reminder tag, a local-command tag, or the line that starts a skill body. Empty prompts go too. What survives is the human half of the conversation and nothing else.",
+              "start": 56.04,
+              "end": 74.76
             },
             {
               "index": 6,
-              "text": "Anything that looks like a cookie, an authorization header, or a CSRF token becomes redacted-credential. A private-key header becomes redacted-private-key. Strings that match known API-token shapes become redacted-token.",
-              "start": 95.72,
-              "end": 109.8
+              "text": "Before any of that is written, each surviving prompt passes through inline redaction. The rule here is that the value is replaced but the line survives, so the prompt stays readable and its shape is preserved. An email address becomes the token redacted-email.",
+              "start": 74.76,
+              "end": 92.48
             },
             {
               "index": 7,
-              "text": "And any home-directory path is collapsed to a tilde, so no machine's internal layout ships in a prompt. All of this exists because of a single prompt from the July twentieth foundation session. It read, verbatim: \"ok, this will be a public repo.",
-              "start": 109.8,
-              "end": 125.28
+              "text": "Anything that looks like a cookie, an authorization header, or a CSRF token becomes redacted-credential. A private-key header becomes redacted-private-key. Strings that match known API-token shapes become redacted-token.",
+              "start": 92.48,
+              "end": 106.56
             },
             {
               "index": 8,
-              "text": "add scanning verbage to the claude.md to ensure no private data leeks into commits. Along with this I will want to be publishing the prompts alongside each session note that is captured with a slash vault recap.\" That one message seeds both the hygiene rules and the export pipeline.",
-              "start": 125.28,
-              "end": 143.12
+              "text": "And any home-directory path is collapsed to a tilde, so no machine's internal layout ships in a prompt. All of this exists because of a single prompt from the July twentieth foundation session. It read, verbatim: \"ok, this will be a public repo.",
+              "start": 106.56,
+              "end": 122.04
             },
             {
               "index": 9,
-              "text": "The build order came a few prompts later, just as verbatim: \"installed, build export-prompts and wire it in.\" The foundation recap records the result as the script plus eleven tests, written test-first, red to green.",
-              "start": 143.12,
-              "end": 159.12
+              "text": "add scanning verbage to the claude.md to ensure no private data leeks into commits. Along with this I will want to be publishing the prompts alongside each session note that is captured with a slash vault recap.\" That one message seeds both the hygiene rules and the export pipeline.",
+              "start": 122.04,
+              "end": 139.88
             },
             {
               "index": 10,
-              "text": "The export writes frontmatter tagging the file as type prompts, a header noting that tool output and system events are excluded and private data is redacted inline, and then each prompt numbered in sequence.",
-              "start": 159.12,
-              "end": 171.4
+              "text": "The build order came a few prompts later, just as verbatim: \"installed, build export-prompts and wire it in.\" The foundation recap records the result as the script plus eleven tests, written test-first, red to green.",
+              "start": 139.88,
+              "end": 155.88
             },
             {
               "index": 11,
-              "text": "After it writes, if the leak-scanner gitleaks is on the path, it runs it against the output file and warns, but never blocks, if anything is flagged. There is one more rule around the count, and it was earned rather than designed.",
-              "start": 171.4,
-              "end": 185.8
+              "text": "The export writes frontmatter tagging the file as type prompts, a header noting that tool output and system events are excluded and private data is redacted inline, and then each prompt numbered in sequence.",
+              "start": 155.88,
+              "end": 168.16
             },
             {
               "index": 12,
-              "text": "The instruction now standing in the project's CLAUDE.md is that an implausibly low prompt count means the transcript format has drifted, and the correct response is to stop and investigate rather than publish a thin export. This rule exists because of a real miss.",
-              "start": 185.8,
-              "end": 202.8
+              "text": "After it writes, if the leak-scanner gitleaks is on the path, it runs it against the output file and warns, but never blocks, if anything is flagged. There is one more rule around the count, and it was earned rather than designed.",
+              "start": 168.16,
+              "end": 182.56
             },
             {
               "index": 13,
-              "text": "On July twenty-first, the counts were wrong: background task-notification blocks had been counted as prompts, inflating earlier numbers.",
-              "start": 202.8,
-              "end": 210.52
+              "text": "The instruction now standing in the project's CLAUDE.md is that an implausibly low prompt count means the transcript format has drifted, and the correct response is to stop and investigate rather than publish a thin export. This rule exists because of a real miss.",
+              "start": 182.56,
+              "end": 199.56
             },
             {
               "index": 14,
-              "text": "When the extractor learned to exclude those blocks, the foundation session's count fell from fifty-seven to forty-six, and the vendored session's rose from twenty-one to twenty-seven as other fixes landed. All four exports were regenerated clean.",
-              "start": 210.52,
-              "end": 224.12
+              "text": "On July twenty-first, the counts were wrong: background task-notification blocks had been counted as prompts, inflating earlier numbers.",
+              "start": 199.56,
+              "end": 207.28
             },
             {
               "index": 15,
-              "text": "The trigger for the whole chain was a sanity-check prompt from the July twenty-first vendored session: \"we are persisting the prompts, but not any of the responses.",
-              "start": 224.12,
-              "end": 232.96
+              "text": "When the extractor learned to exclude those blocks, the foundation session's count fell from fifty-seven to forty-six, and the vendored session's rose from twenty-one to twenty-seven as other fixes landed. All four exports were regenerated clean.",
+              "start": 207.28,
+              "end": 220.88
             },
             {
               "index": 16,
-              "text": "do the requirements want us to preserve the responses from the AI also?\" The old pre-fix recap line still shows the stale fifty-seven, left in place on purpose so the correction stays auditable. Next, the tests.",
-              "start": 232.96,
-              "end": 246.6
+              "text": "The trigger for the whole chain was a sanity-check prompt from the July twenty-first vendored session: \"we are persisting the prompts, but not any of the responses.",
+              "start": 220.88,
+              "end": 229.72
             },
             {
               "index": 17,
-              "text": "A script named test-export-prompts.sh runs the exporter against a tiny fixture transcript and asserts thirteen checks.",
-              "start": 246.6,
-              "end": 254.88
+              "text": "do the requirements want us to preserve the responses from the AI also?\" The old pre-fix recap line still shows the stale fifty-seven, left in place on purpose so the correction stays auditable. Next, the tests.",
+              "start": 229.72,
+              "end": 243.36
             },
             {
               "index": 18,
-              "text": "Two of them are the load-bearing ones: a tool result in the fixture must not appear in the output, and a home path written as the string slash home slash testuser must be redacted to a tilde. The fixture also carries a planted email address so the test can confirm redaction fires.",
-              "start": 254.88,
-              "end": 272.64
+              "text": "A script named test-export-prompts.sh runs the exporter against a tiny fixture transcript, carrying one assertion for every rule the exporter enforces and gaining another each time a new way of leaking non-prompt content turns up.",
+              "start": 243.36,
+              "end": 258.76
             },
             {
               "index": 19,
-              "text": "That email is there because the public-repo wargame from the foundation session caught a real address in the author's own test fixture. The recap's phrasing was that fixtures are leak surface too, and that finding is why the redaction assertions exist at all. The prompts do not just ship raw.",
-              "start": 272.64,
-              "end": 288.4
+              "text": "Two of them are the load-bearing ones: a tool result in the fixture must not appear in the output, and a home path written as the string slash home slash testuser must be redacted to a tilde. The fixture also carries a planted email address so the test can confirm redaction fires.",
+              "start": 258.76,
+              "end": 276.52
             },
             {
               "index": 20,
-              "text": "The README carries a Sessions and prompts table, one row per session linking the recap to its prompt export with the count beside it: forty-six, four, twenty-seven, thirty-three. That table traces to a July twenty-first instruction, verbatim: \"ensure the links to prompts are on the readme.",
-              "start": 288.4,
-              "end": 306.92
+              "text": "That email is there because the public-repo wargame from the foundation session caught a real address in the author's own test fixture. The recap's phrasing was that fixtures are leak surface too, and that finding is why the redaction assertions exist at all. The prompts do not just ship raw.",
+              "start": 276.52,
+              "end": 292.28
             },
             {
               "index": 21,
-              "text": "and include any links to resources there ...",
-              "start": 306.92,
-              "end": 309.24
+              "text": "The README carries a Sessions and prompts table, one row per session linking the recap to its prompt export with the count beside it. That table traces to a July twenty-first instruction, verbatim: \"ensure the links to prompts are on the readme. and include any links to resources there ...",
+              "start": 292.28,
+              "end": 308.4
             },
             {
               "index": 22,
-              "text": "so the reviewer can navigate easily.\" Behind it sits an earlier foundation prompt asking what mechanism gives the reviewer, quote, \"an unambigous breadcrumb trail to follow of how I am building this.\" The curated map over the four raw exports is prompt-history.md, and a decoder document, config-history.md, explains the tools and slash commands the prompts invoke.",
-              "start": 309.24,
-              "end": 335.92
+              "text": "so the reviewer can navigate easily.\" Behind it sits an earlier foundation prompt asking what mechanism gives the reviewer, quote, \"an unambigous breadcrumb trail to follow of how I am building this.\" The count beside each row is not maintained by hand.",
+              "start": 308.4,
+              "end": 323.04
             },
             {
               "index": 23,
-              "text": "A standing rule requires that every slash command appearing in an export already be defined in that file's glossary before publish, so a reviewer never meets an unexplained command. All of this is wrapped in hygiene.",
-              "start": 335.92,
-              "end": 349.28
+              "text": "A gate named check-session-wrapup finds the newest session in the vault's Session Log and re-derives every published count from the exports themselves. The Session Log row has to agree with the README table and its totals line, and so do the curated index and the command glossary.",
+              "start": 323.04,
+              "end": 338.84
             },
             {
               "index": 24,
-              "text": "Before every commit, the staged diff is scanned, by gitleaks or by grep, across three classes: credentials, identity, and machine internals. That rule traces to the same July twentieth public-repo prompt and a follow-up asking to wargame the strategy for securing a public repo.",
-              "start": 349.28,
-              "end": 371.48
+              "text": "Nothing is checked against a copied literal, because a number nobody re-derives is a number that quietly goes wrong.",
+              "start": 338.84,
+              "end": 345.2
             },
             {
               "index": 25,
-              "text": "On top of it sits a private token-map scan for identifiers a regular expression cannot catch.",
-              "start": 371.48,
-              "end": 377.84
+              "text": "It exists because a July thirtieth recap shipped with the curated index left un-updated, and the instruction that followed asked for the rest of the missed dependencies too, verbatim: \"add them as checks to the wrap up process so they don't get missed again.\" The curated map over the raw exports is prompt-history.md, and a decoder document, config-history.md, explains the tools and slash commands the prompts invoke.",
+              "start": 345.2,
+              "end": 375.8
             },
             {
               "index": 26,
-              "text": "That second scan exists because of the July twenty-first lesson, told straight: quoted agent output inside prompt exports had leaked infrastructure identifiers and family names past gitleaks and into pushed history.",
-              "start": 377.84,
-              "end": 389.68
+              "text": "A standing rule requires that every slash command appearing in an export already be defined in that file's glossary before publish, so a reviewer never meets an unexplained command. All of this is wrapped in hygiene.",
+              "start": 375.8,
+              "end": 389.16
             },
             {
               "index": 27,
-              "text": "The prompt that met it was verbatim: \"this is still private and we can force push to rewrite the remote history.",
-              "start": 389.68,
-              "end": 395.6
+              "text": "Before every commit, the staged diff is scanned, by gitleaks or by grep, across three classes: credentials, identity, and machine internals. That rule traces to the same July twentieth public-repo prompt and a follow-up asking to wargame the strategy for securing a public repo.",
+              "start": 389.16,
+              "end": 411.36
             },
             {
               "index": 28,
-              "text": "this does expose that we need to scan our prompts also as a source of private data leakage.\" It was fixed by a full-history rewrite while the repo was still private, and turned into a new standing rule that checks every staged diff and every prompt export against a gitignored banned-token list.",
-              "start": 395.6,
-              "end": 414.92
+              "text": "On top of it sits a private token-map scan for identifiers a regular expression cannot catch.",
+              "start": 411.36,
+              "end": 417.72
             },
             {
               "index": 29,
+              "text": "That second scan exists because of the July twenty-first lesson, told straight: quoted agent output inside prompt exports had leaked infrastructure identifiers and family names past gitleaks and into pushed history.",
+              "start": 417.72,
+              "end": 429.56
+            },
+            {
+              "index": 30,
+              "text": "The prompt that met it was verbatim: \"this is still private and we can force push to rewrite the remote history.",
+              "start": 429.56,
+              "end": 435.48
+            },
+            {
+              "index": 31,
+              "text": "this does expose that we need to scan our prompts also as a source of private data leakage.\" It was fixed by a full-history rewrite while the repo was still private, and turned into a new standing rule that checks every staged diff and every prompt export against a gitignored banned-token list.",
+              "start": 435.48,
+              "end": 454.8
+            },
+            {
+              "index": 32,
               "text": "Prompts are half the audit trail. The config they ran under is the other half, and that is the last chapter.",
-              "start": 414.92,
-              "end": 421.24
+              "start": 454.8,
+              "end": 461.12
             }
           ],
           "summary_chunks": [
@@ -663,27 +681,27 @@
             },
             {
               "index": 4,
-              "text": "A companion test script, test-export-prompts.sh, asserts thirteen checks against a fixture, including that tool results never become prompts and that home paths are redacted.",
+              "text": "A companion test script, test-export-prompts.sh, asserts those rules against a fixture: tool results never become prompts, home paths collapse to a tilde.",
               "start": 45.6,
-              "end": 57.2
+              "end": 57.08
             },
             {
               "index": 5,
-              "text": "A plausibility rule, earned after task-notification blocks once inflated the counts, says an implausibly low count means the transcript format drifted, so stop and investigate.",
-              "start": 57.2,
-              "end": 67.52
+              "text": "A plausibility rule, earned after task-notification blocks once inflated the counts, says an implausibly low count means the transcript format drifted, so stop and investigate. The README's Sessions and prompts table links every recap to its export.",
+              "start": 57.08,
+              "end": 72.92
             },
             {
               "index": 6,
-              "text": "The README's Sessions and prompts table links every recap to its export, one hundred ten prompts across four sessions, and config-history.md serves as the reviewer's decoder ring with a glossary rule for slash commands.",
-              "start": 67.52,
-              "end": 80.04
+              "text": "A gate named check-session-wrapup re-derives those counts from the exports themselves, so the table, the curated index, and the glossary cannot drift apart. And config-history.md is the reviewer's decoder ring, defining every slash command the prompts invoke.",
+              "start": 72.92,
+              "end": 90.76
             },
             {
               "index": 7,
               "text": "Wrapping it all is public-repo hygiene: a scan-before-commit across credentials, identity, and machine internals, plus a private token-map scan for identifiers regex cannot see, added after quoted agent output leaked past gitleaks. A July twentieth request to publish the prompts drove every piece.",
-              "start": 80.04,
-              "end": 98.52
+              "start": 90.76,
+              "end": 109.24
             }
           ]
         },

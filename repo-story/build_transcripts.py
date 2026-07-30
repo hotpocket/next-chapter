@@ -18,16 +18,23 @@ import json
 import sys
 from pathlib import Path
 
-from build_audio import find_sections, get_wav_duration, section_title, split_into_chunks
+from build_audio import (chunk_filename, chunk_key, find_sections, get_wav_duration,
+                         load_cache_params, section_title, split_into_chunks)
 
 
-def align_chunks(text: str, chunks_dir: Path, chapter_idx: int, variant: str) -> list[dict]:
-    """Time-align a text's chunks against their WAVs. variant: 'chunk' (full) or 'summary'."""
+def align_chunks(text: str, chunks_dir: Path, chapter_idx: int, variant: str,
+                 voice: str = "", params: dict | None = None) -> list[dict]:
+    """Time-align a text's chunks against their WAVs. variant: 'chunk' (full) or 'summary'.
+
+    Chunk WAVs are content-addressed, so the name is recomputed from the text
+    through build_audio's own helper — never spelled out here."""
     chunks = split_into_chunks(text)
+    params = params or {}
     records = []
     offset = 0.0
     for i, chunk_text in enumerate(chunks):
-        wav_path = chunks_dir / f"ch{chapter_idx:02d}_{variant}_{i:05d}.wav"
+        wav_path = chunks_dir / chunk_filename(
+            chapter_idx, variant, chunk_key(chunk_text, voice, params))
         if not wav_path.exists():
             print(f"Warning: missing {wav_path}, truncating chapter {chapter_idx} ({variant})")
             break
@@ -46,11 +53,13 @@ def build_transcript(sections_dir: Path, chunks_dir: Path, book_slug: str,
                      summaries_dir: Path | None = None) -> dict:
     """Build transcript data for a single book from section text + chunk WAVs."""
     sections = find_sections(sections_dir)
+    voice, params = load_cache_params(chunks_dir)
     chapters = []
 
     for chapter_idx, section_path in enumerate(sections, 1):
         title = section_title(section_path)
-        chunk_records = align_chunks(section_path.read_text(), chunks_dir, chapter_idx, "chunk")
+        chunk_records = align_chunks(section_path.read_text(), chunks_dir, chapter_idx,
+                                     "chunk", voice, params)
 
         chapter = {
             "index": chapter_idx,
@@ -60,7 +69,8 @@ def build_transcript(sections_dir: Path, chunks_dir: Path, book_slug: str,
 
         summary_path = summaries_dir / section_path.name if summaries_dir else None
         if summary_path and summary_path.exists():
-            summary_records = align_chunks(summary_path.read_text(), chunks_dir, chapter_idx, "summary")
+            summary_records = align_chunks(summary_path.read_text(), chunks_dir, chapter_idx,
+                                           "summary", voice, params)
             if summary_records:
                 chapter["summary_chunks"] = summary_records
 

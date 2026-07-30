@@ -51,7 +51,7 @@ chmod +x "$stub"
 : > "$log"
 PYTHON="$stub" "$script" --registry "$tmp/reg.json" --repo-story "$rs" --artist "Test Artist" >/dev/null
 
-check "6 build calls (2 books x 3 scripts)" test "$(wc -l < "$log")" = 6
+check "8 build calls (2 books x build_audio+m4a+transcripts+gc)" test "$(wc -l < "$log")" = 8
 check "alpha build_audio ran in alpha dir"  grep -q "^$rs/alpha :: ../build_audio.py" "$log"
 check "alpha title flag"                    grep -q "build_audio.py --title alpha --artist Test Artist" "$log"
 check "alpha m4a"                           grep -q "^$rs/alpha :: ../build_m4a.py --title alpha --artist Test Artist" "$log"
@@ -78,28 +78,43 @@ check "missing chapters.txt → nonzero, names book" bash -c "
 PYTHON="$stub" VOICE="$tmp/v.wav" "$script" --registry "$tmp/reg.json" --repo-story "$rs" >/dev/null
 check "VOICE forwarded to build_audio" grep -q -- "--voice $tmp/v.wav" "$log"
 
-# --- Full regen on text change: stale audio wiped, keyed by content hash ---
+# --- Chunks are content-addressed: a text edit never wipes the cache ---
+# The old behaviour (rm -rf the book's audio on any text change) existed only
+# because the chunk cache was index-keyed and could serve the wrong audio.
 aout="$rs/alpha/output"
 mkdir -p "$aout/audio/chunks" "$aout/m4a" "$aout/site"
-touch "$aout/audio/chunks/ch00_chunk_00000.wav" "$aout/audio/chapter-00-x.wav" \
+touch "$aout/audio/chunks/ch01_chunk_abc123def456.wav" "$aout/audio/chapter-00-x.wav" \
       "$aout/m4a/chapter_0000.m4a" "$aout/book.m4b" "$aout/site/transcripts.json"
-rm -f "$aout/.text-hash"   # no hash recorded → treat as changed → wipe
+rm -f "$aout/.text-hash"
+: > "$log"
 PYTHON="$stub" "$script" --registry "$tmp/reg.json" --repo-story "$rs" >/dev/null
-check "no recorded hash → chunks wiped"      test ! -e "$aout/audio/chunks/ch00_chunk_00000.wav"
-check "no recorded hash → chapter wav wiped" test ! -e "$aout/audio/chapter-00-x.wav"
-check "no recorded hash → m4a wiped"         test ! -e "$aout/m4a/chapter_0000.m4a"
-check "no recorded hash → m4b wiped"         test ! -e "$aout/book.m4b"
+check "no recorded hash → chunks kept"       test -e "$aout/audio/chunks/ch01_chunk_abc123def456.wav"
+check "no recorded hash → m4a kept"          test -e "$aout/m4a/chapter_0000.m4a"
+check "no recorded hash → m4b kept"          test -e "$aout/book.m4b"
 check "hash recorded after run"              test -s "$aout/.text-hash"
+check "orphan sweep runs after the build"    grep -q "chunk_cache.py gc" "$log"
+check "gc comes after transcripts"           bash -c "
+  grep -n 'alpha ::' '$log' | grep -E 'build_transcripts|chunk_cache.py gc' \
+    | tail -1 | grep -q 'chunk_cache.py gc'"
 
-# Same text again → cache preserved (resume for interrupted runs)
-mkdir -p "$aout/audio/chunks"
-touch "$aout/audio/chunks/ch00_chunk_00000.wav"
+# Unchanged text → a legacy index-keyed cache is migrated, not re-rendered.
+: > "$log"
 PYTHON="$stub" "$script" --registry "$tmp/reg.json" --repo-story "$rs" >/dev/null
-check "unchanged text → chunks preserved" test -e "$aout/audio/chunks/ch00_chunk_00000.wav"
+check "unchanged text → migrate offered"  grep -q "chunk_cache.py migrate" "$log"
+check "migrate runs before build_audio"   bash -c "
+  grep -n 'alpha ::' '$log' | grep -E 'chunk_cache.py migrate|build_audio' \
+    | head -1 | grep -q 'chunk_cache.py migrate'"
+check "unchanged text → chunks preserved" test -e "$aout/audio/chunks/ch01_chunk_abc123def456.wav"
 
-# Text edited → wiped again
+# Text edited → still no wipe; the changed chunk simply misses the cache.
+: > "$log"
 echo "revised text" > "$rs/alpha/output/sections/section-x.txt"
 PYTHON="$stub" "$script" --registry "$tmp/reg.json" --repo-story "$rs" >/dev/null
-check "changed text → chunks wiped" test ! -e "$aout/audio/chunks/ch00_chunk_00000.wav"
+check "changed text → chunks preserved"   test -e "$aout/audio/chunks/ch01_chunk_abc123def456.wav"
+check "changed text → derived m4a kept"   test -e "$aout/m4a/chapter_0000.m4a"
+check "changed text → no migrate (index map no longer trustworthy)" \
+  bash -c "! grep '^$rs/alpha ::' '$log' | grep -q 'chunk_cache.py migrate'"
+check "unchanged sibling book still migrates" \
+  bash -c "grep '^$rs/beta ::' '$log' | grep -q 'chunk_cache.py migrate'"
 
 if [ "$fails" -eq 0 ]; then echo "ALL TESTS PASSED"; else echo "TESTS FAILED: $fails"; exit 1; fi
