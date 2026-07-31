@@ -96,11 +96,11 @@ The session where the product's genre changed on a single prompt.
 
 ---
 
-## 6 — 2026-07-30 · Site analytics ([21 prompts](vault/sessions/2026-07-30-site-analytics-prompts.md))
+## 6 — 2026-07-30 · Site analytics ([25 prompts](vault/sessions/2026-07-30-site-analytics-prompts.md))
 
-Hit counting added to the published site — then three corrections that each
-turned into a mechanism, ending with a rewrite of how the audio pipeline
-caches its work.
+Hit counting added to the published site — then a chain of corrections, each
+turning into a mechanism, ending with the pipeline's model split rewritten and
+all twelve chapters re-narrated.
 
 - **#1** — the whole feature from one loose question: "is there a way to
   install google analytics here or something like that so I know who hits
@@ -131,14 +131,29 @@ caches its work.
   it is a recap that ships debt.
 - **#20** — "did you run the prose through the fabel5 check for fluid story
   telling?" — a process audit in one line. The narration fix had been
-  hand-patched into the section file, but ADR 0001 says sections are written
+  hand-patched into the section file, but the ADR says sections are written
   only by the `narrator` agent. It read as patched: a spoken five-item list,
   no session-date attribution, an uncomposed transition. Re-narrated properly,
   which the new chunk cache made cheap enough to be worth doing.
+- **#21** — "no! the narrator is Fable 5" — the config said Opus, and the
+  files were right for the model generation they were written in. Opus 5 is
+  now the stronger reasoner and Fable the stronger writer, so ADR 0002
+  supersedes 0001 and narration moved to the writing model. The ADR records
+  the general form: a model-to-task mapping is a dated decision.
+- **#22** — "which means all prose needs to be regenerated" — the consequence
+  the owner drew before I did, plus the instruction to keep it as its own
+  commit. Twelve chapters re-narrated on Fable.
+- **#24** — "do a check with opus for correctness as a sanity check" — the
+  step that saved the release. Three Opus verifiers found next-chapter's
+  opening chapter describing the *previous* edition of the site (wrong
+  chapter count, wrong book order, wrong commit), a false claim about the
+  player's track-bar ticks, and a figure credited to a recap that never
+  states it. Fluent, confident, and wrong is what a prose pass over stale
+  research produces.
 
 ---
 
-**Totals:** 168 prompts across 6 sessions. The unabridged exports live in
+**Totals:** 172 prompts across 6 sessions. The unabridged exports live in
 [`vault/sessions/`](vault/sessions/); each links its session recap, and the
 [decisions index](vault/decisions/README.md) holds the ADRs those prompts
 produced.

@@ -35,7 +35,7 @@ script at all.
 
 ## The prompts
 
-Every working session's user prompts are published verbatim — **168 prompts across 6 sessions** — each session a recap + prompts pair:
+Every working session's user prompts are published verbatim — **172 prompts across 6 sessions** — each session a recap + prompts pair:
 
 | Session | Recap | Prompts |
 |---------|-------|---------|
@@ -44,7 +44,7 @@ Every working session's user prompts are published verbatim — **168 prompts ac
 | 2026-07-21 — repo-story vendored + in-repo pivot | [recap](vault/sessions/2026-07-21-repo-story-vendored.md) | [27 prompts](vault/sessions/2026-07-21-repo-story-vendored-prompts.md) |
 | 2026-07-21 — Trilogy built | [recap](vault/sessions/2026-07-21-trilogy-built.md) | [33 prompts](vault/sessions/2026-07-21-trilogy-built-prompts.md) |
 | 2026-07-23 — Walkthrough rewrite (v3) | [recap](vault/sessions/2026-07-23-walkthrough-rewrite.md) | [37 prompts](vault/sessions/2026-07-23-walkthrough-rewrite-prompts.md) |
-| 2026-07-30 — Site analytics | [recap](vault/sessions/2026-07-30-site-analytics.md) | [21 prompts](vault/sessions/2026-07-30-site-analytics-prompts.md) |
+| 2026-07-30 — Site analytics | [recap](vault/sessions/2026-07-30-site-analytics.md) | [25 prompts](vault/sessions/2026-07-30-site-analytics-prompts.md) |
 
 [`prompt-history.md`](prompt-history.md) is the curated index (the prompts
 that best show the collaboration); [`config-history.md`](config-history.md)
@@ -78,7 +78,7 @@ descriptions of it.
    session groups features into a chapter plan → per chapter, code-researcher
    + prompt-researcher agents verify behavior and trace prompts → narrator
    agents write `output/sections/` + `output/summaries/`, ordered by
-   `chapters.txt`. Fable plans, Opus executes (its ADR 0001). The narration
+   `chapters.txt`. Fable writes, Opus researches (its ADR 0002). The narration
    text is tracked in git.
 3. **Audio** (CUDA GPU + [Chatterbox TTS](https://github.com/resemble-ai/chatterbox)).
    [`scripts/regen-trilogy-audio`](scripts/regen-trilogy-audio) runs, per
@@ -87,9 +87,9 @@ descriptions of it.
    `chunk_cache.py gc` (orphan sweep). Chunk WAVs are **content-addressed**
    — `chNN_<variant>_<sha12>.wav`, hashed from the chunk's text plus the voice
    and TTS params — so editing one sentence re-renders that sentence and
-   everything else is a cache hit. The last narration pass re-rendered 11
-   chunks out of 151; under the previous index-keyed cache it would have
-   re-rendered the whole book.
+   everything else is a cache hit. A one-paragraph edit re-renders a handful of
+   chunks; under the previous index-keyed cache any text change re-rendered
+   the whole book.
 4. **Site.** [`scripts/build-trilogy-site`](scripts/build-trilogy-site) reads
    [`scripts/trilogy.json`](scripts/trilogy.json), copies audio into
    `docs/audio/`, merges transcripts (content-hash cache key), copies the
@@ -178,7 +178,9 @@ generation (ADR 0009).
 
 - **Player**: vanilla JavaScript (no build step), CSS, service worker —
   [landry-ui](https://github.com/hotpocket/landry-ui)'s audiobook component,
-  vendored at a pinned commit ([`docs/PROVENANCE.md`](docs/PROVENANCE.md)).
+  vendored as a `luinst`-fetched copy, with provenance recorded at build time
+  ([`docs/PROVENANCE.md`](docs/PROVENANCE.md) — a commit is pinned only when
+  the source is a landry-ui checkout it can stand behind).
 - **Audio pipeline**: Python + Chatterbox TTS (local CUDA GPU, cloned voice),
   ffmpeg — the vendored [`repo-story/`](repo-story/) pipeline.
 - **Hosting**: GitHub Pages serving [`docs/`](docs/) — audio in-tree, no
@@ -196,7 +198,7 @@ The entire build ran through Claude Code under an audited workflow:
 [`.claude/`](.claude/README.md) mirrors the actual config, and every
 session's prompts are published (see [The prompts](#the-prompts)). Narration
 is written by the [`repo-story/`](repo-story/) pipeline's research + narrator
-agents ("Fable plans, Opus executes") and voiced by Chatterbox TTS.
+agents ("Fable writes, Opus researches") and voiced by Chatterbox TTS.
 
 ## How to read this repo (the trail)
 

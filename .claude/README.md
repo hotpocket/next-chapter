@@ -11,7 +11,7 @@ config is **mirrored here, inside the repo**. When a path like
 | `~/bin/claude-orient`            | `.claude/bin/claude-orient`       | mirror — global SessionStart router; delegates to `scripts/session-start.sh` in this repo |
 | `~/bin/deny-git-push.sh`         | `.claude/bin/deny-git-push.sh`    | **live** — wired as a project hook in `settings.json` below (also registered globally) |
 | `~/.claude/CLAUDE.md`            | `.claude/CLAUDE.global.md`        | mirror — global conduct; the loaded project rules are `/CLAUDE.md` at repo root |
-| `~/.claude/settings.json`        | `.claude/settings.global.json`    | mirror — global hooks (orient, brevity injector, push guard), model, statusline |
+| `~/.claude/settings.json`        | `.claude/settings.global.json`    | mirror — global hooks (orient, brevity injector, push guard), permissions, statusline |
 | `~/.claude/statusline-command.sh`| `.claude/statusline-command.sh`   | mirror — cosmetic statusline |
 | `~/.claude/skills/<name>`        | `.claude/skills/<name>`           | **live** — loaded as project skills; bodies of `/vault`, `/wargame`, `/vet`, `/conduct`, `/gstack`, `/browse` |
 | `~/bin/vault-digest`             | `scripts/vault-digest`            | **live** — already committed; byte-identical to the global copy |

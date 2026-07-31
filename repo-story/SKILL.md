@@ -9,7 +9,7 @@ You are executing the repo-story process. This skill surveys code repositories, 
 
 Read `PLAN.md` in this skill's directory for the full process definition. The phases below are your execution guide.
 
-**Model split — Fable plans, Opus executes.** The main session is pinned to Fable via `.claude/settings.json` (loud failure if unavailable) and does the planning: Phase 1 survey, Phase 3 inventory, Phase 5a beats, chapter ordering. Phases 2, 4, and 5b run only via the named agent types in `.claude/agents/` (`explorer`, `code-researcher`, `prompt-researcher`, `narrator`), each pinned to Opus. Never spawn generic subagents for those phases and never write sections inline. See `docs/adr/0001-fable-plans-opus-executes.md`.
+**Model split — Fable writes, Opus researches.** The main session is pinned to Fable via `.claude/settings.json` (loud failure if unavailable) and does the planning: Phase 1 survey, Phase 3 inventory, Phase 5a beats, chapter ordering. Phase 5b/5c run via the `narrator` agent, also pinned to Fable — narration is judged as prose. Phases 2 and 4 run via `explorer`, `code-researcher` and `prompt-researcher`, each pinned to Opus. Never spawn generic subagents for those phases and never write sections inline. See `docs/adr/0002-fable-writes-opus-researches.md`.
 
 ## Invocation
 

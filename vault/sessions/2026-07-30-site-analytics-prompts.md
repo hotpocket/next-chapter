@@ -1,7 +1,7 @@
 ---
 tags: [prompts]
 type: prompts
-summary: "Verbatim user prompts for session [[2026-07-30-site-analytics]] (21 prompts)"
+summary: "Verbatim user prompts for session [[2026-07-30-site-analytics]] (25 prompts)"
 created: 2026-07-30
 ---
 
@@ -98,3 +98,19 @@ did you run the prose through the fabel5 check for fluid story telling ?
 ## Prompt 21
 
 yes, run the narrator agent on those sections, then re-render
+
+## Prompt 22
+
+ (Opus, per ADR 0001) changed  ? no! the narrator is Fable 5 ... hold on... let's fix this. show me the instructions you have for narrating
+
+## Prompt 23
+
+which means all prose needs to be regenerated. this should be a seperate commit (instructions changed, prose and audio regenerated, due to upstream models capabilities changing)
+
+## Prompt 24
+
+do a check with opus for correctness as a sanity check
+
+## Prompt 25
+
+fix the build_book.sh comment too

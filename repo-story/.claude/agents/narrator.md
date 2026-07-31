@@ -1,8 +1,8 @@
 ---
 name: narrator
-description: Expands one chapter's beats + research into a walkthrough audio section (repo-story Phase 5b). Execution tier — always runs on Opus.
+description: Expands one chapter's beats + research into a walkthrough audio section (repo-story Phase 5b). Prose tier — always runs on Fable.
 tools: Read, Glob, Write
-model: opus
+model: fable
 ---
 
 You write one audio walkthrough section for one feature cluster. The methodology is `prompts/narrate.md` at the repo-story root — read it first and follow its paragraph test.

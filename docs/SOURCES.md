@@ -7,11 +7,13 @@ ADR 0003: generation is offline; this site only plays).
 
 ## Book 1 — landry-ui
 
-- Source: [hotpocket/landry-ui](https://github.com/hotpocket/landry-ui)
-  at commit `67ffdec` (also the player this site runs — see
-  [PROVENANCE.md](PROVENANCE.md)).
-- Researched from a full-history clone (64+ commits); dates and commit
+- Source: [hotpocket/landry-ui](https://github.com/hotpocket/landry-ui),
+  researched from a full-history clone at commit `67ffdec`; dates and commit
   hashes quoted in narration are from that log.
+- The player this site actually ships is a later `luinst`-fetched build, not
+  that clone. Where the two differ, the narration describes the shipped copy
+  — [PROVENANCE.md](PROVENANCE.md) records what its origin can be stood
+  behind.
 
 ## Book 2 — repo-story
 
@@ -25,11 +27,11 @@ ADR 0003: generation is offline; this site only plays).
 
 ## Book 3 — next-chapter
 
-- Source: this repository, **narrated through commit `8ab693d`**
-  (ADR 0009: the closing book cannot contain its own generation — it was
-  generated last and trails HEAD by construction). Everything after that
-  commit — including the walkthrough rewrite that produced this edition and
-  the assembly of this site — is outside the book's narrated range.
+- Source: this repository, narrated through the session that produced this
+  edition (2026-07-30). Per ADR 0009 the closing book cannot contain its own
+  generation: the commits that publish this render are outside its narrated
+  range by construction. No commit hash is pinned here because the boundary
+  moves every time the book is regenerated.
 - The checkable record the book defers to: [`vault/decisions/`](../vault/decisions/)
   (ADRs + index), `vault/sessions/` (recaps + verbatim prompt exports),
   `llm-docs/` (plan, wargames, vets).
@@ -42,6 +44,9 @@ ADR 0003: generation is offline; this site only plays).
   edition (2026-07-23): each chapter tours features and traces them to the
   prompts that shaped them, attributions labeled verbatim / paraphrase /
   inference. Summary tracks are Phase 5c artifacts — a ~2-minute orientation
-  per chapter.
+  per chapter. Re-narrated 2026-07-30 on the writing model per
+  [ADR 0002](../repo-story/docs/adr/0002-fable-writes-opus-researches.md)
+  (Fable writes, Opus researches), then verified against source by the
+  research model before rendering.
 - Site assembly: [`scripts/build-trilogy-site`](../scripts/build-trilogy-site)
   from [`scripts/trilogy.json`](../scripts/trilogy.json).
